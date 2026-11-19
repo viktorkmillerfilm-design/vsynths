@@ -552,7 +552,13 @@ function AVoice(c,out){ const v={note:60,active:false,age:0};
   v.off=function(t,hard){ const r=hard?0.01:T(P.p33); V.adsrOff(v.env.offset,t,r); V.adsrOff(v.vca.gain,t,P.p3%2===1&&!hard?0.008:r); };
   return v; }
 V.synth={
-  build(c,out){ A.lfo=c.createOscillator(); A.lfo.type='sine'; A.lfo.start(); A.pwm=c.createOscillator(); A.pwm.type='triangle'; A.pwm.start(); A.ch=V.chorus(); A.ch.out.connect(out);
+  build(c,out){ /* Orbit-6 only: rebuild the shared output chain with a hard ceiling at the very end (same approach as the groovebox):
+       master -> DC block -> compressor -> tanh soft-clip (no oversampling, so it cannot overshoot) -> 0.93 trim -> destination */
+    out.disconnect(); { const dc=c.createBiquadFilter(); dc.type='highpass'; dc.frequency.value=18;
+      const lim=c.createDynamicsCompressor(); lim.threshold.value=-6; lim.knee.value=6; lim.ratio.value=12; lim.attack.value=0.002; lim.release.value=0.12;
+      const clip=c.createWaveShaper(), cc=new Float32Array(4096); for(let i=0;i<4096;i++){ const x=i/4095*2-1; cc[i]=Math.tanh(1.5*x)/Math.tanh(1.5); } clip.curve=cc; clip.oversample='none';
+      const ceil=c.createGain(); ceil.gain.value=0.93; out.connect(dc); dc.connect(lim); lim.connect(clip); clip.connect(ceil); ceil.connect(c.destination); }
+    A.lfo=c.createOscillator(); A.lfo.type='sine'; A.lfo.start(); A.pwm=c.createOscillator(); A.pwm.type='triangle'; A.pwm.start(); A.ch=V.chorus(); A.ch.out.connect(out);
     A.bend=V.cs(0); A.bendC=V.gain(0); A.bend.connect(A.bendC); A.mod=V.cs(0); A.modP=V.gain(0); A.mod.connect(A.modP); A.lfo.connect(A.modP.gain);
     A.voices=Array.from({length:6},()=>AVoice(c,A.ch.in)); A.al=V.alloc(A.voices); },
   update(){ if(!A.lfo) return; const t=V.now(); A.lfo.frequency.setTargetAtTime(0.1*Math.pow(10,P.p25/127*1.7),t,0.02); A.pwm.frequency.setTargetAtTime(0.1*Math.pow(10,P.p16/127*1.6),t,0.02);
@@ -585,6 +591,43 @@ V.presets=[
 V.saveExtra=()=>({user:V.user,chord}); V.loadExtra=x=>{ V.user=x.user||{}; chord=x.chord||null; };
 V.start(); showSel(); lights(); lcd();
 
+
+/* vsynths note protocol v1 · receiver (shared, paste once per synth, then call VSN.use({...}) with the synth's own note functions)
+   messages in : {type:'vsynths:hello'}                                   -> answers {type:'vsynths:ready', proto:1, slug, notes:true}
+                 {type:'vsynths:note', note, vel, on, dur, delay, at, src}  note: midi 0-127 or [notes]; vel 0-1 (or 1-127); on: true|false (default true)
+                                                                            dur: s (on + auto off); delay: s from now, or at: epoch ms (performance.timeOrigin+performance.now())
+                 {type:'vsynths:notes', list:[...note msgs]}               batch
+                 {type:'vsynths:panic'} / {type:'vsynths:stop'}            release every note this protocol holds (the synth's own stop handler still runs for :stop)
+   messages out: {type:'vsynths:ready', ...} once VSN.use() runs and on every hello; {type:'vsynths:ack', on, off} on {type:'vsynths:stats'} */
+(function (W) {
+  if (W.VSN) return;
+  const A = { on: null, off: null, panic: null, slug: '' }, live = new Map(), timers = new Set(), st = { on: 0, off: 0, msgs: 0 };
+  const slugOf = () => A.slug || (location.pathname.split('/').filter(s => s && !/\.html?$/.test(s)).pop() || document.title || 'synth').toLowerCase();
+  const nowMs = () => (performance.timeOrigin || 0) + performance.now();
+  const ready = to => { const m = { type: 'vsynths:ready', proto: 1, slug: slugOf(), notes: !!A.on }; try { (to || (W.parent !== W ? W.parent : null)) && (to || W.parent).postMessage(m, '*'); } catch (e) {} };
+  const later = (ms, f) => { if (ms <= 2) return f(); const id = setTimeout(() => { timers.delete(id); f(); }, ms); timers.add(id); };
+  const v01 = v => { v = +v; if (!isFinite(v)) return 0.8; if (v > 1) v /= 127; return Math.max(0.01, Math.min(1, v)); };
+  function on(n, v) { const c = live.get(n) || 0; try { if (c) A.off(n); A.on(n, v); } catch (e) {} live.set(n, c + 1); st.on++; }
+  function off(n) { const c = live.get(n) || 0; if (!c) return; if (c > 1) { live.set(n, c - 1); return; } live.delete(n); try { A.off(n); } catch (e) {} st.off++; }
+  function releaseAll() { timers.forEach(clearTimeout); timers.clear(); for (const n of [...live.keys()]) { live.set(n, 1); off(n); } try { A.panic && A.panic(); } catch (e) {} }
+  function note(d) {
+    if (!A.on) return; const ns = Array.isArray(d.note) ? d.note : [d.note], v = v01(d.vel == null ? 0.8 : d.vel);
+    const ms = d.at != null ? d.at - nowMs() : (+d.delay || 0) * 1000; if (ms < -250) return; // stale (tab was asleep): drop instead of a burst
+    const isOn = d.on !== false, dur = +d.dur > 0 ? Math.min(+d.dur, 30) : 0;
+    for (const n0 of ns) { const n = Math.round(+n0); if (!(n >= 0 && n <= 127)) continue;
+      if (!isOn) { later(ms, () => off(n)); continue; }
+      later(ms, () => on(n, v)); if (dur) later(ms + dur * 1000, () => off(n)); }
+  }
+  W.addEventListener('message', e => { const d = e.data; if (!d || typeof d !== 'object' || typeof d.type !== 'string' || d.type.slice(0, 8) !== 'vsynths:') return;
+    st.msgs++;
+    if (d.type === 'vsynths:note') note(d);
+    else if (d.type === 'vsynths:notes' && Array.isArray(d.list)) d.list.forEach(note);
+    else if (d.type === 'vsynths:panic' || d.type === 'vsynths:stop') releaseAll();
+    else if (d.type === 'vsynths:hello') ready(e.source);
+    else if (d.type === 'vsynths:stats') { try { e.source.postMessage({ type: 'vsynths:ack', slug: slugOf(), on: st.on, off: st.off, held: live.size }, '*'); } catch (x) {} } });
+  W.VSN = { use(o) { Object.assign(A, o); ready(); return W.VSN; }, stats: () => Object.assign({ held: live.size }, st), releaseAll, proto: 1 };
+})(typeof window !== 'undefined' ? window : this);
+VSN.use({slug:'alpha-juno',on:(n,v)=>V.noteOn(n,v),off:n=>V.noteOff(n)}); /* vsynths note protocol: notes from a host page (orbs) */
 </script>
 </body>
 </html>
