@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#1c1c1e">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" href="data:,">
-<title>VACID Alpha-6 · 6-voice DCO poly with alpha dial</title>
+<title>VACID Orbit-6 · 6-voice DCO poly with alpha dial</title>
 <style>
 html,body{margin:0;height:100%;background:#1c1c1e;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
@@ -43,7 +43,7 @@ body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:cente
 
 .ap{background:linear-gradient(#232427,#16171a);border:2px solid #000}
 .cheek{background:linear-gradient(90deg,#0b0b0b,#2a2a2a 40%,#141414)}
-.lcd{background:linear-gradient(#9fc23a,#86a828);border:3px solid #000;border-radius:3px;box-shadow:inset 0 0 10px #0006;font-family:"Courier New",monospace;font-weight:700;color:#1b2a05;font-size:20px;white-space:pre;display:flex;flex-direction:column;justify-content:center;padding-left:10px;line-height:1.15}
+.lcd{background:linear-gradient(#a9b59c,#8f9c82);border:3px solid #000;border-radius:3px;box-shadow:inset 0 0 10px #0006;font-family:"Courier New",monospace;font-weight:700;color:#1b2a05;font-size:20px;white-space:pre;display:flex;flex-direction:column;justify-content:center;padding-left:10px;line-height:1.15}
 .prow{cursor:pointer;color:#cfd6e0;font:700 8.5px Arial;white-space:nowrap;padding:1px 3px;border-radius:2px}
 .prow.sel{background:#2b77c9;color:#fff}
 
@@ -181,18 +181,27 @@ function dragger(e,b,o,render,sens=180){ let y0=null,x0=0,n0=0;
 /* knob: style moog|mod|arp|alpha|small; scale: array of labels around the dial (from -150deg to +150deg) */
 V.knob=function(o){ const r=o.r||22, b=V.bind(o), sz=r*2+(o.pad??34), cx=sz/2, parent=o.parent||panel, col=o.scol||'#e8e8e8';
   const sweep=o.sweep||300, a0=-sweep/2; let marks='';
-  const sc=o.scale||(o.steps?null:['0','1','2','3','4','5','6','7','8','9','10']);
+  const ang=v=>(a0+sweep*clamp((v-o.min)/(o.max-o.min),0,1))*Math.PI/180;
+  if(o.ring) marks+=`<circle cx="${cx}" cy="${cx}" r="${o.ring}" fill="none" stroke="${col}" stroke-width="1"/>`;
+  if(o.tk) for(const v of o.tk){ const a=ang(v), r1=o.tr1||r+2, r2=o.tr2||r+6; marks+=`<line x1="${(cx+Math.sin(a)*r1).toFixed(1)}" y1="${(cx-Math.cos(a)*r1).toFixed(1)}" x2="${(cx+Math.sin(a)*r2).toFixed(1)}" y2="${(cx-Math.cos(a)*r2).toFixed(1)}" stroke="${col}" stroke-width="${o.tw||1.2}"/>`; }
+  if(o.sc) for(const [v,t,dr] of o.sc){ const a=ang(v), rr=r+(o.mr||11)+(dr||0), x=cx+Math.sin(a)*rr, y=cx-Math.cos(a)*rr;
+    if(t[0]==='#'){ marks+=`<path transform="translate(${(x-6).toFixed(1)},${(y-4).toFixed(1)})" d="${t.slice(1)}" stroke="${col}" fill="none" stroke-width="1.3"/>`; continue; }
+    marks+=`<text x="${x.toFixed(1)}" y="${(y+(o.fs||8)*0.36).toFixed(1)}" fill="${col}" font-size="${o.fs||8}" font-family="Arial" font-weight="700" text-anchor="middle">${t}</text>`; }
+  const sc=o.sc?null:(o.scale||(o.steps?null:['0','1','2','3','4','5','6','7','8','9','10']));
   if(sc){ const n=sc.length; for(let i=0;i<n;i++){ const a=(a0+sweep*i/(n-1))*Math.PI/180, rr=r+(o.mr||11); const x=cx+Math.sin(a)*rr, y=cx-Math.cos(a)*rr;
       if(sc[i][0]==='#'){ marks+=`<path transform="translate(${(x-6).toFixed(1)},${(y-4).toFixed(1)})" d="${sc[i].slice(1)}" stroke="${col}" fill="none" stroke-width="1.3"/>`; continue; }
       marks+=`<text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${col}" font-size="${o.fs||8}" font-family="Arial" font-weight="700" text-anchor="middle">${sc[i]}</text>`;
       if(o.ticks!==false){ const x1=cx+Math.sin(a)*(r+2), y1=cx-Math.cos(a)*(r+2), x2=cx+Math.sin(a)*(r+5), y2=cx-Math.cos(a)*(r+5); marks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="1"/>`; } } }
   const st=o.style||'moog'; let body;
-  if(st==='moog') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1.5"/><circle r="${r*0.72}" fill="#151515" stroke="#2c2c2c"/><rect x="-1.6" y="${-r+2}" width="3.2" height="${r*0.62}" fill="#f2f2f2"/>`;
+  if(st==='mm') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1"/><rect x="-1.3" y="${-r+1}" width="2.6" height="${r*(1-(o.cap||0.6))}" fill="#f4f4f4"/><circle r="${r*(o.cap||0.6)}" fill="url(#gm)" stroke="#777" stroke-width=".8"/><circle r="${r*(o.cap||0.6)*0.5}" fill="url(#gm2)"/>`;
+  else if(st==='rol') body=`<circle r="${r}" fill="#2a2a2c" stroke="#000"/><circle r="${r*0.8}" fill="url(#gk)"/><rect x="-1.2" y="${-r+1}" width="2.4" height="${r*0.55}" fill="#fff"/>`;
+  else if(st==='moog') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1.5"/><circle r="${r*0.72}" fill="#151515" stroke="#2c2c2c"/><rect x="-1.6" y="${-r+2}" width="3.2" height="${r*0.62}" fill="#f2f2f2"/>`;
   else if(st==='mod') body=`<circle r="${r}" fill="#0c0c0c" stroke="#333" stroke-width="2"/><circle r="${r*0.62}" fill="url(#gs)" stroke="#555"/><rect x="-1.5" y="${-r+1}" width="3" height="${r*0.55}" fill="#fff"/>`;
   else if(st==='chick') body=`<circle r="${r*0.8}" fill="#111" stroke="#444"/><path d="M-${r*0.28} ${r*0.55} L-${r*0.16} -${r} L${r*0.16} -${r} L${r*0.28} ${r*0.55}Z" fill="#1b1b1b" stroke="#555"/><rect x="-1.2" y="-${r*0.95}" width="2.4" height="${r*0.5}" fill="#fff"/>`;
   else if(st==='arp') body=`<circle r="${r}" fill="url(#gs)" stroke="#333" stroke-width="1"/><circle r="${r*0.55}" fill="#c9c9c9"/><rect x="-1.4" y="${-r+1}" width="2.8" height="${r*0.6}" fill="#111"/>`;
   else body=`<circle r="${r}" fill="url(#gk)" stroke="#000"/><rect x="-1.4" y="${-r+2}" width="2.8" height="${r*0.6}" fill="#fff"/>`;
   const e=V.svg((o.x-cx),(o.y-cx),sz,sz,`<defs><radialGradient id="gk" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#4a4a4a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
+    <radialGradient id="gm" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#cfcfcf"/><stop offset="1" stop-color="#8d8d8d"/></radialGradient><radialGradient id="gm2" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <radialGradient id="gs" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#b9b9b9"/><stop offset="1" stop-color="#6b6b6b"/></radialGradient></defs>
     ${marks}<g transform="translate(${cx},${cx})"><g class="rt">${body}</g></g>`,parent);
   e.classList.add('kn'); const rt=e.querySelector('.rt');
@@ -201,10 +210,14 @@ V.knob=function(o){ const r=o.r||22, b=V.bind(o), sz=r*2+(o.pad??34), cx=sz/2, p
   if(o.label) V.txt(o.label,o.x+(o.lx||0),o.y+(o.ly!=null?o.ly:r+(o.mr||11)+14),o.lsz||9,o.lcol||col,{parent,css:'text-align:center;line-height:1.15'});
   return e; };
 /* vertical fader */
-V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=22, cap=o.cap||'#d9d9d9';
+V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=o.w||22, cap=o.cap||'#d9d9d9';
   const e=V.el('sl',o.x-w/2,o.y,w,h,parent); const tr=V.el('',w/2-2,8,4,h-16,e,'background:#000;border-radius:2px;box-shadow:0 0 0 1px #333');
-  if(o.ticks!==false) for(let i=0;i<=10;i++){ V.el('',-7,8+(h-16)*i/10,6,1,e,'background:'+(o.tcol||'#bbb')); if(i%5===0&&o.nums!==false) V.txt(String(10-i),-13,8+(h-16)*i/10,7,o.tcol||'#bbb',{parent:e}); }
-  const c=V.el('',0,0,w,14,e,`background:linear-gradient(${cap},${cap} 45%,#000 46%,#000 54%,${cap} 55%);border:1px solid #000;border-radius:2px;box-shadow:0 2px 2px #0008`);
+  const rol=o.look==='roland', nt=o.nt||10;
+  if(rol){ for(let i=0;i<=nt;i++){ const yy=8+(h-16)*i/nt; V.el('',-3,yy,9,1,e,'background:'+(o.tcol||'#ddd')); V.el('',w-6,yy,9,1,e,'background:'+(o.tcol||'#ddd'));
+      const lab=o.nums===false?null:(o.numl?o.numl[i]:(i%5===0?String(Math.round(10-i*10/nt)):null)); if(lab!=null&&lab!==''){ if(o.numsL!==false) V.txt(lab,-8,yy,o.nsz||6.5,o.tcol||'#ddd',{parent:e}); if(o.numsR) V.txt(lab,w+8,yy,o.nsz||6.5,o.tcol||'#ddd',{parent:e}); } } }
+  else if(o.ticks!==false) for(let i=0;i<=10;i++){ V.el('',-7,8+(h-16)*i/10,6,1,e,'background:'+(o.tcol||'#bbb')); if(i%5===0&&o.nums!==false) V.txt(String(10-i),-13,8+(h-16)*i/10,7,o.tcol||'#bbb',{parent:e}); }
+  const c=rol?V.el('',2,0,w-4,14,e,`background:linear-gradient(#2c2c2e,#111 45%,#eee 46%,#eee 56%,#111 57%,#1c1c1e);border:1px solid #000;border-radius:1px;box-shadow:0 2px 2px #000a`)
+    :V.el('',0,0,w,14,e,`background:linear-gradient(${cap},${cap} 45%,#000 46%,#000 54%,${cap} 55%);border:1px solid #000;border-radius:2px;box-shadow:0 2px 2px #0008`);
   const render=()=>{ c.style.top=(h-16)*(1-clamp(b.norm(b.get()),0,1))+1+'px'; };
   let y0=null,n0=0;
   e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); y0=ev.clientY; n0=b.norm(b.get()); try{e.setPointerCapture(ev.pointerId);}catch(_){}
@@ -221,13 +234,19 @@ V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=2
 V.sw=function(o){ const n=o.labels.length, b=V.bind({k:o.k,min:0,max:n-1,def:o.def||0,steps:1}), parent=o.parent||panel, st=o.style||'slide';
   const w=o.w||(st==='rocker'?22:14), h=o.h||(st==='rocker'?34:(n*14+6)); const e=V.el('sw',o.x-w/2,o.y-h/2,w,h,parent);
   let cap;
-  if(st==='rocker'){ e.style.cssText+=`;background:#000;border-radius:3px;border:1px solid #444`; cap=V.el('',2,2,w-4,h/2-2,e,`background:${o.col||'#2f62c7'};border-radius:2px;box-shadow:inset 0 2px 0 #fff4`); }
+  if(st==='paddle'){ e.style.cssText+=`;background:${o.col||'#2f6fb5'};border-radius:3px;border:1px solid #0008;box-shadow:0 2px 3px #000a`; cap=V.el('',0,0,w,h,e,''); }
+  else if(st==='lever'){ e.style.cssText+=`;background:#050505;border-radius:2px;border:1px solid #333`; cap=V.el('',1,0,w-2,8,e,`background:linear-gradient(#f0f0f0,#9a9a9a);border-radius:1px;box-shadow:0 2px 2px #000`); }
+  else if(st==='rocker'){ e.style.cssText+=`;background:#000;border-radius:3px;border:1px solid #444`; cap=V.el('',2,2,w-4,h/2-2,e,`background:${o.col||'#2f62c7'};border-radius:2px;box-shadow:inset 0 2px 0 #fff4`); }
   else { e.style.cssText+=`;background:#0b0b0b;border-radius:3px;border:1px solid #555`; cap=V.el('',2,2,w-4,10,e,`background:linear-gradient(#eee,#888);border-radius:2px`); }
-  const lab=o.labels.map((s,i)=>{ if(!s) return null; const yy=st==='rocker'?(i?h*0.25:-h*0.25)+h/2:(n>1?5+i*(h-10)/(n-1):h/2);
+  const lab=o.labels.map((s,i)=>{ if(!s||o.nolab) return null; const yy=st==='rocker'?(i?h*0.25:-h*0.25)+h/2:(n>1?5+i*(h-10)/(n-1):h/2);
     const t=V.txt(s,(o.side==='l'?-6:w+6),yy,o.lsz||8,o.lcol||'#eee',{parent:e,al:o.side==='l'?'r':'l'}); return t; });
-  const render=()=>{ const v=b.get(); if(st==='rocker'){ cap.style.top=(v?h/2:2)+'px'; cap.style.opacity=1; }
+  const render=()=>{ const v=b.get(); if(st==='paddle'){ const on=v===(o.onv??1), hz=w>h; // raised half shows the switch position
+      cap.style.background=hz?`linear-gradient(90deg,${on?'#0000':'#fff5'} 0 50%,${on?'#fff5':'#0000'} 50%)`:`linear-gradient(${on?'#fff5':'#0000'} 0 50%,${on?'#0000':'#fff5'} 50%)`;
+      cap.style.boxShadow=hz?(on?'inset -6px 0 4px -3px #0009':'inset 6px 0 4px -3px #0009'):(on?'inset 0 -6px 4px -3px #0009':'inset 0 6px 4px -3px #0009'); return; }
+    if(st==='lever'){ if(w>h){ cap.style.top='1px'; cap.style.height=(h-4)+'px'; cap.style.width='8px'; cap.style.left=(n>1?v*(w-10)/(n-1):0)+'px'; } else cap.style.top=(n>1?v*(h-10)/(n-1):0)+'px'; return; }
+    if(st==='rocker'){ cap.style.top=(v?h/2:2)+'px'; cap.style.opacity=1; }
     else cap.style.top=(n>1?2+v*(h-14)/(n-1):2)+'px'; };
-  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); let v=b.get(); if(n===2) v=1-v; else { const r=e.getBoundingClientRect(); v=clamp(Math.round((ev.clientY-r.top)/r.height*n-0.5),0,n-1); if(v===b.get()) v=(v+1)%n; } b.set(v); render(); });
+  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); let v=b.get(); if(n===2) v=1-v; else { const r=e.getBoundingClientRect(); v=clamp(Math.round((w>h?(ev.clientX-r.left)/r.width:(ev.clientY-r.top)/r.height)*n-0.5),0,n-1); if(v===b.get()) v=(v+1)%n; } b.set(v); render(); });
   render(); V.refreshers.push(render);
   if(o.label) V.txt(o.label,o.x+(o.lx||0),o.y+(o.ly!=null?o.ly:h/2+11),o.lsz2||8,o.lcol||'#eee',{parent,css:'text-align:center;line-height:1.15'});
   return e; };
@@ -297,7 +316,7 @@ let nextT=0, stepI=0, timer=null, pendOff=null;
 V.seqStart=function(){ V.ensureAudio(); if(V.seqRun) return; V.seqRun=true; nextT=ctx.currentTime+0.06; stepI=0; timer=setInterval(sched,20); sched(); V.drawSeq(); };
 V.seqStop=function(){ if(!V.seqRun) return; V.seqRun=false; clearInterval(timer); timer=null; if(pendOff!=null&&ctx){ V.synth.noteOff(pendOff,ctx.currentTime); pendOff=null; } V.seqPos=-1; V.synth.seqOff&&V.synth.seqOff(); V.drawSeq(); };
 function sched(){ if(!ctx) return; const sd=60/V.bpm/4; while(nextT<ctx.currentTime+0.12){ const i=stepI%16, s=V.seq[i], t=nextT;
-    if(V.arpActive&&V.arpActive()) V.arpTick(t,sd,stepI);
+    if(V.arpActive&&V.arpActive()&&(!V.arpHas||V.arpHas())) V.arpTick(t,sd,stepI);
     else if(s.on){ const n=s.n, lg=pendOff!=null; V.synth.noteOn(n,s.a?1:0.72,t,lg); if(lg&&pendOff!==n) V.synth.noteOff(pendOff,t+0.002);
       pendOff=null; if(s.s) pendOff=n; else V.synth.noteOff(n,t+sd*0.55); }
     else if(pendOff!=null){ V.synth.noteOff(pendOff,t); pendOff=null; }
@@ -368,46 +387,93 @@ V.start=function(){ V.defaults=JSON.parse(JSON.stringify(V.P)); if(!V.restore())
 
 </script>
 <script>
-//TITLE:VACID Alpha-6 · 6-voice DCO poly with alpha dial
+//TITLE:VACID Orbit-6 · 6-voice DCO poly with alpha dial
 /*CSS
 .ap{background:linear-gradient(#232427,#16171a);border:2px solid #000}
 .cheek{background:linear-gradient(90deg,#0b0b0b,#2a2a2a 40%,#141414)}
-.lcd{background:linear-gradient(#9fc23a,#86a828);border:3px solid #000;border-radius:3px;box-shadow:inset 0 0 10px #0006;font-family:"Courier New",monospace;font-weight:700;color:#1b2a05;font-size:20px;white-space:pre;display:flex;flex-direction:column;justify-content:center;padding-left:10px;line-height:1.15}
+.lcd{background:linear-gradient(#a9b59c,#8f9c82);border:3px solid #000;border-radius:3px;box-shadow:inset 0 0 10px #0006;font-family:"Courier New",monospace;font-weight:700;color:#1b2a05;font-size:20px;white-space:pre;display:flex;flex-direction:column;justify-content:center;padding-left:10px;line-height:1.15}
 .prow{cursor:pointer;color:#cfd6e0;font:700 8.5px Arial;white-space:nowrap;padding:1px 3px;border-radius:2px}
 .prow.sel{background:#2b77c9;color:#fff}
 CSS*/
-V.id='alpha6'; V.title='VACID Alpha-6'; V.kbBase=36;
-V.helpText=`<p>Six-voice DCO poly laid out like the mid-80s "alpha dial" poly: almost no knobs, a 2-line display, one big <b>ALPHA</b> dial, 4 <b>Tone Modify</b> buttons (Mod Rate, Mod Depth, Brilliance, Env Time), <b>Portamento</b> and <b>Chord Memory</b>, Group / Bank / Number patch buttons, and the 36-parameter tone chart printed on the panel.</p>
-<p><b>Editing:</b> press PARAMETER (or tap a line in the chart) and turn the dial to choose a parameter, then press VALUE and turn the dial to change it. Tone Modify buttons make the dial adjust that macro. <b>Chord Memory:</b> hold a chord and press CHORD MEMORY to store it; one key then plays the chord. Patch <b>P-11 "What The"</b> is the signature hoover: PWM-chopped saws, inverted pitch envelope, fast chorus and portamento.</p>`;
+V.id='orbit6'; V.title='VACID Orbit-6'; V.kbBase=36;
+V.helpText=`<p>Six-voice DCO poly laid out like the mid-80s "alpha dial" poly: almost no knobs, a 2-line display, one big <b>ALPHA</b> dial, EDIT buttons (PARAMETER SELECT, VALUE, NAME, WRITE), 4 <b>Tone Modify</b> buttons (Mod Rate, Mod Depth, Brilliance, Env Time), GROUP Preset / Memory, Bank / Number patch buttons, and the printed WAVEFORM and ENV charts. Left of the 49 keys: OCT TRANSPOSE (Down / Normal), <b>Portamento</b>, <b>Chord Memory</b>, VOLUME and the pitch bender / modulation lever.</p>
+<p><b>Tone parameters:</b> 01 DCO ENV MODE · 02 VCF ENV MODE · 03 VCA ENV MODE · 04 PULSE · 05 SAW · 06 SUB · 07 RANGE · 08 SUB LEVEL · 09 NOISE · 10 HPF · 11 CHORUS · 12 DCO LFO · 13 DCO ENV · 14 DCO AFTER · 15 PW/PWM · 16 PWM RATE · 17 VCF CUTOFF · 18 RESONANCE · 19 VCF LFO · 20 VCF ENV · 21 KEY FOLLOW · 22 VCF AFTER · 23 VCA LEVEL · 24 VCA AFTER · 25 LFO RATE · 26 LFO DELAY · 27–33 ENV T1 L1 T2 L2 T3 L3 T4 · 34 ENV KEY FOLLOW · 35 CHORUS RATE · 36 BENDER RANGE. TUNE/FUNCTION makes the dial set the portamento time.</p>
+<p><b>Editing:</b> press PARAMETER SELECT and turn the dial to choose a parameter, then press VALUE and turn the dial to change it. Tone Modify buttons make the dial adjust that macro. <b>Chord Memory:</b> hold a chord and press CHORD MEMORY to store it; one key then plays the chord. Patch <b>P-11 "What The"</b> is the signature hoover: PWM-chopped saws, inverted pitch envelope, fast chorus and portamento.</p>`;
 /* tone parameter list (no. name max [labels]) */
 const PL=[['DCO ENV MODE',3],['VCF ENV MODE',3],['VCA ENV MODE',3],['DCO WAVE PULSE',3],['DCO WAVE SAW',5],['DCO WAVE SUB',5],['DCO RANGE',3,["4'","8'","16'","32'"]],['DCO SUB LEVEL',3],['DCO NOISE LEVEL',3],
  ['HPF CUTOFF FREQ',3],['CHORUS',1,['OFF','ON']],['DCO LFO MOD DEPTH',127],['DCO ENV MOD DEPTH',127],['DCO AFTER DEPTH',15],['DCO PW/PWM DEPTH',127],['DCO PWM RATE',127],['VCF CUTOFF FREQ',127],
  ['VCF RESONANCE',127],['VCF LFO MOD DEPTH',127],['VCF ENV MOD DEPTH',127],['VCF KEY FOLLOW',15],['VCF AFTER DEPTH',15],['VCA LEVEL',127],['VCA AFTER DEPTH',15],['LFO RATE',127],['LFO DELAY TIME',127],
  ['ENV T1',127],['ENV L1',127],['ENV T2',127],['ENV L2',127],['ENV T3',127],['ENV L3',127],['ENV T4',127],['ENV KEY FOLLOW',15],['CHORUS RATE',127],['BENDER RANGE',12]];
 const DEF=[0,0,0,0,1,0,1,0,0,1,1,0,0,0,0,0,90,10,0,40,8,0,110,0,60,0,0,127,40,90,50,80,40,0,60,2];
-V.setSize(1400,600);
-V.el('cheek',0,0,28,520); V.el('cheek',1372,0,28,520); V.el('ap',28,4,1344,300);
+V.setSize(1400,474);
+/* controls placed at their positions on the front reference photo (1841 px wide) */
+const S=0.7843, X=p=>(p-30)*S, Y=p=>(p-30)*S, TX='#e6e8ec', BL='#4aa6e8', RD='#e0352b';
+const Lb=(t,px,py,sz=6.4,o={})=>V.txt(t,X(px),Y(py),sz,o.col||TX,Object.assign({css:'text-align:center;line-height:1.05'},o));
+V.el('ap',0,0,1400,Y(545));
+V.el('',X(245),Y(86),X(1655)-X(245),Y(205)-Y(86),panel,'background:#101113;border:1px solid #2a2b2e;border-radius:2px');
+V.txt('VACID',X(258),Y(72),17,'#c8ccd2',{al:'l',w:700,ls:'.06em'});
+V.txt('ORBIT-6',X(1689),Y(70),30,'#1b1c1f',{al:'r',w:900,ls:'.05em',css:'font-family:Arial Black,Arial;-webkit-text-stroke:1.3px #b8bcc4'});
 const P=V.P; PL.forEach((_,i)=>{ if(P['p'+(i+1)]==null) P['p'+(i+1)]=DEF[i]; });
-let editMode=0, cur=16, macro=null, grp=0, bank=1, num=1;
-/* left: volume + performance */
-V.knob({k:'volume',x:80,y:90,r:20,style:'small',min:0,max:10,def:7,label:'VOLUME',fs:7,mr:10});
-V.btn({k:'porta',x:52,y:176,w:56,h:22,col:'#c9ccd2',label:'PORTAMENTO',ly:-14,lsz:7}); V.knob({k:'ptime',x:146,y:186,r:12,style:'small',min:0,max:10,def:4,label:'PORTA TIME',fs:6,mr:8,scale:['','','','','','','','','','',''],ly:24});
-V.btn({x:52,y:240,w:56,h:22,col:'#c9ccd2',label:'CHORD MEMORY',ly:-14,lsz:7,led:true,on:()=>chordBtn()});
-/* tone modify */
-V.txt('TONE MODIFY',300,40,9,'#7fb3ff',{ls:'.15em'});
-const TM=[['MOD RATE','rate'],['MOD DEPTH','depth'],['BRILLIANCE','bril'],['ENV TIME','env']]; const tmB=TM.map(([l,m],i)=>V.btn({x:212+i*46,y:76,w:38,h:22,col:'#c9ccd2',label:l.replace(' ','<br>'),ly:-22,lsz:7,led:true,lyo:28,on:()=>{ macro=macro===m?null:m; editMode=0; lights(); lcd(); }}));
-/* display + alpha dial */
-const L=V.el('lcd',432,40,330,62); const L1=V.el('',0,0,null,null,L,'position:relative'), L2=V.el('',0,0,null,null,L,'position:relative');
-const pb=V.btn({x:440,y:130,w:52,h:22,col:'#2b77c9',label:'PARAMETER',ly:-12,lsz:7,led:true,on:()=>{ editMode=editMode===1?0:1; macro=null; lights(); lcd(); }});
-const vb=V.btn({x:506,y:130,w:52,h:22,col:'#2b77c9',label:'VALUE',ly:-12,lsz:7,led:true,on:()=>{ editMode=editMode===2?0:2; macro=null; lights(); lcd(); }});
-V.btn({x:572,y:130,w:52,h:22,col:'#c8402a',label:'WRITE',ly:-12,lsz:7,on:()=>{ V.user=V.user||{}; V.user[idx()]=JSON.parse(JSON.stringify(P)); V.save(); V.flash('WRITTEN '+code()); }});
-V.btn({x:638,y:130,w:52,h:22,col:'#8a8d93',label:'MIDI',ly:-12,lsz:7,on:()=>V.flash('MIDI IN: ANY CHANNEL (WEB MIDI)')});
-V.btn({x:704,y:130,w:52,h:22,col:'#8a8d93',label:'DATA TRANSFER',ly:-12,lsz:7,on:()=>V.flash('PATCHES SAVE IN THIS BROWSER')});
-/* the alpha dial: endless, 1 step per 10 degrees */
-const DX=860,DY=120,DR=56; const dial=V.svg(DX-DR-8,DY-DR-8,DR*2+16,DR*2+16,`<defs><radialGradient id="ad" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#5a5d63"/><stop offset="1" stop-color="#0c0d0f"/></radialGradient></defs>
- <g transform="translate(${DR+8},${DR+8})"><circle r="${DR+6}" fill="#0a0a0b"/><circle r="${DR}" fill="url(#ad)" stroke="#000" stroke-width="2"/>${Array.from({length:36},(_,i)=>`<line x1="0" y1="${-DR+2}" x2="0" y2="${-DR+7}" stroke="#777" transform="rotate(${i*10})"/>`).join('')}
- <g class="rt"><circle cx="0" cy="${-DR*0.62}" r="7" fill="#1a1b1e" stroke="#555"/></g></g>`); dial.classList.add('kn');
-V.txt('ALPHA',DX,DY+DR+16,10,'#7fb3ff',{ls:'.3em'});
+let editMode=0, cur=16, macro=null, grp=0, bank=1, num=1; const rows=[]; if(P.ptime==null) P.ptime=4;
+const BW=41*S, BH=15*S, GR='#55585e';
+const BT=(o)=>{ const w=o.w||BW, h=o.h||BH; return V.btn(Object.assign({w,h,tsz:4.6,tcol:'#f2f2f2',led:false},o,{x:X(o.px)-w/2,y:Y(o.py)-h/2})); };
+/* left inset: TUNE/FUNCTION, MIDI, KEY TRANSPOSE, DATA TRANSFER */
+BT({px:318,py:122,col:GR,text:'TUNE/<br>FUNCTION',on:()=>{ macro=macro==='ptime'?null:'ptime'; editMode=0; lights(); lcd(); }});
+BT({px:358,py:122,col:GR,text:'MIDI',on:()=>V.flash('MIDI IN: ANY CHANNEL (WEB MIDI)')});
+const ktLed=V.el('',X(314)-3,Y(148)-2,6,4,panel,'background:#3b0b06;border-radius:1px');
+BT({px:314,py:167,col:GR,text:'KEY<br>TRANSPOSE',on:()=>{ V.ktArm=!V.ktArm; ktLed.style.background=V.ktArm||V.kt?'#ff3b1f':'#3b0b06'; V.flash(V.ktArm?'PLAY A KEY TO TRANSPOSE':'TRANSPOSE '+(V.kt||0)); }});
+BT({px:358,py:167,col:'#2e86de',text:'DATA<br>TRANSFER',on:()=>V.flash('PATCHES SAVE IN THIS BROWSER')});
+/* EDIT + TONE MODIFY */
+Lb('EDIT',501,107,6); V.el('',X(437)-BW/2,Y(107),X(565)-X(437)+BW,1,panel,'background:#8a8d93'); 
+const pb=BT({px:437,py:121,col:GR,text:'PARAMETER<br>SELECT',led:true,lyo:-6,on:()=>{ editMode=editMode===1?0:1; macro=null; lights(); lcd(); }});
+const vb=BT({px:480,py:121,col:GR,text:'VALUE',led:true,lyo:-6,on:()=>{ editMode=editMode===2?0:2; macro=null; lights(); lcd(); }});
+BT({px:522,py:121,col:GR,text:'NAME',on:()=>V.flash('NAME: '+(V.presetName||'').toUpperCase())});
+BT({px:565,py:121,col:RD,text:'WRITE',on:()=>{ V.user=V.user||{}; V.user[idx()]=JSON.parse(JSON.stringify(P)); V.save(); V.flash('WRITTEN '+code()); }});
+Lb('TONE MODIFY',501,153,6); V.el('',X(434)-BW/2,Y(153),X(563)-X(434)+BW,1,panel,'background:#8a8d93');
+const TM=[['MOD RATE','rate',434],['MOD DEPTH','depth',477],['BRILLIANCE','bril',520],['ENV TIME','env',563]];
+const tmB=TM.map(([l,m,px])=>BT({px,py:167,col:GR,text:l,led:true,lyo:BH+1,on:()=>{ macro=macro===m?null:m; editMode=0; lights(); lcd(); }}));
+/* display */
+V.el('',X(631),Y(107),X(848)-X(631),Y(164)-Y(107),panel,'background:#1c1d20;border:1px solid #3a3b3f');
+Lb('PROGRAMMABLE POLYPHONIC SYNTHESIZER &nbsp;VS-6',739,121,5.6);
+const L=V.el('lcd',X(679),Y(130),X(816)-X(679),Y(160)-Y(130)); L.style.fontSize='8.6px'; L.style.paddingLeft='4px'; L.style.borderWidth='2px';
+const L1=V.el('',0,0,null,null,L,'position:relative'), L2=V.el('',0,0,null,null,L,'position:relative');
+/* GROUP: PRESET / MEMORY */
+Lb('GROUP',950,105,6,{col:RD}); V.el('',X(918),Y(105),X(938)-X(918),1,panel,'background:'+RD); V.el('',X(962),Y(105),X(982)-X(962),1,panel,'background:'+RD);
+Lb('PRESET',930,125,5.4); Lb('MEMORY',971,125,5.4);
+const gB=[0,1].map(g=>BT({px:[931,971][g],py:154,w:11*S+2,h:38*S,col:'#8a8d93',on:()=>{ grp=g; pick(); }}));
+/* BANK / NUMBER */
+Lb('BANK',1182,104,6,{col:RD}); V.el('',X(1011),Y(106),X(1354)-X(1011),1.2,panel,'background:'+RD);
+Lb('NUMBER',1182,148,6,{col:RD}); V.el('',X(1011),Y(150),X(1354)-X(1011),1.2,panel,'background:'+RD);
+const bB=[],nB=[];
+for(let i=0;i<8;i++){ const px=1029.5+i*43;
+  bB.push(BT({px,py:119.5,w:37*S,h:13*S,col:'#8a8d93',on:()=>{ bank=i+1; pick(); }})); Lb(String(i+1),px-12,119.5,5.6,{col:'#111'});
+  nB.push(BT({px,py:165.5,w:37*S,h:13*S,col:'#8a8d93',on:()=>{ num=i+1; pick(); }})); Lb(String(i+1),px-12,165.5,5.6,{col:'#111'}); }
+[['DUMP',1031],['LOAD',1075],['SAVE',1120],['VERIFY',1162],['LOAD',1206]].forEach(([t,px])=>Lb(t,px,181,4.8));
+Lb('BULK',1053,188,5,{col:BL}); Lb('TAPE',1162,188,5,{col:BL}); V.el('',X(1015),Y(188),X(1040)-X(1015),1,panel,'background:'+BL); V.el('',X(1066),Y(188),X(1090)-X(1066),1,panel,'background:'+BL);
+V.el('',X(1100),Y(188),X(1146)-X(1100),1,panel,'background:'+BL); V.el('',X(1178),Y(188),X(1225)-X(1178),1,panel,'background:'+BL);
+/* printed WAVEFORM chart + ENV diagram (as on the panel) */
+{ const x0=X(1386), y0=Y(106), w=X(1499)-x0, h=Y(198)-y0; const ic={
+   p:['OFF','M1 7 V1 H5 V7 H9 V1','M1 7 V1 H3 V7 H9 V1','M1 7 V1 H7 V7 H9','M1 4 H9','M1 4 H9'],
+   s:['OFF','M1 7 L9 1 V7','M1 7 V1 H3 L5 4 V1 H7 L9 4','M1 7 L3 3 V7 L5 3 V7 L7 3 V7 L9 3','M1 7 L4 1 V7 L7 1 V7','M1 7 L5 1 L9 7'],
+   u:['M1 7 V1 H5 V7 H9 V1','M1 7 V1 H3 V7 H9 V1','M1 7 V1 H9 V7','M1 7 V1 H5 V7 H9','M1 7 V1 H7 V7 H9','M1 7 V1 H3 V7 H5 V1 H9']};
+  let g=`<rect x=".5" y=".5" width="${w-1}" height="${h-1}" fill="none" stroke="#9aa0a8"/><text x="${w/2}" y="8" fill="#cfd6e0" font-size="6" font-family="Arial" font-weight="700" text-anchor="middle">WAVEFORM</text>`;
+  ['PULSE','SAW','SUB'].forEach((t,c)=>g+=`<text x="${18+c*26+10}" y="17" fill="#cfd6e0" font-size="4.6" font-family="Arial" font-weight="700" text-anchor="middle">${t}</text>`);
+  for(let r=0;r<6;r++){ g+=`<text x="7" y="${27+r*9.6}" fill="#cfd6e0" font-size="4.6" font-family="Arial" text-anchor="middle">${r}</text>`;
+    ['p','s','u'].forEach((k,c)=>{ const d=ic[k][r], cx=18+c*26; g+= d==='OFF'?`<text x="${cx+10}" y="${27+r*9.6}" fill="${BL}" font-size="4.6" font-family="Arial" font-weight="700" text-anchor="middle">OFF</text>`:`<path transform="translate(${cx+4},${20+r*9.6})" d="${d}" stroke="${BL}" fill="none" stroke-width="1"/>`; }); }
+  g+=`<line x1="13" y1="11" x2="13" y2="${h-1}" stroke="#666"/>`; V.svg(x0,y0,w,h,g); }
+{ const x0=X(1500), y0=Y(106), w=X(1645)-x0, h=Y(198)-y0;
+  let g=`<rect x=".5" y=".5" width="${w-1}" height="${h-1}" fill="none" stroke="#9aa0a8"/><text x="${w/2}" y="8" fill="#cfd6e0" font-size="6" font-family="Arial" font-weight="700" text-anchor="middle">ENV</text>`;
+  for(let i=0;i<6;i++) g+=`<line x1="10" y1="${14+i*10}" x2="${w-20}" y2="${14+i*10}" stroke="#555"/>`; for(let i=0;i<7;i++) g+=`<line x1="${10+i*13.5}" y1="14" x2="${10+i*13.5}" y2="64" stroke="#555"/>`;
+  g+=`<path d="M10 64 L23 18 L40 33 L70 40 L88 62" stroke="${RD}" stroke-width="1.6" fill="none"/>`;
+  [['T1',16],['T2',31],['T3',53],['T4',80]].forEach(([t,x])=>g+=`<text x="${x}" y="70" fill="#cfd6e0" font-size="4.6" font-family="Arial" text-anchor="middle">${t}</text>`);
+  [['L1',18],['L2',33],['L3',40]].forEach(([t,y])=>g+=`<text x="${w-12}" y="${y}" fill="#cfd6e0" font-size="4.6" font-family="Arial" text-anchor="middle">${t}</text>`);
+  g+=`<text x="14" y="${h-3}" fill="#cfd6e0" font-size="4.4" font-family="Arial">KEY ON</text><text x="${w-34}" y="${h-3}" fill="#cfd6e0" font-size="4.4" font-family="Arial">KEY OFF</text>`; V.svg(x0,y0,w,h,g); }
+/* alpha dial (recessed well, top left) */
+const DX=X(163),DY=Y(159),DR=45; V.el('',DX-DR-8,DY-DR-8,DR*2+16,DR*2+16,panel,'border-radius:50%;background:radial-gradient(#050505 60%,#16171a 72%,#2a2b2f 100%)');
+const dial=V.svg(DX-DR-8,DY-DR-8,DR*2+16,DR*2+16,`<defs><radialGradient id="ad" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#3a3c41"/><stop offset="1" stop-color="#07080a"/></radialGradient></defs>
+ <g transform="translate(${DR+8},${DR+8})"><circle r="${DR}" fill="url(#ad)" stroke="#000" stroke-width="2"/>${Array.from({length:48},(_,i)=>`<line x1="0" y1="${-DR+1}" x2="0" y2="${-DR+4}" stroke="#333" transform="rotate(${i*7.5})"/>`).join('')}
+ <g class="rt"><circle cx="0" cy="${-DR*0.6}" r="7" fill="#0d0e10" stroke="#3a3b3f"/></g></g>`); dial.classList.add('kn');
+Lb('α-DIAL',151,214,6.6);
 let ang=0, acc=0, lastA=null; const drt=dial.querySelector('.rt');
 const angOf=ev=>{ const r=dial.getBoundingClientRect(); return Math.atan2(ev.clientX-(r.left+r.width/2),-(ev.clientY-(r.top+r.height/2)))*180/Math.PI; };
 dial.addEventListener('pointerdown',ev=>{ ev.preventDefault(); lastA=angOf(ev); try{dial.setPointerCapture(ev.pointerId);}catch(_){} });
@@ -416,43 +482,35 @@ dial.addEventListener('pointermove',ev=>{ if(lastA==null) return; const a=angOf(
 dial.addEventListener('wheel',ev=>{ ev.preventDefault(); turn(ev.deltaY<0?10:-10); },{passive:false});
 function turn(d){ ang+=d; drt.setAttribute('transform',`rotate(${ang})`); acc+=d; while(Math.abs(acc)>=8){ const s=Math.sign(acc); acc-=s*8; step(s); } }
 function step(s){ if(macro){ applyMacro(macro,s); } else if(editMode===1){ cur=(cur+s+36)%36; } else { if(editMode===0) editMode=2; const k='p'+(cur+1), mx=PL[cur][1]; P[k]=clamp(P[k]+s*(mx>15?1:1),0,mx); V.changed(k); } lights(); lcd(); }
-function applyMacro(m,s){ const bump=(i,d,mx)=>{ const k='p'+i; P[k]=clamp(P[k]+d,0,mx); };
+function applyMacro(m,s){ const bump=(i,d,mx)=>{ const k='p'+i; P[k]=clamp(P[k]+d,0,mx); }; if(m==='ptime'){ P.ptime=clamp(+(P.ptime+s*0.25).toFixed(2),0,10); V.changed('ptime'); return; }
   if(m==='rate'){ bump(25,s*2,127); bump(35,s*2,127); bump(16,P.p16>0?s*2:0,127); } else if(m==='depth'){ bump(12,s*2,127); bump(19,s,127); }
   else if(m==='bril'){ bump(17,s*2,127); } else if(m==='env'){ [27,29,31,33].forEach(i=>bump(i,s*2,127)); } V.changed('p17'); }
 function lights(){ pb.setLed(editMode===1); vb.setLed(editMode===2); tmB.forEach((b,i)=>b.setLed(macro===TM[i][1])); rows.forEach((r,i)=>r.classList.toggle('sel',i===cur&&editMode>0)); }
 function fmt(i){ const p=PL[i], v=P['p'+(i+1)]; return p[2]?p[2][v]:String(v); }
 function lcd(){ const name=(V.presetName||'').toUpperCase();
-  if(macro){ const lbl={rate:'MOD RATE',depth:'MOD DEPTH',bril:'BRILLIANCE',env:'ENV TIME'}[macro]; const val={rate:P.p25,depth:P.p12,bril:P.p17,env:P.p27}[macro]; L1.textContent=code()+' '+name.slice(0,12); L2.textContent=(lbl+'            ').slice(0,12)+String(val).padStart(4); }
+  if(macro){ const lbl={rate:'MOD RATE',depth:'MOD DEPTH',bril:'BRILLIANCE',env:'ENV TIME',ptime:'PORTA TIME'}[macro]; const val={rate:P.p25,depth:P.p12,bril:P.p17,env:P.p27,ptime:Math.round((P.ptime||0)*12.7)}[macro]; L1.textContent=code()+' '+name.slice(0,12); L2.textContent=(lbl+'            ').slice(0,12)+String(val).padStart(4); }
   else if(editMode){ L1.textContent=(editMode===1?'>':' ')+String(cur+1).padStart(2,'0')+' '+PL[cur][0]; L2.textContent=(editMode===2?'>':' ')+'VALUE  '+fmt(cur); }
   else { L1.textContent=code()+' '+name.slice(0,12); L2.textContent='TONE  '+(P.porta?'PORTA ':'')+(chord?'CHORD':''); } }
-/* tone select */
-V.el('',36,206,1328,2,panel,'background:#33363b');
-V.txt('TONE SELECT',300,224,9,'#7fb3ff',{ls:'.15em'});
-const gB=V.btn({x:210,y:248,w:40,h:24,col:'#c9ccd2',label:'GROUP<br>P / M',ly:-26,lsz:7,led:true,lyo:30,on:()=>{ grp=1-grp; pick(); }});
-V.txt('BANK',430,224,8,'#ddd',{ls:'.2em'}); V.txt('NUMBER',770,224,8,'#ddd',{ls:'.2em'});
-const bB=[],nB=[]; for(let i=1;i<=8;i++){ bB.push(V.btn({x:276+(i-1)*40,y:248,w:32,h:24,col:'#c9ccd2',text:String(i),tsz:9,led:true,lyo:30,on:()=>{ bank=i; pick(); }}));
-  nB.push(V.btn({x:612+(i-1)*40,y:248,w:32,h:24,col:'#2b77c9',text:String(i),tcol:'#fff',tsz:9,led:true,lyo:30,on:()=>{ num=i; pick(); }})); }
 const idx=()=>grp*64+(bank-1)*8+num-1, code=()=>('PM'[grp])+'-'+bank+num;
 function pick(){ const i=idx(); if(V.user&&V.user[i]){ Object.assign(P,V.user[i]); V.presetName='USER '+code(); V.refresh(); V.synth.update(); V.presetLbl.textContent=code()+' USER'; } else V.loadPreset(i%V.presets.length); showSel(); }
-function showSel(){ gB.setLed(grp===1); bB.forEach((b,i)=>b.setLed(i+1===bank)); nB.forEach((b,i)=>b.setLed(i+1===num)); lcd(); }
+function showSel(){ gB.forEach((b,i)=>b.style.background=i===grp?'#c9ccd2':'#8a8d93'); bB.forEach((b,i)=>b.style.background=i+1===bank?'#c9ccd2':'#8a8d93'); nB.forEach((b,i)=>b.style.background=i+1===num?'#c9ccd2':'#8a8d93'); lcd(); }
 V.onPreset=()=>{ const i=V.presetIdx; grp=Math.floor(i/64); bank=Math.floor(i%64/8)+1; num=i%8+1; showSel(); };
-/* printed tone parameter chart + envelope diagram */
-V.el('',964,22,400,176,panel,'border:1px solid #3a3d42;border-radius:3px');
-V.txt('TONE PARAMETERS',1164,22,8,'#7fb3ff',{ls:'.15em',css:'background:#1d1e21;padding:0 6px'});
-const rows=PL.map((p,i)=>{ const c=Math.floor(i/12), r=i%12; const e=V.el('prow',972+c*132,32+r*13.4,128,13,panel); e.textContent=String(i+1).padStart(2,'0')+' '+p[0];
-  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); cur=i; editMode=2; macro=null; lights(); lcd(); }); return e; });
-V.svg(980,214,380,80,`<g stroke="#7fb3ff" fill="none" stroke-width="1.5"><path d="M10 70 L60 12 L120 34 L190 22 L300 22 L360 70"/></g><g fill="#cfd6e0" font-size="9" font-family="Arial" font-weight="700">
- <text x="28" y="76">T1</text><text x="84" y="76">T2</text><text x="148" y="76">T3</text><text x="324" y="76">T4</text><text x="58" y="9">L1</text><text x="118" y="30">L2</text><text x="240" y="18">L3 (SUSTAIN)</text></g>`);
-V.txt('VACID  ALPHA-6',597,25,10,'#7fb3ff',{ls:'.3em'});
-/* keyboard bed */
-V.el('cheek',28,304,1344,216); V.el('',28,304,1344,6,panel,'background:#000a');
-V.el('',38,318,200,192,panel,'background:#1b1b1d;border:1px solid #000;border-radius:4px');
-V.btn({k:'octdown',x:110,y:352,w:56,h:22,col:'#c9ccd2',label:'OCTAVE TRANSPOSE<br>(DOWN)',ly:-22,lsz:7});
-V.txt('BENDER / MODULATION',138,420,8,'#ddd'); const be=bender(83,452,110);
+/* left of the keys: OCT TRANSPOSE, PORTAMENTO, CHORD MEMORY, VOLUME, bender */
+Lb('OCT TRANSPOSE',167,248,6.4,{col:'#b9c3cf'});
+const lt=(px,py)=>V.el('',X(px)-4,Y(py)-1.5,8,3,panel,'background:#3b0b06;border-radius:1px');
+const oL=[lt(153,257),lt(183,257)], pL=lt(147,316), cL=lt(177,316);
+const BB=(o)=>BT(Object.assign({w:29*S,h:22*S,col:'#111214',tsz:4.8,tcol:'#cfd2d8'},o));
+BB({px:147,py:281,text:'DOWN',on:()=>{ P.octdown=1; V.changed('octdown'); leds(); }}); BB({px:177,py:281,text:'NORMAL',on:()=>{ P.octdown=0; V.changed('octdown'); leds(); }});
+BB({px:147,py:342,text:'PORTA-<br>MENTO',on:()=>{ P.porta=P.porta?0:1; V.changed('porta'); leds(); }}); BB({px:177,py:342,text:'CHORD<br>MEMORY',on:()=>{ chordBtn(); leds(); }});
+function leds(){ const on='#ff3b1f', off='#3b0b06'; oL[0].style.background=P.octdown?on:off; oL[1].style.background=P.octdown?off:on; pL.style.background=P.porta?on:off; cL.style.background=chord?on:off; }
+V.refreshers.push(leds);
+V.slider({k:'volume',x:X(103),y:Y(266),h:Y(352)-Y(266),w:12,look:'roland',tcol:'#9aa',nums:false,min:0,max:10,def:7}); Lb('MAX',88,274,4.8); Lb('MIN',88,349,4.8); Lb('VOLUME',97,363,6.2,{col:'#b9c3cf'});
+Lb('MODULATION<br>▲',135,410,6,{col:'#b9c3cf'}); Lb('PITCH BENDER',130,462,6,{col:'#b9c3cf'});
+const be=bender(X(133)-35,Y(439)-8,70); be.style.height='16px'; be.style.borderRadius='3px'; { const hd=be.firstChild; hd.style.top='-3px'; hd.style.height='22px'; hd.style.width='12px'; hd.style.marginLeft='3px'; }
 let push=null; be.addEventListener('pointerdown',ev=>push=ev.clientY); be.addEventListener('pointermove',ev=>{ if(push==null) return; V.synth.modwheel(clamp((push-ev.clientY)/(V.scale||1)/30,0,1)); });
 ['pointerup','pointercancel'].forEach(t=>be.addEventListener(t,()=>{ push=null; V.synth.modwheel(0); }));
-V.keyboard({x:248,y:316,w:1114,h:198,lo:36,hi:96});
-V.strip(536,64);
+V.keyboard({x:X(216),y:Y(222),w:X(1735)-X(216),h:Y(530)-Y(222),lo:36,hi:84});
+V.strip(Y(545)+6,64);
 /* ---- engine ---- */
 const A={voices:[]}; const T=v=>0.002*Math.pow(10,v/127*3.6), Lv=v=>v/127;
 const SUBW=[['square',-12],['pulse25',-12],['square',-24],['pulse25',-24],['pulse12',-12],['pulse12',-24]];

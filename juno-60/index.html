@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#1c1c1e">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" href="data:,">
-<title>VACID JU-6 · 6-voice DCO poly with arpeggio</title>
+<title>VACID Ember-6 · 6-voice DCO poly with arpeggio</title>
 <style>
 html,body{margin:0;height:100%;background:#1c1c1e;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
@@ -179,18 +179,27 @@ function dragger(e,b,o,render,sens=180){ let y0=null,x0=0,n0=0;
 /* knob: style moog|mod|arp|alpha|small; scale: array of labels around the dial (from -150deg to +150deg) */
 V.knob=function(o){ const r=o.r||22, b=V.bind(o), sz=r*2+(o.pad??34), cx=sz/2, parent=o.parent||panel, col=o.scol||'#e8e8e8';
   const sweep=o.sweep||300, a0=-sweep/2; let marks='';
-  const sc=o.scale||(o.steps?null:['0','1','2','3','4','5','6','7','8','9','10']);
+  const ang=v=>(a0+sweep*clamp((v-o.min)/(o.max-o.min),0,1))*Math.PI/180;
+  if(o.ring) marks+=`<circle cx="${cx}" cy="${cx}" r="${o.ring}" fill="none" stroke="${col}" stroke-width="1"/>`;
+  if(o.tk) for(const v of o.tk){ const a=ang(v), r1=o.tr1||r+2, r2=o.tr2||r+6; marks+=`<line x1="${(cx+Math.sin(a)*r1).toFixed(1)}" y1="${(cx-Math.cos(a)*r1).toFixed(1)}" x2="${(cx+Math.sin(a)*r2).toFixed(1)}" y2="${(cx-Math.cos(a)*r2).toFixed(1)}" stroke="${col}" stroke-width="${o.tw||1.2}"/>`; }
+  if(o.sc) for(const [v,t,dr] of o.sc){ const a=ang(v), rr=r+(o.mr||11)+(dr||0), x=cx+Math.sin(a)*rr, y=cx-Math.cos(a)*rr;
+    if(t[0]==='#'){ marks+=`<path transform="translate(${(x-6).toFixed(1)},${(y-4).toFixed(1)})" d="${t.slice(1)}" stroke="${col}" fill="none" stroke-width="1.3"/>`; continue; }
+    marks+=`<text x="${x.toFixed(1)}" y="${(y+(o.fs||8)*0.36).toFixed(1)}" fill="${col}" font-size="${o.fs||8}" font-family="Arial" font-weight="700" text-anchor="middle">${t}</text>`; }
+  const sc=o.sc?null:(o.scale||(o.steps?null:['0','1','2','3','4','5','6','7','8','9','10']));
   if(sc){ const n=sc.length; for(let i=0;i<n;i++){ const a=(a0+sweep*i/(n-1))*Math.PI/180, rr=r+(o.mr||11); const x=cx+Math.sin(a)*rr, y=cx-Math.cos(a)*rr;
       if(sc[i][0]==='#'){ marks+=`<path transform="translate(${(x-6).toFixed(1)},${(y-4).toFixed(1)})" d="${sc[i].slice(1)}" stroke="${col}" fill="none" stroke-width="1.3"/>`; continue; }
       marks+=`<text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${col}" font-size="${o.fs||8}" font-family="Arial" font-weight="700" text-anchor="middle">${sc[i]}</text>`;
       if(o.ticks!==false){ const x1=cx+Math.sin(a)*(r+2), y1=cx-Math.cos(a)*(r+2), x2=cx+Math.sin(a)*(r+5), y2=cx-Math.cos(a)*(r+5); marks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="1"/>`; } } }
   const st=o.style||'moog'; let body;
-  if(st==='moog') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1.5"/><circle r="${r*0.72}" fill="#151515" stroke="#2c2c2c"/><rect x="-1.6" y="${-r+2}" width="3.2" height="${r*0.62}" fill="#f2f2f2"/>`;
+  if(st==='mm') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1"/><rect x="-1.3" y="${-r+1}" width="2.6" height="${r*(1-(o.cap||0.6))}" fill="#f4f4f4"/><circle r="${r*(o.cap||0.6)}" fill="url(#gm)" stroke="#777" stroke-width=".8"/><circle r="${r*(o.cap||0.6)*0.5}" fill="url(#gm2)"/>`;
+  else if(st==='rol') body=`<circle r="${r}" fill="#2a2a2c" stroke="#000"/><circle r="${r*0.8}" fill="url(#gk)"/><rect x="-1.2" y="${-r+1}" width="2.4" height="${r*0.55}" fill="#fff"/>`;
+  else if(st==='moog') body=`<circle r="${r}" fill="url(#gk)" stroke="#000" stroke-width="1.5"/><circle r="${r*0.72}" fill="#151515" stroke="#2c2c2c"/><rect x="-1.6" y="${-r+2}" width="3.2" height="${r*0.62}" fill="#f2f2f2"/>`;
   else if(st==='mod') body=`<circle r="${r}" fill="#0c0c0c" stroke="#333" stroke-width="2"/><circle r="${r*0.62}" fill="url(#gs)" stroke="#555"/><rect x="-1.5" y="${-r+1}" width="3" height="${r*0.55}" fill="#fff"/>`;
   else if(st==='chick') body=`<circle r="${r*0.8}" fill="#111" stroke="#444"/><path d="M-${r*0.28} ${r*0.55} L-${r*0.16} -${r} L${r*0.16} -${r} L${r*0.28} ${r*0.55}Z" fill="#1b1b1b" stroke="#555"/><rect x="-1.2" y="-${r*0.95}" width="2.4" height="${r*0.5}" fill="#fff"/>`;
   else if(st==='arp') body=`<circle r="${r}" fill="url(#gs)" stroke="#333" stroke-width="1"/><circle r="${r*0.55}" fill="#c9c9c9"/><rect x="-1.4" y="${-r+1}" width="2.8" height="${r*0.6}" fill="#111"/>`;
   else body=`<circle r="${r}" fill="url(#gk)" stroke="#000"/><rect x="-1.4" y="${-r+2}" width="2.8" height="${r*0.6}" fill="#fff"/>`;
   const e=V.svg((o.x-cx),(o.y-cx),sz,sz,`<defs><radialGradient id="gk" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#4a4a4a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
+    <radialGradient id="gm" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#cfcfcf"/><stop offset="1" stop-color="#8d8d8d"/></radialGradient><radialGradient id="gm2" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <radialGradient id="gs" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#b9b9b9"/><stop offset="1" stop-color="#6b6b6b"/></radialGradient></defs>
     ${marks}<g transform="translate(${cx},${cx})"><g class="rt">${body}</g></g>`,parent);
   e.classList.add('kn'); const rt=e.querySelector('.rt');
@@ -199,10 +208,14 @@ V.knob=function(o){ const r=o.r||22, b=V.bind(o), sz=r*2+(o.pad??34), cx=sz/2, p
   if(o.label) V.txt(o.label,o.x+(o.lx||0),o.y+(o.ly!=null?o.ly:r+(o.mr||11)+14),o.lsz||9,o.lcol||col,{parent,css:'text-align:center;line-height:1.15'});
   return e; };
 /* vertical fader */
-V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=22, cap=o.cap||'#d9d9d9';
+V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=o.w||22, cap=o.cap||'#d9d9d9';
   const e=V.el('sl',o.x-w/2,o.y,w,h,parent); const tr=V.el('',w/2-2,8,4,h-16,e,'background:#000;border-radius:2px;box-shadow:0 0 0 1px #333');
-  if(o.ticks!==false) for(let i=0;i<=10;i++){ V.el('',-7,8+(h-16)*i/10,6,1,e,'background:'+(o.tcol||'#bbb')); if(i%5===0&&o.nums!==false) V.txt(String(10-i),-13,8+(h-16)*i/10,7,o.tcol||'#bbb',{parent:e}); }
-  const c=V.el('',0,0,w,14,e,`background:linear-gradient(${cap},${cap} 45%,#000 46%,#000 54%,${cap} 55%);border:1px solid #000;border-radius:2px;box-shadow:0 2px 2px #0008`);
+  const rol=o.look==='roland', nt=o.nt||10;
+  if(rol){ for(let i=0;i<=nt;i++){ const yy=8+(h-16)*i/nt; V.el('',-3,yy,9,1,e,'background:'+(o.tcol||'#ddd')); V.el('',w-6,yy,9,1,e,'background:'+(o.tcol||'#ddd'));
+      const lab=o.nums===false?null:(o.numl?o.numl[i]:(i%5===0?String(Math.round(10-i*10/nt)):null)); if(lab!=null&&lab!==''){ if(o.numsL!==false) V.txt(lab,-8,yy,o.nsz||6.5,o.tcol||'#ddd',{parent:e}); if(o.numsR) V.txt(lab,w+8,yy,o.nsz||6.5,o.tcol||'#ddd',{parent:e}); } } }
+  else if(o.ticks!==false) for(let i=0;i<=10;i++){ V.el('',-7,8+(h-16)*i/10,6,1,e,'background:'+(o.tcol||'#bbb')); if(i%5===0&&o.nums!==false) V.txt(String(10-i),-13,8+(h-16)*i/10,7,o.tcol||'#bbb',{parent:e}); }
+  const c=rol?V.el('',2,0,w-4,14,e,`background:linear-gradient(#2c2c2e,#111 45%,#eee 46%,#eee 56%,#111 57%,#1c1c1e);border:1px solid #000;border-radius:1px;box-shadow:0 2px 2px #000a`)
+    :V.el('',0,0,w,14,e,`background:linear-gradient(${cap},${cap} 45%,#000 46%,#000 54%,${cap} 55%);border:1px solid #000;border-radius:2px;box-shadow:0 2px 2px #0008`);
   const render=()=>{ c.style.top=(h-16)*(1-clamp(b.norm(b.get()),0,1))+1+'px'; };
   let y0=null,n0=0;
   e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); y0=ev.clientY; n0=b.norm(b.get()); try{e.setPointerCapture(ev.pointerId);}catch(_){}
@@ -219,13 +232,19 @@ V.slider=function(o){ const h=o.h||110, b=V.bind(o), parent=o.parent||panel, w=2
 V.sw=function(o){ const n=o.labels.length, b=V.bind({k:o.k,min:0,max:n-1,def:o.def||0,steps:1}), parent=o.parent||panel, st=o.style||'slide';
   const w=o.w||(st==='rocker'?22:14), h=o.h||(st==='rocker'?34:(n*14+6)); const e=V.el('sw',o.x-w/2,o.y-h/2,w,h,parent);
   let cap;
-  if(st==='rocker'){ e.style.cssText+=`;background:#000;border-radius:3px;border:1px solid #444`; cap=V.el('',2,2,w-4,h/2-2,e,`background:${o.col||'#2f62c7'};border-radius:2px;box-shadow:inset 0 2px 0 #fff4`); }
+  if(st==='paddle'){ e.style.cssText+=`;background:${o.col||'#2f6fb5'};border-radius:3px;border:1px solid #0008;box-shadow:0 2px 3px #000a`; cap=V.el('',0,0,w,h,e,''); }
+  else if(st==='lever'){ e.style.cssText+=`;background:#050505;border-radius:2px;border:1px solid #333`; cap=V.el('',1,0,w-2,8,e,`background:linear-gradient(#f0f0f0,#9a9a9a);border-radius:1px;box-shadow:0 2px 2px #000`); }
+  else if(st==='rocker'){ e.style.cssText+=`;background:#000;border-radius:3px;border:1px solid #444`; cap=V.el('',2,2,w-4,h/2-2,e,`background:${o.col||'#2f62c7'};border-radius:2px;box-shadow:inset 0 2px 0 #fff4`); }
   else { e.style.cssText+=`;background:#0b0b0b;border-radius:3px;border:1px solid #555`; cap=V.el('',2,2,w-4,10,e,`background:linear-gradient(#eee,#888);border-radius:2px`); }
-  const lab=o.labels.map((s,i)=>{ if(!s) return null; const yy=st==='rocker'?(i?h*0.25:-h*0.25)+h/2:(n>1?5+i*(h-10)/(n-1):h/2);
+  const lab=o.labels.map((s,i)=>{ if(!s||o.nolab) return null; const yy=st==='rocker'?(i?h*0.25:-h*0.25)+h/2:(n>1?5+i*(h-10)/(n-1):h/2);
     const t=V.txt(s,(o.side==='l'?-6:w+6),yy,o.lsz||8,o.lcol||'#eee',{parent:e,al:o.side==='l'?'r':'l'}); return t; });
-  const render=()=>{ const v=b.get(); if(st==='rocker'){ cap.style.top=(v?h/2:2)+'px'; cap.style.opacity=1; }
+  const render=()=>{ const v=b.get(); if(st==='paddle'){ const on=v===(o.onv??1), hz=w>h; // raised half shows the switch position
+      cap.style.background=hz?`linear-gradient(90deg,${on?'#0000':'#fff5'} 0 50%,${on?'#fff5':'#0000'} 50%)`:`linear-gradient(${on?'#fff5':'#0000'} 0 50%,${on?'#0000':'#fff5'} 50%)`;
+      cap.style.boxShadow=hz?(on?'inset -6px 0 4px -3px #0009':'inset 6px 0 4px -3px #0009'):(on?'inset 0 -6px 4px -3px #0009':'inset 0 6px 4px -3px #0009'); return; }
+    if(st==='lever'){ if(w>h){ cap.style.top='1px'; cap.style.height=(h-4)+'px'; cap.style.width='8px'; cap.style.left=(n>1?v*(w-10)/(n-1):0)+'px'; } else cap.style.top=(n>1?v*(h-10)/(n-1):0)+'px'; return; }
+    if(st==='rocker'){ cap.style.top=(v?h/2:2)+'px'; cap.style.opacity=1; }
     else cap.style.top=(n>1?2+v*(h-14)/(n-1):2)+'px'; };
-  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); let v=b.get(); if(n===2) v=1-v; else { const r=e.getBoundingClientRect(); v=clamp(Math.round((ev.clientY-r.top)/r.height*n-0.5),0,n-1); if(v===b.get()) v=(v+1)%n; } b.set(v); render(); });
+  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); let v=b.get(); if(n===2) v=1-v; else { const r=e.getBoundingClientRect(); v=clamp(Math.round((w>h?(ev.clientX-r.left)/r.width:(ev.clientY-r.top)/r.height)*n-0.5),0,n-1); if(v===b.get()) v=(v+1)%n; } b.set(v); render(); });
   render(); V.refreshers.push(render);
   if(o.label) V.txt(o.label,o.x+(o.lx||0),o.y+(o.ly!=null?o.ly:h/2+11),o.lsz2||8,o.lcol||'#eee',{parent,css:'text-align:center;line-height:1.15'});
   return e; };
@@ -295,7 +314,7 @@ let nextT=0, stepI=0, timer=null, pendOff=null;
 V.seqStart=function(){ V.ensureAudio(); if(V.seqRun) return; V.seqRun=true; nextT=ctx.currentTime+0.06; stepI=0; timer=setInterval(sched,20); sched(); V.drawSeq(); };
 V.seqStop=function(){ if(!V.seqRun) return; V.seqRun=false; clearInterval(timer); timer=null; if(pendOff!=null&&ctx){ V.synth.noteOff(pendOff,ctx.currentTime); pendOff=null; } V.seqPos=-1; V.synth.seqOff&&V.synth.seqOff(); V.drawSeq(); };
 function sched(){ if(!ctx) return; const sd=60/V.bpm/4; while(nextT<ctx.currentTime+0.12){ const i=stepI%16, s=V.seq[i], t=nextT;
-    if(V.arpActive&&V.arpActive()) V.arpTick(t,sd,stepI);
+    if(V.arpActive&&V.arpActive()&&(!V.arpHas||V.arpHas())) V.arpTick(t,sd,stepI);
     else if(s.on){ const n=s.n, lg=pendOff!=null; V.synth.noteOn(n,s.a?1:0.72,t,lg); if(lg&&pendOff!==n) V.synth.noteOff(pendOff,t+0.002);
       pendOff=null; if(s.s) pendOff=n; else V.synth.noteOff(n,t+sd*0.55); }
     else if(pendOff!=null){ V.synth.noteOff(pendOff,t); pendOff=null; }
@@ -366,13 +385,13 @@ V.start=function(){ V.defaults=JSON.parse(JSON.stringify(V.P)); if(!V.restore())
 
 </script>
 <script>
-//TITLE:VACID JU-6 · 6-voice DCO poly with arpeggio
+//TITLE:VACID Ember-6 · 6-voice DCO poly with arpeggio
 /*CSS
 .wood{background:linear-gradient(90deg,#2a160a,#6b3b1b 35%,#4a2711 70%,#2a160a)}
 .jp{background:linear-gradient(#262628,#1b1b1d);border:2px solid #000}
 .led7{font-family:"Courier New",monospace;color:#ff3b22;text-shadow:0 0 6px #ff2a00;font-weight:700;background:#200303;border:2px solid #000;display:flex;align-items:center;justify-content:center;letter-spacing:.08em}
 CSS*/
-/* ---- shared 6-voice DCO poly engine (used by the JU-6 and JU-106 panels) ---- */
+/* ---- shared 6-voice DCO poly engine (used by the Ember-6 and Tide-6 panels) ---- */
 const JE={voices:[],model:60};
 const jFreq=v=>20*Math.pow(2,v*0.96), jT=v=>0.003*Math.pow(10,v*0.33);
 function jHpf(v){ return v<0.5?{f:10,boost:6*(1-v*2)}:{f:Math.min(1200,10+Math.pow((v-0.5)/2.5,1.6)*900),boost:0}; }
@@ -413,61 +432,108 @@ V.synth={ build:JE.build, update:JE.update, param(){ JE.update(); },
   bend(v){ if(JE.bend) JE.bend.offset.setTargetAtTime(v,V.now(),0.005); }, modwheel(v){ JE.lfoHeld=v>0.5; } };
 
 JE.model=60;
-V.id='ju6'; V.title='VACID JU-6'; V.kbBase=36; V.panelBg='#212123';
-V.helpText=`<p>Six-voice poly laid out like the early-80s DCO poly with arpeggio: <b>Arpeggio · LFO · DCO · HPF · VCF · VCA · ENV · Chorus</b> sliders on top, programmer (Bank 1–7 × Number 1–8) below, bender with DCO/VCF sensitivity left of the 61 keys.</p>
-<p><b>Arpeggio:</b> press ARPEGGIO, hold a chord (or press HOLD to latch). MODE = UP / U&amp;D / DOWN, RANGE = 1–3 octaves, RATE = speed. While the sequencer strip is RUNning the arp locks to the BPM in 16ths, and MIDI ⇩ exports the arp pattern. <b>DCO PWM switch:</b> LFO / MAN / ENV. <b>LFO TRIG MODE:</b> AUTO (delay per note) or MANUAL (LFO only while LFO TRIG is held). WRITE stores the panel into the selected Bank/Number.</p>`;
-V.setSize(1400,600);
-V.el('wood',0,0,28,520); V.el('wood',1372,0,28,520); V.el('jp',28,4,1344,300);
-const S=(o)=>V.slider(Object.assign({y:52,h:112,lsz:8,tcol:'#aaa',cap:'#cfcfcf'},o));
-const SW=(o)=>V.sw(Object.assign({style:'slide',lsz:7,lcol:'#ddd',w:14},o));
-S({k:'volume',x:62,min:0,max:10,def:7,label:'VOLUME'});
-sect('ARPEGGIO',96,150); SW({k:'arpmode',x:120,y:96,labels:['UP','U&D','DOWN'],h:48,def:0,label:'MODE',ly:38}); SW({k:'arprange',x:170,y:96,labels:['1','2','3'],h:48,def:0,label:'RANGE',ly:38});
-S({k:'arprate',x:220,min:0,max:10,def:6,label:'RATE'});
-sect('LFO',254,132); S({k:'lforate',x:276,min:0,max:10,def:5,label:'RATE'}); S({k:'lfodelay',x:320,min:0,max:10,def:0,label:'DELAY<br>TIME'});
-SW({k:'lfotrig',x:372,y:96,labels:['AUTO','MANUAL'],h:34,def:0,side:'l',label:'TRIG<br>MODE',ly:34});
-sect('DCO',394,334);
-V.knob({k:'range',x:425,y:92,r:15,min:0,max:2,def:1,steps:1,scale:["16'","8'","4'"],sweep:120,style:'chick',label:'RANGE',ly:44,lsz:8,fs:8});
-S({k:'dcolfo',x:476,min:0,max:10,def:0,label:'LFO'}); S({k:'pwm',x:516,min:0,max:10,def:0,label:'PWM'});
-SW({k:'pwmode',x:552,y:96,labels:['LFO','MAN','ENV'],h:48,def:1,label:'',ly:38});
-V.btn({k:'pulse',x:580,y:96,w:30,h:22,col:'#d9d2bf',label:'⊓⊓',ly:-22,lsz:12,def:0}); V.btn({k:'saw',x:620,y:96,w:30,h:22,col:'#d9d2bf',label:'◿◿',ly:-22,lsz:12,def:1});
-S({k:'sub',x:672,min:0,max:10,def:0,label:'SUB OSC'}); S({k:'noise',x:710,min:0,max:10,def:0,label:'NOISE'});
-sect('HPF',734,54); S({k:'hpf',x:761,min:0,max:3,def:1,steps:1,label:'FREQ',nums:false}); [0,1,2,3].forEach(i=>V.txt(String(i),775,52+8+(112-16)*(1-i/3),7,'#aaa'));
-sect('VCF',796,250); S({k:'vcf',x:818,min:0,max:10,def:6,label:'FREQ'}); S({k:'res',x:858,min:0,max:10,def:2,label:'RES'});
-SW({k:'envpol',x:894,y:96,labels:['+','−'],h:34,def:0,label:'',ly:30}); S({k:'envamt',x:934,min:0,max:10,def:3,label:'ENV'}); S({k:'vcflfo',x:974,min:0,max:10,def:0,label:'LFO'}); S({k:'kybd',x:1016,min:0,max:10,def:5,label:'KYBD'});
-sect('VCA',1052,84); SW({k:'vcamode',x:1074,y:96,labels:['ENV','GATE'],h:34,def:0,label:'',ly:30}); S({k:'vcalvl',x:1112,min:0,max:10,def:6,label:'LEVEL'});
-sect('ENV',1140,156); ['a','d','s','r'].forEach((k,i)=>S({k,x:1160+i*38,min:0,max:10,def:[0,4,7,3][i],label:k.toUpperCase()}));
-sect('CHORUS',1302,66); V.btn({k:'ch1',x:1319,y:70,w:32,h:24,col:'#e27b2c',text:'I',tsz:11,def:1}); V.btn({k:'ch2',x:1319,y:122,w:32,h:24,col:'#e27b2c',text:'II',tsz:11,def:0});
-/* programmer row */
-V.el('',36,206,1328,2,panel,'background:#444');
-V.btn({k:'arp',x:50,y:244,w:40,h:26,col:'#e27b2c',label:'ARPEGGIO',ly:-26}); V.btn({k:'hold',x:110,y:244,w:40,h:26,col:'#e8b02a',label:'HOLD',ly:-26});
-V.btn({x:170,y:244,w:40,h:26,col:'#cfcfcf',label:'KEY<br>TRANSPOSE',ly:-30,led:true,on:()=>{ V.ktArm=!V.ktArm; V.flash(V.ktArm?'PLAY A KEY TO TRANSPOSE':'TRANSPOSE '+(V.kt||0)); }});
-V.txt('PATCH NUMBER',275,222,8,'#ddd'); const disp=V.el('led7',245,236,62,40); disp.style.fontSize='26px';
+V.id='ember6'; V.title='VACID Ember-6'; V.kbBase=36; V.panelBg='#212123';
+V.helpText=`<p>Six-voice poly laid out like the early-80s DCO poly with arpeggio: <b>Arpeggio · LFO · DCO · HPF · VCF · VCA · ENV · Chorus</b> sliders on top, programmer (Bank 1–7 × Number 1–8) below, bender panel (DCO/VCF bend depth, VOLUME, LFO TRIG, OCTAVE TRANSPOSE) left of the 61 keys.</p>
+<p><b>Arpeggio:</b> press ARPEGGIO, hold a chord (or press HOLD to latch). MODE = UP / U&amp;D / DOWN, RANGE = 1–3 octaves, RATE = speed. While the sequencer strip is RUNning the arp locks to the BPM in 16ths, and MIDI ⇩ exports the arp pattern. <b>DCO PWM switch:</b> LFO / MANUAL / ENV. <b>OCTAVE TRANSPOSE</b> (left of the keys) shifts the keyboard DOWN / NORMAL / UP. Space starts/stops the step pattern (with ARPEGGIO on and keys held it clocks the arp). <b>LFO TRIG MODE:</b> AUTO (delay per note) or MANUAL (LFO only while LFO TRIG is held). WRITE stores the panel into the selected Bank/Number.</p>`;
+V.setSize(1400,540);
+/* every control sits at its position on the straight front reference photo (1024 px wide scale) */
+const S=1.4426, X=p=>40+(p-55)*S, Y=p=>(p-30)*S, TX='#e4e4e0';
+const L=(t,px,py,sz=7.4,o={})=>V.txt(t,X(px),Y(py),sz,o.col||TX,Object.assign({css:'text-align:center;line-height:1.05'},o));
+const CREAM='#ecdcaa', YEL='#e9d063', ORA='#e8962f', OLIVE='#cbbf8e', BLUE='#3e6db6', RUST='#c4531d', GREYB='#cfcfc8';
+V.el('wood',0,0,40,470); V.el('wood',1360,0,40,470);
+V.el('jp',40,0,1320,Y(212));
+V.el('',40,Y(40),1320,Y(58)-Y(40),panel,'background:repeating-linear-gradient(90deg,#060606 0 3px,#2a2a2c 3px 5px);border-top:1px solid #000;border-bottom:1px solid #444');
+/* own logo + model name in place of the maker / model graphics */
+V.txt('VACID',X(92),Y(82),20,'#d8d8d8',{al:'l',w:700,ls:'.06em',css:'font-family:Arial Black,Arial;-webkit-text-stroke:0'});
+V.txt('EMBER-6',X(930),Y(83),40,'#2b2b2d',{al:'r',w:900,ls:'.04em',css:'font-family:Arial Black,Arial;-webkit-text-stroke:1.6px #c9c9c9'});
+/* section header bands + bottom rules */
+const SEC=[['POWER',53,102,GREYB],['KEY<br>TRANSPOSE&nbsp;&nbsp;&nbsp;HOLD',103,155,GREYB],['ARPEGGIO',155.5,241,BLUE],['LFO',245.8,306,RUST],['DCO',307.3,456.8,RUST],['HPF',458,485,RUST],['VCF',486.6,594.5,RUST],
+  ['VCA',595.6,640.5,RUST],['ENV',641.6,709.7,RUST],['CHORUS',711,772.7,RUST],['MEMORY',773.7,958,BLUE]];
+SEC.forEach(([t,a,b,c],i)=>{ V.el('',X(a),Y(100.3),X(b)-X(a),Y(110.3)-Y(100.3),panel,'background:'+c); V.el('',X(a),Y(181.5),X(b)-X(a),Y(186)-Y(181.5),panel,'background:'+c);
+  if(i>0) V.el('',X(a)-2,Y(110.3),1.5,Y(181.5)-Y(110.3),panel,'background:#9a9a9a');
+  if(i===1){ L('KEY<br>TRANSPOSE',118.6,105.3,5.6,{col:'#777'}); L('HOLD',139.7,105.3,5.6,{col:'#777'}); }
+  else L(t,(a+b)/2,105.3,c===GREYB?5.6:10.5,{col:c===GREYB?'#777':'#f4f4f4',w:700}); });
+V.txt('PROGRAMMABLE POLYPHONIC SYNTHESIZER',X(941),Y(195.6),11.5,'#e8e8e8',{al:'r',w:700,ls:'.01em'});
+const SL=(o)=>V.slider(Object.assign({y:Y(125.5),h:Y(165)-Y(125.5),w:16,look:'roland',tcol:'#e2e2e2',nums:false},o,{x:X(o.px)}));
+const SLn=(o,L1,R1)=>SL(Object.assign({nums:true,numsL:!!L1,numsR:!!R1},o));
+const LV=(o)=>V.sw(Object.assign({style:'lever',w:9,h:22,nolab:false,lsz:5.4,lcol:'#ddd'},o,{x:X(o.px),y:Y(o.py)}));
+const BT=(o)=>{ const w=o.w||(14.5*S), h=o.h||(13.3*S); return V.btn(Object.assign({w,h,lyo:o.ledy!=null?o.ledy:(Y(132.3)-(Y(o.py)-h/2))-3,lsz:5.6},o,{x:X(o.px)-w/2,y:Y(o.py)-h/2})); };
+/* POWER */
+V.sw({k:'power',style:'rocker',labels:['',''],nolab:true,x:X(79),y:Y(141),w:20,h:29,col:'#1a1a1a',def:0}); L('ON',89.6,139,5.2); L('OFF',89.6,152,5.2);
+/* KEY TRANSPOSE / HOLD */
+V.el('',X(118.6),Y(110.3),1,Y(130)-Y(110.3),panel,'background:#bbb'); V.el('',X(139.7),Y(110.3),1,Y(130)-Y(110.3),panel,'background:#bbb');
+const ktB=BT({px:118.6,py:145.7,w:16*S,h:14.5*S,col:CREAM,led:true,on:()=>{ V.ktArm=!V.ktArm; ktB.setLed(V.ktArm||!!V.kt); V.flash(V.ktArm?'PLAY A KEY TO TRANSPOSE':'TRANSPOSE '+(V.kt||0)); }});
+BT({k:'hold',px:139.7,py:145.7,w:16*S,h:14.5*S,col:YEL});
+/* ARPEGGIO */
+L('ON/OFF',171.4,123.5,5.6); BT({k:'arp',px:171.4,py:145.7,w:16*S,h:14.5*S,col:ORA});
+L('MODE',196,123.5,5.6); LV({k:'arpmode',px:191,py:145.5,labels:['UP','U&amp;D','DOWN'],def:0,h:26});
+L('RANGE',212.8,123.5,5.6); LV({k:'arprange',px:209.6,py:145,labels:['1','2','3'],def:0,h:26});
+L('RATE',232,123.5,5.6); SLn({k:'arprate',px:232,min:0,max:10,def:6},0,1);
+/* LFO */
+L('RATE',258.4,123.5,5.6); SLn({k:'lforate',px:258.4,min:0,max:10,def:5},1,0);
+L('DELAY<br>TIME',271.6,121,5.6); SL({k:'lfodelay',px:273,min:0,max:10,def:0});
+L('TRIG<br>MODE',294,121,5.6); LV({k:'lfotrig',px:291.4,py:147.8,labels:['AUTO','MAN'],def:0,h:20});
+/* DCO */
+L('LFO',317.6,123.4,5.6); SLn({k:'dcolfo',px:317.6,min:0,max:10,def:0},1,0); L('PWM',332.8,123.4,5.6); SL({k:'pwm',px:332.8,min:0,max:10,def:0});
+V.el('',X(336),Y(118.5),X(376.8)-X(336),1,panel,'background:#bbb'); V.el('',X(351.3),Y(118.5),1,Y(140)-Y(118.5),panel,'background:#bbb'); V.el('',X(376.8),Y(118.5),1,Y(121)-Y(118.5),panel,'background:#bbb');
+LV({k:'pwmode',px:351.3,py:147.7,labels:['∿','MANUAL','⊓∿'],def:1,h:26,lsz:5});
+L('⊓',376.8,123.4,8); L('◢',390.8,123.4,7); L('⊓<span style="font-size:4px;display:block">SUB</span>',404.9,123.4,7);
+BT({k:'pulse',px:376.8,py:147,col:CREAM,def:0}); BT({k:'saw',px:391,py:147,col:YEL,def:1}); BT({k:'subon',px:405,py:147,col:ORA,def:1});
+V.el('',X(404.9),Y(118.5),X(427.5)-X(404.9),1,panel,'background:#bbb'); V.el('',X(404.9),Y(118.5),1,Y(120.5)-Y(118.5),panel,'background:#bbb');
+L('SUB OSC',427.5,123.4,5.6); SL({k:'sub',px:427.5,min:0,max:10,def:0}); L('NOISE',445,123.4,5.6); SLn({k:'noise',px:445,min:0,max:10,def:0},0,1);
+/* HPF */
+L('FREQ',471.4,123.4,5.6); SL({k:'hpf',px:471.4,min:0,max:3,def:1,steps:1,nt:3,nums:true,numsL:true,numsR:true,numl:['3','2','1','0']});
+/* VCF */
+L('FREQ',499.2,123.4,5.6); SLn({k:'vcf',px:499.2,min:0,max:10,def:6},1,0); L('RES',513.9,123.4,5.6); SL({k:'res',px:513.9,min:0,max:10,def:2});
+V.el('',X(532.3),Y(118.5),X(554.3)-X(532.3),1,panel,'background:#bbb'); V.el('',X(532.3),Y(118.5),1,Y(140)-Y(118.5),panel,'background:#bbb'); V.el('',X(554.3),Y(118.5),1,Y(121)-Y(118.5),panel,'background:#bbb');
+LV({k:'envpol',px:532.3,py:147.2,labels:['⋀','⋁'],def:0,h:20,lsz:6});
+L('ENV',554.3,123.4,5.6); SL({k:'envamt',px:554.3,min:0,max:10,def:3}); L('LFO',567.5,123.4,5.6); SL({k:'vcflfo',px:567.5,min:0,max:10,def:0}); L('KYBD',581.3,123.4,5.6); SLn({k:'kybd',px:581.3,min:0,max:10,def:5},0,1);
+/* VCA */
+LV({k:'vcamode',px:604.8,py:149.7,labels:['⋀','⊓'],def:0,h:20,lsz:6}); L('LEVEL',627.1,124.1,5.6); SLn({k:'vcalvl',px:627.1,min:0,max:10,def:6},0,1);
+/* ENV */
+[['a',654,0],['d',668.3,4],['s',682.2,7],['r',696.7,3]].forEach(([k,px,d],i)=>{ L(k.toUpperCase(),px,124.1,5.8); (i===0?SLn:SL)({k,px,min:0,max:10,def:d},1,0); });
+/* CHORUS */
+L('OFF',728.2,124.1,5.6); L('I',742.1,124.1,5.6); L('II',756,124.1,5.6);
+BT({px:728,py:149.8,h:14.5*S,col:CREAM,led:false,on:()=>{ V.P.ch1=0; V.P.ch2=0; V.changed('ch1'); V.refresh(); }});
+BT({k:'ch1',px:742.5,py:149.8,h:14.5*S,col:YEL}); BT({k:'ch2',px:756.6,py:149.8,h:14.5*S,col:ORA});
+/* MEMORY */
+L('PATCH<br>BANK NUMBER',799,117.4,5.4); const disp=V.el('led7',X(785.4),Y(122.3),X(812.7)-X(785.4),Y(141.9)-Y(122.3)); disp.style.fontSize='22px';
+L('BANK',861,118,5.4); V.el('',X(833),Y(118),X(889)-X(833),1,panel,'background:#bbb');
 let bank=1,num=1,manual=false; const bankB=[],numB=[];
-V.btn({x:325,y:244,w:40,h:26,col:'#cfcfcf',label:'MANUAL',ly:-26,led:true,on:()=>{ manual=true; disp.textContent='--'; V.flash('MANUAL: PANEL = SOUND'); }});
-V.btn({x:375,y:244,w:40,h:26,col:'#d8452b',label:'WRITE',ly:-26,on:()=>{ V.user=V.user||{}; V.user[(bank-1)*8+num-1]=JSON.parse(JSON.stringify(V.P)); V.save(); V.flash('WRITTEN TO '+bank+num); }});
-V.txt('BANK',540,222,9,'#ddd',{ls:'.2em'}); V.txt('NUMBER',870,222,9,'#ddd',{ls:'.2em'});
-for(let i=1;i<=7;i++) bankB.push(V.btn({x:440+(i-1)*30,y:244,w:24,h:26,col:'#d8452b',text:String(i),tsz:9,led:true,on:()=>{ bank=i; pick(); }}));
-for(let i=1;i<=8;i++) numB.push(V.btn({x:690+(i-1)*44,y:244,w:36,h:26,col:'#e8b02a',text:String(i),tsz:9,led:true,on:()=>{ num=i; pick(); }}));
-V.txt('TAPE MEMORY',1160,222,8,'#ddd'); ['SAVE','VERIFY','LOAD'].forEach((s,i)=>V.btn({x:1090+i*50,y:244,w:40,h:26,col:'#9a9a9a',label:s,ly:-12,lsz:7,on:()=>V.flash('NO TAPE – PATCHES SAVE IN THIS BROWSER')}));
-V.txt('VACID',1300,252,18,'#eee',{ls:'.2em'}); V.txt('JU-6',1300,274,10,'#e27b2c',{ls:'.3em'});
+['1(6)','2(7)','3','4','5'].forEach((t,i)=>{ L(t,836+i*14,123.3,5.2); bankB.push(BT({px:836.5+i*14,py:134.8,w:14*S,col:OLIVE,led:false,on:()=>{ const b=i+1; bank=(b<=2&&(bank===b||bank===b+5))?(bank===b?b+5:b):b; pick(); }})); });
+L('PATCH NUMBER',840.5,144.8,5.4); V.el('',X(792),Y(147.3),X(889.5)-X(792),1,panel,'background:#bbb');
+for(let i=1;i<=8;i++){ L(String(i),792+(i-1)*13.93,150.7,5.2); numB.push(BT({px:792+(i-1)*13.93,py:163,w:14*S,col:YEL,led:false,on:()=>{ num=i; pick(); }})); }
+L('TAPE',930,104.4,5.2); [['SAVE',916.6,CREAM],['VERIFY',930.1,YEL],['LOAD',943.8,ORA]].forEach(([t,px,c])=>{ L(t,px,108.6,5.2); V.el('',X(px),Y(110.5),1,Y(118.5)-Y(110.5),panel,'background:#bbb');
+  BT({px,py:134.8,col:c,led:true,ledy:Y(120)-(Y(134.8)-13.3*S/2)-3,on:()=>V.flash('NO TAPE – PATCHES SAVE IN THIS BROWSER')}); });
+L('MANUAL',917.2,150.7,5.2); BT({px:916.6,py:163,col:YEL,led:false,on:()=>{ manual=true; show(); V.flash('MANUAL: PANEL = SOUND'); }});
+L('WRITE',943.6,150.7,5.2); BT({px:943.8,py:163,col:ORA,led:false,on:()=>{ V.user=V.user||{}; V.user[(bank-1)*8+num-1]=JSON.parse(JSON.stringify(V.P)); V.save(); V.flash('WRITTEN TO '+bank+num); }});
 function pick(){ manual=false; const i=(bank-1)*8+num-1; if(V.user&&V.user[i]){ Object.assign(V.P,V.user[i]); V.presetName='USER '+bank+num; V.refresh(); JE.update(); V.presetLbl.textContent=bank+''+num+' USER'; } else V.loadPreset(i%V.presets.length); show(); }
-function show(){ disp.textContent=manual?'--':bank+''+num; bankB.forEach((b,i)=>b.setLed(i+1===bank)); numB.forEach((b,i)=>b.setLed(i+1===num)); }
+function show(){ disp.textContent=manual?'--':bank+''+num; }
 V.onPreset=()=>{ const i=V.presetIdx; bank=Math.floor(i/8)+1; num=i%8+1; show(); };
-/* keyboard bed + bender */
-V.el('wood',28,304,1344,216); V.el('',28,304,1344,6,panel,'background:#000a');
-const bm=V.el('',38,318,200,192,panel,'background:#1b1b1d;border:1px solid #000;border-radius:4px');
-V.txt('BENDER',138,330,9,'#ddd',{ls:'.15em'}); V.slider({k:'bdco',x:78,y:344,h:80,min:0,max:10,def:3,label:'DCO',lsz:8,nums:false,tcol:'#888'}); V.slider({k:'bvcf',x:128,y:344,h:80,min:0,max:10,def:0,label:'VCF',lsz:8,nums:false,tcol:'#888'});
-V.btn({x:172,y:372,w:44,h:26,col:'#cfcfcf',label:'LFO TRIG',ly:-16,on:()=>{ JE.lfoHeld=true; JE.voices.forEach(v=>{ if(v.active){ V.hold(v.lfoD.gain,V.now()); v.lfoD.gain.setTargetAtTime(1,V.now(),0.02);} }); }});
+/* keyboard bed: bender panel left of the 61 keys */
+V.el('',40,Y(212),1320,Y(216)-Y(212),panel,'background:#000');
+const bp=V.el('',X(69.3),Y(219),X(191.4)-X(69.3),Y(347.5)-Y(219),panel,'background:#4b4e53;border:1px solid #222');
+L('DCO',79,239.3,6.4); L('VCF',92.9,239.3,6.4);
+V.slider({k:'bdco',x:X(77.9),y:Y(241.5),h:Y(282)-Y(241.5),w:14,look:'roland',tcol:'#ddd',nums:false,min:0,max:10,def:3});
+V.slider({k:'bvcf',x:X(90.7),y:Y(241.5),h:Y(282)-Y(241.5),w:14,look:'roland',tcol:'#ddd',nums:false,min:0,max:10,def:0});
+const bl=(x1,y1,x2,y2)=>V.el('',X(Math.min(x1,x2)),Y(Math.min(y1,y2)),Math.max(1.3,Math.abs(X(x2)-X(x1))),Math.max(1.3,Math.abs(Y(y2)-Y(y1))),panel,'background:#d8d8d8');
+bl(75.3,283,75.3,319.6); bl(75.3,319.6,117,319.6); bl(88.6,283,88.6,317.5); bl(88.6,317.5,117,317.5);
+L('VOLUME',145.4,228,6.4); V.knob({k:'volume',x:X(145.4),y:Y(244.6),r:15,style:'rol',min:0,max:10,def:7,sweep:300,scale:['','','','','','','','','','',''],mr:5,scol:'#ddd',pad:24,ticks:true});
+L('LFO TRIG',126,266,6.4);
+const lt=BT({px:126.4,py:278.3,w:34.7*S,h:17.8*S,col:CREAM,led:false,on:()=>{ JE.lfoHeld=true; JE.voices.forEach(v=>{ if(v.active){ V.hold(v.lfoD.gain,V.now()); v.lfoD.gain.setTargetAtTime(1,V.now(),0.02);} }); }});
 document.addEventListener('pointerup',()=>{ if(JE.lfoHeld&&V.P.lfotrig){ JE.lfoHeld=false; JE.voices.forEach(v=>{ V.hold(v.lfoD.gain,V.now()); v.lfoD.gain.setTargetAtTime(0,V.now(),0.05); }); } });
-bender(83,466,110);
-V.keyboard({x:248,y:316,w:1114,h:198,lo:36,hi:96});
-V.strip(536,64);
+L('OCTAVE<br>TRANSPOSE',168.5,269.3,5.8);
+V.sw({k:'range',style:'lever',labels:['','',''],nolab:true,x:X(168.6),y:Y(279.6),w:18.2*S,h:6.5*S,def:1});
+L('DOWN',158.2,290.3,4.8); L('NORMAL',167.4,286.6,4.8); L('UP',176.4,290.3,4.8);
+L('BENDER',144.3,309.4,6.4); { const be=bender(X(151)-36,Y(320.4)-7,72); be.style.height='14px'; be.style.borderRadius='3px'; const hd=be.firstChild; hd.style.top='-3px'; hd.style.height='20px'; hd.style.width='12px'; hd.style.marginLeft='3px'; }
+V.keyboard({x:X(191.5),y:Y(216),w:X(971)-X(191.5),h:Y(349)-Y(216),lo:36,hi:96});
+V.strip(476,64);
 /* ---- key transpose + arpeggiator ---- */
 const base=V.synth.noteOn, baseOff=V.synth.noteOff; V.kt=0;
 V.synth.noteOn=(n,v,t,lg)=>{ if(V.ktArm){ V.ktArm=false; V.kt=n-60; V.flash('TRANSPOSE '+V.kt); return; } base(n+V.kt,v,t); };
 V.synth.noteOff=(n,t)=>baseOff(n+V.kt,t);
 let latched=[], arpI=0, arpTimer=null, arpCur=null, arpNext=0;
-V.arpActive=()=>!!V.P.arp;
+V.arpActive=()=>!!V.P.arp; V.arpHas=()=>arpList().length>0;
 function arpList(){ const src=(V.P.hold?latched:V.held).slice().sort((a,b)=>a-b); if(!src.length) return []; const r=V.P.arprange+1, up=[]; for(let o=0;o<r;o++) src.forEach(n=>up.push(n+12*o));
   if(V.P.arpmode===0) return up; if(V.P.arpmode===2) return up.slice().reverse(); return up.length>1?up.concat(up.slice(1,-1).reverse()):up; }
 V.arpNotes=function(){ if(V.P.hold){ if(V.held.length){ if(V.held.length===1&&!V._chordOpen) latched=[]; for(const n of V.held) if(!latched.includes(n)) latched.push(n); V._chordOpen=true; } else V._chordOpen=false; }

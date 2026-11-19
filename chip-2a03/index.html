@@ -31,24 +31,28 @@ body{display:flex;align-items:center;justify-content:center;font-family:ui-monos
 #help b{color:#fff}
 select{font-family:inherit}
 
-#panel{background:linear-gradient(#cfcfcb,#b9b9b5);border-radius:10px;color:#1a1a1a;box-shadow:inset 0 0 0 2px #8d8d89}
-#hdr{position:absolute;left:0;top:0;width:1280px;height:78px;background:linear-gradient(#262626,#141414);border-radius:10px 10px 0 0;display:flex;align-items:center;gap:12px;padding:0 16px;color:#ddd}
+#panel{background:linear-gradient(#a3a3a0,#999996);border-radius:10px;color:#1a1a1a;box-shadow:inset 0 0 0 2px #7e7e7b}
+#lid{position:absolute;left:0;top:0;width:1280px;height:84px;background:linear-gradient(#e2e2de,#cfcfcb);border-radius:10px 10px 0 0;box-shadow:0 2px 0 #8a8a87,0 3px 0 #bdbdb9}
+#ribs{position:absolute;right:0;top:0;width:390px;height:84px;background:#1d1d1d;border-radius:0 10px 0 0}
+#grill{position:absolute;right:390px;top:0;width:96px;height:84px;background:repeating-linear-gradient(90deg,#d9d9d5 0 4px,#a7a7a3 4px 6px);box-shadow:inset 0 -2px 0 #9a9a96}
+#ribs:before{content:'';position:absolute;inset:6px 8px auto 8px;height:5px;background:#2c2c2c;border-radius:2px}
+#hdr{position:absolute;left:0;top:0;width:1280px;height:84px;display:flex;align-items:center;gap:12px;padding:0 14px 0 18px;color:#222}
 #logo{display:flex;flex-direction:column;margin-right:6px}
-#logo b{font-size:26px;letter-spacing:.12em;color:#e8e8e8;font-weight:800}
-#logo b span{color:#d62a35}
-#logo small{font-size:10.5px;color:#9a9a9a;letter-spacing:.06em}
-#hdr .kn .kl,#hdr .kn .kv{color:#cfcfcf}
+#logo b{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;font-size:27px;letter-spacing:.01em;color:#c8102e;font-weight:900;font-style:italic;line-height:28px}
+#logo b span{color:#c8102e}
+#logo small{font-family:"Arial Black",Arial,sans-serif;font-size:9.5px;color:#c8102e;letter-spacing:.32em;font-weight:900;white-space:nowrap}
+#hdr .kn .kl,#hdr .kn .kv{color:#333}#hdr .rb .kn .kl,#hdr .rb .kn .kv{color:#cfcfcf}
 #hdr .bt{background:linear-gradient(#5a5a5a,#3a3a3a);color:#eee;box-shadow:0 2px 0 #000;border:1px solid #111}
 #hdr .bt.red{background:linear-gradient(#d83a44,#a51d27);color:#fff}
 #hdr .bt.on{background:linear-gradient(#e14a52,#b3242d);color:#fff}
-#hdr .seg b{background:#3a3a3a;color:#bbb}#hdr .seg b.on{background:#d62a35;color:#fff}
+#hdr .seg b{background:#bdbdb9;color:#333;border:1px solid #7e7e7b}#hdr .seg b.on{background:#1d1d1d;color:#ff4a55}
 .grp{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
-.grp>label{font-size:9.5px;color:#9a9a9a;letter-spacing:.08em}
-#preset{background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;padding:5px 6px;width:170px}
+.grp>label{font-size:9.5px;color:#c8102e;letter-spacing:.12em;font-weight:700}
+#preset{background:#1d1d1d;color:#eee;border:1px solid #000;border-radius:3px;font-size:12px;padding:5px 6px;width:170px}
 .sp{flex:1}
-#strips{position:absolute;left:12px;top:88px;width:792px;height:388px;display:flex;gap:6px}
-.st{flex:1;background:linear-gradient(#d9d9d6,#c6c6c2);border:1px solid #8d8d89;border-radius:5px;padding:6px 7px;display:flex;flex-direction:column;gap:4px;position:relative}
-.st h3{font-size:13px;letter-spacing:.1em;color:#fff;background:#1f1f1f;margin:-6px -7px 2px;padding:6px 8px;border-radius:5px 5px 0 0;display:flex;justify-content:space-between;align-items:center}
+#strips{position:absolute;left:12px;top:96px;width:792px;height:388px;display:flex;gap:6px}
+.st{flex:1;background:linear-gradient(#d4d4d0,#c3c3bf);border:1px solid #7e7e7b;box-shadow:inset 0 1px 0 #ececea;border-radius:5px;padding:6px 7px;display:flex;flex-direction:column;gap:4px;position:relative}
+.st h3{font-family:"Arial Black",Arial,sans-serif;font-size:12px;letter-spacing:.14em;color:#ff4a55;background:#1d1d1d;margin:-6px -7px 2px;padding:6px 8px;border-radius:5px 5px 0 0;display:flex;justify-content:space-between;align-items:center}
 .st h3 .lv{display:flex;gap:2px}.st h3 .lv i{width:4px;height:10px;background:#3a1416;display:block}.st h3 .lv i.on{background:#ff3b45;box-shadow:0 0 4px #f33}
 .rg{font-size:9.5px;color:#b0141f;font-weight:700;letter-spacing:.06em;border-top:1px solid #9a9a96;padding-top:3px;display:flex;justify-content:space-between}
 .rg em{font-style:normal;color:#555}
@@ -59,12 +63,12 @@ select{font-family:inherit}
 .kn .ktr{stroke:#8f8f8b}.kn .kva{stroke:#d62a35}.kn .kbody{fill:#2a2a2a}.kn .kcap{fill:#3c3c3c}.kn .kptr{stroke:#eee}
 #hdr .kn .ktr{stroke:#555}
 .st .kn{width:58px}.st .kl{font-size:10px}.st .kv{font-size:10px;color:#444}
-#trkw{position:absolute;left:814px;top:88px;width:454px;height:388px;background:#1b1b1b;border-radius:6px;padding:8px;box-shadow:inset 0 0 0 2px #000}
-#trk{background:#0b0b0d;border:1px solid #333;border-radius:3px;font-size:13px;color:#cfcfcf;line-height:19px;height:332px;overflow:hidden;touch-action:none}
+#trkw{position:absolute;left:814px;top:96px;width:454px;height:388px;background:#1b1b1b;border-radius:6px;padding:8px;box-shadow:inset 0 0 0 2px #000}
+#trk{background:#000;border:1px solid #333;border-radius:3px;font-size:13px;color:#cfcfcf;line-height:19px;height:332px;overflow:hidden;touch-action:none}
 #trk .r{display:flex;white-space:pre;height:19px}
 #trk .r.beat{background:#16161a}
-#trk .r.cur{background:#5a1218 !important;color:#fff}
-#trk .r.hd{color:#ff5a62;font-weight:700;background:#141414;border-bottom:1px solid #333}
+#trk .r.cur{background:#c8102e !important;color:#fff}#trk .r.cur .dim{color:#ffb0b5}
+#trk .r.hd{color:#ff4a55;font-family:"Arial Black",Arial,sans-serif;letter-spacing:.06em;font-size:11px;font-weight:700;background:#141414;border-bottom:1px solid #333}
 #trk .rn{width:28px;color:#777;text-align:right;padding-right:6px}
 #trk .c{padding:0 4px;border-left:1px solid #26262a;cursor:pointer}
 #trk .c0,#trk .c1{width:110px}#trk .c2{width:76px}#trk .c3{width:90px}#trk .c4{width:40px}
@@ -72,15 +76,49 @@ select{font-family:inherit}
 #trk .r.ed .rn{color:#ff5a62}
 #trk .dim{color:#555}
 #tb{display:flex;gap:4px;margin-top:6px}
-#tb .bt{flex:1;background:linear-gradient(#4a4a4a,#2e2e2e);color:#ddd;font-size:11px;padding:6px 2px;border:1px solid #000}
+#tb .bt{flex:1;background:linear-gradient(#3a3a3a,#252525);color:#ff6b73;font-family:"Arial Black",Arial,sans-serif;letter-spacing:.06em;font-size:11px;padding:6px 2px;border:1px solid #000}
 #tb .bt.on{background:#d62a35;color:#fff}
-#regs{position:absolute;left:12px;top:484px;width:1256px;height:28px;background:#0b0b0d;border-radius:4px;color:#8fd18f;font-size:12px;display:flex;align-items:center;padding:0 10px;gap:14px;white-space:pre;overflow:hidden}
+#regs{position:absolute;left:12px;top:490px;width:1256px;height:26px;background:#0b0b0d;border-radius:4px;color:#8fd18f;font-size:12px;display:flex;align-items:center;padding:0 10px;gap:14px;white-space:pre;overflow:hidden}
 #regs b{color:#ff5a62;font-weight:400}
-#kbw{position:absolute;left:12px;top:520px;width:1256px;height:190px;display:flex;gap:10px}
-#kside{width:150px;background:#1f1f1f;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;color:#ccc;font-size:11px}
+#kbw{position:absolute;left:12px;top:522px;width:1256px;height:188px;display:flex;gap:10px}
+#kside{width:300px;display:flex;flex-direction:column;gap:6px;font-size:11px}
+#front{display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;background:#9b9b98;border-radius:4px;box-shadow:inset 0 0 0 1px #868683}
+#front .pled{width:8px;height:8px;background:#3a0d10;border:1px solid #222}#front .pled.on{background:#ff2a35;box-shadow:0 0 6px #f22}
+#front .pb{font-family:"Arial Black",Arial,sans-serif;font-size:9px;letter-spacing:.12em;color:#c8102e;background:linear-gradient(#a9a9a6,#8d8d8a);border:1px solid #5d5d5a;border-radius:2px;padding:6px 12px;box-shadow:0 2px 0 #5d5d5a,inset 0 1px 0 #c5c5c2;cursor:pointer}
+#front .pb:active{transform:translateY(1px);box-shadow:0 1px 0 #5d5d5a}
+#front .info{margin-left:auto;text-align:right;color:#2b2b2b;font-size:10px;line-height:13px}
+#pad{flex:1;background:linear-gradient(#dcdcd8,#cbcbc7);border-radius:7px;padding:7px;box-shadow:inset 0 0 0 1px #9a9a96,0 2px 0 #7e7e7b}
+#face{height:100%;background:#2e2e2e;border-radius:3px;position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+#dp{position:relative;width:84px;height:84px}
+#dp b{position:absolute;background:#141414;border:1px solid #000;cursor:pointer;box-shadow:inset 0 1px 0 #333;z-index:1}
+#dp .u,#dp .d{left:28px;width:28px;height:30px}#dp .u{top:0;border-radius:3px 3px 0 0}#dp .d{bottom:0;border-radius:0 0 3px 3px}
+#dp .l,#dp .r{top:28px;width:30px;height:28px}#dp .l{left:0;border-radius:3px 0 0 3px}#dp .r{right:0;border-radius:0 3px 3px 0}
+#dp .c{left:28px;top:28px;width:28px;height:28px;border:0;cursor:default;box-shadow:none}
+#dp:before{content:'';position:absolute;inset:-4px;background:#d5d5d1;clip-path:polygon(30% 0,70% 0,70% 30%,100% 30%,100% 70%,70% 70%,70% 100%,30% 100%,30% 70%,0 70%,0 30%,30% 30%)}
+#mid{display:flex;flex-direction:column;gap:5px;width:96px}
+#mid i{display:block;height:8px;background:#a9a9a6;border-radius:2px}
+#mid .ss{display:flex;justify-content:space-around;font-family:"Arial Black",Arial,sans-serif;font-size:8px;color:#c8102e;letter-spacing:.08em}
+#mid .pills{background:#d5d5d1;border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between}
+#mid .pills b{width:34px;height:11px;border-radius:6px;background:#1d1d1d;cursor:pointer;box-shadow:inset 0 -2px 0 #000}
+#mid .pills b.on{background:#c8102e}
+#ab{display:flex;gap:8px}
+#ab div{display:flex;flex-direction:column;align-items:center;gap:3px}
+#ab span{width:40px;height:40px;background:#d5d5d1;border-radius:3px;display:flex;align-items:center;justify-content:center}
+#ab b{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ff5a50,#d81e1a 60%,#a3120f);box-shadow:0 2px 0 #7a0c0a;cursor:pointer}
+#ab b:active{transform:translateY(1px);box-shadow:0 1px 0 #7a0c0a}
+#ab em{font-family:"Arial Black",Arial,sans-serif;font-style:normal;font-size:9px;color:#c8102e}
+.rb{position:relative;display:flex;align-items:center;gap:12px;height:84px;padding:0 4px 0 6px}
+.port{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.port .n{font-family:"Arial Black",Arial,sans-serif;font-size:10px;color:#c8102e;line-height:10px}
+.port .sk{width:34px;height:40px;background:#0d0d0d;border-radius:4px 4px 10px 10px;border:2px solid #333;display:grid;grid-template-columns:repeat(2,7px);gap:4px 6px;justify-content:center;align-content:center}
+.port .sk i{width:6px;height:6px;border-radius:50%;background:#2a2a2a;box-shadow:inset 0 1px 1px #000}
+.port .sk i:nth-child(7){grid-column:1/3;justify-self:center}
+.port .t{font-size:8.5px;color:#9a9a9a;letter-spacing:.06em}
+.port:active .sk{border-color:#c8102e}
+.dip{margin-top:auto;align-self:center}
 #kside .bt{background:#3a3a3a;color:#eee;border:1px solid #000;padding:6px}
 #kside .bt.on{background:#d62a35}
-#kbch{font-size:11px;color:#ff5a62;line-height:15px}
+#kbch{font-size:10px;color:#c8102e;line-height:13px;font-weight:700}
 #kb .w{background:linear-gradient(#f6f6f4,#dcdcd8);border:1px solid #888;box-shadow:inset 0 -6px 0 #c8c8c4}
 #kb .b{background:linear-gradient(#2a2a2a,#0d0d0d);border:1px solid #000}
 #kb .w.dn{background:#ffb3b8}#kb .b.dn{background:#d62a35}
@@ -88,7 +126,7 @@ select{font-family:inherit}
 <body>
 <div id="probe"></div>
 <div id="stage"><div id="panel">
-  <div id="hdr"></div>
+  <div id="lid"></div><div id="grill"></div><div id="ribs"></div><div id="hdr"></div>
   <div id="strips"></div>
   <div id="trkw"><div id="trk"></div><div id="tb"></div></div>
   <div id="regs"></div>
@@ -384,6 +422,20 @@ function initFit(){ const p=$('#panel'); p.style.width=PANEL.W+'px'; p.style.hei
 /* prevent page scroll / pinch on controls (iOS) */
 document.addEventListener('touchmove',e=>{ if(!e.target.closest||!e.target.closest('.scroll')) e.preventDefault(); },{passive:false});
 document.addEventListener('gesturestart',e=>e.preventDefault());
+/* DIP package drawing (decorative chip, e.g. the sound chip itself). Returns {el,set(l1,l2)} */
+function dipChip(parent,{pins=28,w=200,h=64,l1='',l2='',pin='#b9b9b2'}){
+  const n=pins/2, ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg'); svg.setAttribute('width',w); svg.setAttribute('height',h+16); svg.setAttribute('viewBox',`0 0 ${w} ${h+16}`); svg.style.display='block';
+  let p=''; const step=(w-16)/n; for(let i=0;i<n;i++){ const x=8+step*i+step*0.25, pw=step*0.5; p+=`<rect x="${x.toFixed(1)}" y="0" width="${pw.toFixed(1)}" height="9" fill="${pin}"/><rect x="${x.toFixed(1)}" y="${h+7}" width="${pw.toFixed(1)}" height="9" fill="${pin}"/>`; }
+  svg.innerHTML=`<defs><linearGradient id="dipg${pins}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2b2b"/><stop offset=".5" stop-color="#1a1a1a"/><stop offset="1" stop-color="#111"/></linearGradient></defs>${p}
+    <rect x="2" y="7" width="${w-4}" height="${h+2}" rx="2" fill="url(#dipg${pins})" stroke="#000"/>
+    <path d="M2 ${7+h/2-7} a7 7 0 0 1 0 14" fill="#000" opacity=".9"/>
+    <circle cx="${w*0.12}" cy="${7+h*0.32}" r="${h*0.12}" fill="#262626" stroke="#0c0c0c"/><circle cx="${w*0.86}" cy="${7+h*0.62}" r="${h*0.12}" fill="#262626" stroke="#0c0c0c"/>
+    <circle cx="10" cy="${h}" r="2" fill="#333"/>
+    <text class="l1" x="${w/2}" y="${7+h*0.47}" text-anchor="middle" font-size="${h*0.24}" fill="#cfd2d6" font-family="ui-monospace,Menlo,monospace" letter-spacing="1.5">${l1}</text>
+    <text class="l2" x="${w/2}" y="${7+h*0.8}" text-anchor="middle" font-size="${h*0.2}" fill="#9fa3a8" font-family="ui-monospace,Menlo,monospace" letter-spacing="1.5">${l2}</text>`;
+  const el=document.createElement('div'); el.className='dip'; el.appendChild(svg); parent.appendChild(el);
+  return {el,set(a,b){ svg.querySelector('.l1').textContent=a; if(b!=null) svg.querySelector('.l2').textContent=b; }};
+}
 
 PANEL.W=1280; PANEL.H=720;
 /* ================= state ================= */
@@ -492,8 +544,8 @@ function exportMidi(){ downloadBlob(buildMidi(),`pulsar8_${PRESETS[S.preset]?PRE
 
 /* ================= panel ================= */
 const hdr=$('#hdr');
-hdr.innerHTML='<div id="logo"><b>PULSAR<span>·</span>8</b><small>2A03-style apu emulation</small></div>';
-const playBtn=button(hdr,'▶ PLAY',()=>SQ.on?stop():play(),'red'); button(hdr,'■ STOP',stop);
+hdr.innerHTML='<div id="logo"><b>PULSAR<span>·</span>8</b><small>8-BIT AUDIO PROCESSING SYSTEM</small></div>';
+const playBtn={classList:{add:()=>setRun(true),remove:()=>setRun(false)}};
 knob(hdr,{label:'TEMPO',min:60,max:240,def:150,get:()=>S.bpm,set:v=>{S.bpm=v;save();},fmt:v=>v+' bpm'});
 knob(hdr,{label:'ROWS/BEAT',min:1,max:8,def:4,get:()=>S.rpb,set:v=>{S.rpb=v;save();}});
 { const g=el('div','grp',hdr); el('label','',g,'PRESET / SONG'); const sel=el('select','',g); sel.id='preset';
@@ -501,8 +553,11 @@ knob(hdr,{label:'ROWS/BEAT',min:1,max:8,def:4,get:()=>S.rpb,set:v=>{S.rpb=v;save
   WID.push({render:()=>{ sel.value=S.preset; }}); }
 { const g=el('div','grp',hdr); el('label','',g,'$4017 FRAME'); seg(g,['4-STEP','5-STEP'],()=>S.f5,v=>{S.f5=v;writeStatic();save();}); }
 el('div','sp',hdr);
-button(hdr,'MIDI IN',()=>midiIn(false)); button(hdr,'EXPORT .MID',exportMidi); button(hdr,'?',()=>toggleHelp());
-knob(hdr,{label:'VOLUME',min:0,max:100,def:80,get:()=>Math.round(S.vol*100),set:v=>{S.vol=v/100;setVol(S.vol);save();},fmt:v=>v+'%'});
+const rb=el('div','rb',hdr);
+const port=(n,t,fn)=>{ const p=el('div','port',rb); el('div','n',p,n); const sk=el('div','sk',p); for(let i=0;i<7;i++) el('i','',sk); el('div','t',p,t); p.addEventListener('click',fn); return p; };
+port('1','midi in',()=>midiIn(false)); port('2','export .mid',exportMidi);
+{ const h=button(rb,'?',()=>toggleHelp()); h.style.cssText='background:#2c2c2c;color:#ff4a55;border:1px solid #000;box-shadow:none;padding:6px 9px'; }
+knob(rb,{label:'VOLUME',min:0,max:100,def:80,get:()=>Math.round(S.vol*100),set:v=>{S.vol=v/100;setVol(S.vol);save();},fmt:v=>v+'%'});
 
 const strips=$('#strips'), lvEls=[];
 function strip(c){ const st=el('div','st',strips), h=el('h3','',st); el('span','',h,CHN[c].toUpperCase()); const lv=el('span','lv',h); lvEls[c]=Array.from({length:4},()=>el('i','',lv)); return st; }
@@ -522,7 +577,7 @@ for(let c=0;c<2;c++){ const st=strip(c), b=0x4000+4*c;
   r=el('div','row',st); K(r,c,'lr','LINEAR',127,{def:127});
   rg(st,'$400B','LLLL Lttt'); r=el('div','row',st); K(r,c,'len','LENGTH',31,{def:1,fmt:lenFmt});
   rg(st,'$4015','ENABLE'); r=el('div','row',st); TG(r,c,'en','TRI ON');
-  const nt=el('div','rg',st); nt.style.cssText='color:#555;font-weight:400;line-height:14px;display:block;margin-top:auto'; nt.textContent='4-bit stepped triangle; no volume. control=1 holds the note, linear counter (×¼ frame) gates it.'; }
+  const ch=dipChip(st,{pins:40,w:132,h:40,l1:'APU-8',l2:'2A03 · 8611'}); ch.el.title='the sound chip: 2 pulse, triangle, noise, dpcm'; }
 { const c=3, st=strip(c); rg(st,'$400C','--LC VVVV'); let r=el('div','row',st); TG(r,c,'halt','LOOP'); TG(r,c,'cv','CONST');
   r=el('div','row',st); K(r,c,'V','VOL/ENV',15,{def:2});
   rg(st,'$400E','M--- PPPP'); r=el('div','row',st); TG(r,c,'mode','SHORT');
@@ -559,10 +614,10 @@ function bump(d){ const k=FIELDS[CUR.c][CUR.f], x=S.pat[CUR.c][CUR.r];
   if(k==='n'){ if(x.n==null||x.n<0) x.n=CUR.c===3?3:CUR.c===4?0:12*(KB.oct+1); else x.n=CUR.c===3?((x.n&16)|((x.n+d)&15)):CUR.c===4?(x.n+d)&3:clamp(x.n+d,12,108); }
   else if(k==='v') x.v=clamp((x.v??8)+d,0,15); else if(k==='d') x.d=clamp((x.d??2)+d,0,3); else { const v=clamp(parseInt(x.fx||'000',16)+d,0,0xFFF); x.fx=hex(v,3); }
   save(); renderTrk(); }
-const tb=$('#tb'); const recBtn=button(tb,'● REC',()=>{ REC=!REC; recBtn.classList.toggle('on',REC); renderTrk(); });
-button(tb,'▲',()=>moveCur(-1)); button(tb,'▼',()=>moveCur(1)); button(tb,'◀',()=>{ CUR.f--; if(CUR.f<0){ CUR.c=(CUR.c+NCH-1)%NCH; CUR.f=FIELDS[CUR.c].length-1; } renderTrk(); });
-button(tb,'▶',()=>{ CUR.f++; if(CUR.f>=FIELDS[CUR.c].length){ CUR.c=(CUR.c+1)%NCH; CUR.f=0; } renderTrk(); });
-button(tb,'−',()=>bump(-1)); button(tb,'+',()=>bump(1)); button(tb,'OFF',()=>enterNote(-1)); button(tb,'CLR',clearField); button(tb,'PAGE',()=>{ CUR.r=(CUR.r+16)%ROWS; renderTrk(); });
+const tb=$('#tb');
+button(tb,'OFF',()=>enterNote(-1)); button(tb,'CLR',clearField); button(tb,'PAGE',()=>{ CUR.r=(CUR.r+16)%ROWS; renderTrk(); });
+button(tb,'OCT −',()=>{ allKeysOff(); KB.oct=clamp(KB.oct-1,0,7); KB.onOct(); }); button(tb,'OCT +',()=>{ allKeysOff(); KB.oct=clamp(KB.oct+1,0,7); KB.onOct(); });
+const fmv=d=>{ CUR.f+=d; if(CUR.f<0){ CUR.c=(CUR.c+NCH-1)%NCH; CUR.f=FIELDS[CUR.c].length-1; } if(CUR.f>=FIELDS[CUR.c].length){ CUR.c=(CUR.c+1)%NCH; CUR.f=0; } renderTrk(); };
 
 /* ================= register dump + meters ================= */
 const regs=$('#regs'); regs.innerHTML='<b>$4000</b> -- registers appear when audio starts (tap a key or play) --';
@@ -570,12 +625,20 @@ function renderRegs(){ const s=AU.snap; if(!s) return; let t=''; for(let i=0;i<2
   s.lv.forEach((v,c)=>lvEls[c].forEach((e,k)=>e.classList.toggle('on',v>k*4))); }
 
 /* ================= keyboard ================= */
-const kside=$('#kside'); el('div','',kside,'ON-SCREEN KEYS').style.cssText='color:#888;font-size:10px;letter-spacing:.08em';
-el('div','',kside).id='kbch';
-{ const r=el('div','row',kside); r.style.gap='4px'; button(r,'OCT −',()=>{ allKeysOff(); KB.oct=clamp(KB.oct-1,0,7); octL.textContent='octave '+KB.oct; }); button(r,'OCT +',()=>{ allKeysOff(); KB.oct=clamp(KB.oct+1,0,7); octL.textContent='octave '+KB.oct; }); }
-const octL=el('div','',kside,'octave 4'); KB.onOct=()=>octL.textContent='octave '+KB.oct;
-el('div','',kside,'keys: a w s e d f t g y h u j k · z/x octave · space play · arrows move · 0-f hex · del clear · 1 off').style.cssText='color:#888;font-size:10px;line-height:13px';
-buildKeyboard($('#kbw'),1094,190,2);
+const kside=$('#kside');
+const front=el('div','',kside); front.id='front';
+const pled=el('i','pled',front); el('div','pb',front,'POWER').addEventListener('click',()=>SQ.on?stop():play());
+el('div','pb',front,'RESET').addEventListener('click',()=>{ stop(); allKeysOff(); loadPreset(S.preset); flash('reset'); });
+const info=el('div','info',front); el('div','',info).id='kbch'; const octL=el('div','',info,'octave 4'); KB.onOct=()=>octL.textContent='octave '+KB.oct;
+function setRun(on){ pled.classList.toggle('on',on); startB.classList.toggle('on',on); }
+const pad=el('div','',kside); pad.id='pad'; const face=el('div','',pad); face.id='face';
+const dp=el('div','',face); dp.id='dp'; [['u',()=>moveCur(-1)],['d',()=>moveCur(1)],['l',()=>fmv(-1)],['r',()=>fmv(1)],['c',null]].forEach(([c,fn])=>{ const b=el('b',c,dp); if(fn) b.addEventListener('click',fn); });
+const mid=el('div','',face); mid.id='mid'; el('i','',mid); el('i','',mid); const ss=el('div','ss',mid); el('span','',ss,'REC'); el('span','',ss,'PLAY');
+const pills=el('div','pills',mid); const selB=el('b','',pills), startB=el('b','',pills); el('i','',mid);
+selB.title='select: record notes into the tracker'; startB.title='start: play / stop';
+selB.addEventListener('click',()=>{ REC=!REC; selB.classList.toggle('on',REC); renderTrk(); }); startB.addEventListener('click',()=>SQ.on?stop():play());
+const ab=el('div','',face); ab.id='ab'; [['B −',()=>bump(-1)],['A +',()=>bump(1)]].forEach(([t,fn])=>{ const d=el('div','',ab); el('b','',el('span','',d)).addEventListener('click',fn); el('em','',d,t); });
+buildKeyboard($('#kbw'),946,188,2);
 const kbMap=m=>CUR.c===3?(15-(m%16))|(S.ch[3].mode<<4):CUR.c===4?(m%4):m;
 KB.onOn=(m,src)=>{ ensureAudio(); const c=CUR.c, n=kbMap(m); writeStatic(); noteOn(c,n,{},0); KB.lastCh=c; if(REC&&FIELDS[c][CUR.f]==='n') enterNote(n); };
 KB.onOff=(m,src)=>{ if(KB.held.size===0) noteOff(KB.lastCh??CUR.c,0); };
@@ -600,7 +663,7 @@ const help=$('#help');
 help.innerHTML=`<b>PULSAR·8</b> — a clocked emulation of a 2A03-style audio unit (1.79 MHz, nonlinear mixer, console filters). Tap to close.<br><br>
 <b>Panel = the real registers.</b> $4000/$4004: duty (DD), length-halt / envelope-loop (L), constant volume (C), volume or envelope period (VVVV). $4001/$4005: sweep enable, period, negate, shift. $4003/$4007/$400B/$400F: length counter index (frames in brackets). $4008: triangle control + linear counter. $400C/$400E: noise loop/const/vol, mode (short = 93-step metallic), period index 0-15. $4010-$4013: DMC rate, loop, direct load, sample address &amp; length. $4015: channel enables. $4017: 4/5-step frame counter.<br><br>
 <b>Tracker</b>: 32 rows × 5 channels. Columns: note · vol · duty · fx. Effects: <b>0xy</b> arpeggio (60 Hz), <b>1xx</b> slide up, <b>2xx</b> slide down (period units/frame). Tap a cell to move the cursor; the keyboard plays the cursor's channel. <b>REC</b>: keys enter notes. Noise "5-#" = period 5 (S = short mode). DMC: KCK/SNR/HAT/TOM samples.<br><br>
-<b>Keys</b>: a w s e d f t g y h u j k (piano), z/x octave, space play/stop, arrows move, 0-9 a-f hex in value fields, 1 or = note-off, delete clear. Web MIDI input via MIDI IN. EXPORT .MID writes one track per channel (P1 ch1, P2 ch2, TRI ch3, NOISE ch4, DMC ch5).`;
+<b>Controller</b>: d-pad moves the tracker cursor, SELECT toggles record, START plays, B/A change the value under the cursor. POWER plays/stops, RESET reloads the preset. Port 1 = MIDI in, port 2 = export .mid.<br><br><b>Keys</b>: a w s e d f t g y h u j k (piano), z/x octave, space play/stop, arrows move, 0-9 a-f hex in value fields, 1 or = note-off, delete clear. Web MIDI input via MIDI IN. EXPORT .MID writes one track per channel (P1 ch1, P2 ch2, TRI ch3, NOISE ch4, DMC ch5).`;
 function toggleHelp(){ help.style.display=help.style.display==='block'?'none':'block'; } help.addEventListener('click',toggleHelp);
 let saveT=0; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} },250); }
 (function loop(){ if(SQ.on&&AU.ctx){ const t=now()-(AU.ctx.outputLatency||0); let ch=false; while(SQ.vis.length&&SQ.vis[0].t<=t){ SQ.cur=SQ.vis.shift().r; ch=true; } if(ch) renderTrk(); }

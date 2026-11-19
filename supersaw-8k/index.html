@@ -6,59 +6,66 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1c1d20">
+<meta name="theme-color" content="#11151d">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" href="data:,">
 <title>VS-8K · virtual analog synthesizer</title>
 <style>
-  html,body{margin:0;height:100%;background:#141518;overflow:hidden;-webkit-text-size-adjust:100%}
+  html,body{margin:0;height:100%;background:#10131a;overflow:hidden;-webkit-text-size-adjust:100%}
   body{display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
     padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box;
     -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
   #rot{display:none;color:#9aa3ad;font-size:13px;margin:6px 0;letter-spacing:.05em;text-align:center}
   @media (orientation:portrait) and (max-width:900px){#rot{display:block}}
   #stage{position:relative;flex:none}
-  #panel{position:absolute;left:0;top:0;transform-origin:0 0;touch-action:none;border-radius:10px;overflow:hidden;
-    background:linear-gradient(#34373c,#25272b 40%,#1f2124);box-shadow:0 20px 60px #000c,inset 0 1px 0 #ffffff22}
+  #panel{position:absolute;left:0;top:0;transform-origin:0 0;touch-action:none;overflow:hidden}
   #panel *{position:absolute;box-sizing:border-box}
-  .sec{border:1px solid #4d5866;border-radius:4px;background:linear-gradient(#2b2e33,#24262a)}
-  .st{color:#6fb4ff;font-weight:700;font-size:10px;letter-spacing:.12em;white-space:nowrap;transform:translate(-50%,-50%);background:#2a2d32;padding:0 6px}
-  .lb{color:#d7dbe0;font-weight:700;font-size:8.5px;letter-spacing:.06em;white-space:nowrap;transform:translate(-50%,-50%);line-height:1}
-  .lb.l{transform:translate(0,-50%)} .lb.s{font-size:7.5px;color:#aeb5bd} .lb.b{color:#6fb4ff} .lb.r{color:#ff5a4a}
-  .ln{background:#4d5866}
+  #panel svg,#panel svg *{position:static}
+  /* body: slate-blue speckled casing, light rear bevel, rounded ends */
+  .bd{border-radius:26px 30px 14px 14px;background:linear-gradient(#6a7193 0,#565e83 30px,#2c3858 40px,#1c2943 70px,#1f2f4c 300px,#21324f 100%);
+    box-shadow:inset 2px 0 0 #ffffff14,inset -3px 0 0 #00000040,0 10px 30px #000c}
+  .tx{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .8 0 0 0 0 1 0 0 0 .55 -.18'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none}
+  .frm{background:#141d2d;border-radius:7px;box-shadow:0 1px 0 #ffffff1c}
+  .sc{background:linear-gradient(#2a3d5f,#25375a 60%,#23345a);border-radius:5px;box-shadow:inset 0 1px 0 #ffffff12}
+  .tab{background:#141d2d;border-radius:0 0 7px 7px}
+  .tt{color:#ff7a1c;font-weight:900;font-size:15.5px;letter-spacing:.01em;white-space:nowrap;transform:translate(-50%,-50%);line-height:1;font-stretch:condensed}
+  .lb{color:#f2f3f6;font-weight:700;font-size:8px;letter-spacing:.01em;white-space:nowrap;transform:translate(-50%,-50%);line-height:1.05;text-align:center}
+  .lb.l{transform:translate(0,-50%);text-align:left} .lb.s{font-size:7.2px} .lb.o{color:#ff8a2e} .lb.r{color:#ff4a3e} .lb.k{color:#c9cfdb;font-size:6.6px}
+  .lb.box{background:#e9ebef;color:#1b2333;border-radius:2px;padding:0 2px;font-size:7px}
+  .lb.plate{background:#111621;border-radius:2px;padding:1px 4px;font-size:7.4px}
+  .ln{background:#e8eaef}
   .knob,.sld{touch-action:none;cursor:ns-resize}
-  .btn{cursor:pointer;touch-action:none;border-radius:3px;background:linear-gradient(#5b6068,#3c4047);border:1px solid #15171a;
-    box-shadow:0 2px 0 #0b0c0e,inset 0 1px 0 #ffffff33}
-  .btn.bl{background:linear-gradient(#5d87c2,#36598d)} .btn.rd{background:linear-gradient(#d8574a,#9b2a21)}
-  .btn:active,.btn.press{transform:translateY(1px);box-shadow:0 1px 0 #0b0c0e,inset 0 1px 0 #ffffff22}
-  .led{border-radius:50%;background:radial-gradient(circle at 40% 35%,#5a1c1c,#240707 70%);box-shadow:inset 0 1px 1px #000,0 1px 0 #ffffff22}
-  .led.on{background:radial-gradient(circle at 40% 35%,#ffd6d0,#ff3a2a 40%,#b30d00 80%);box-shadow:0 0 7px 2px #ff3a2a99}
-  .led.bu{background:radial-gradient(circle at 40% 35%,#1c2a5a,#070c24 70%)}
-  .led.bu.on{background:radial-gradient(circle at 40% 35%,#e0f0ff,#3d9bff 40%,#0b4fb3 80%);box-shadow:0 0 7px 2px #3d9bff99}
+  .btn{cursor:pointer;touch-action:none;border-radius:3px;background:linear-gradient(#34373e,#17191d 45%,#0b0c0e);border:1px solid #000;
+    box-shadow:0 2px 2px #000b,inset 0 1px 0 #ffffff30}
+  .btn.press{transform:translateY(1px);box-shadow:0 1px 1px #000b,inset 0 1px 0 #ffffff1c}
+  .bar{left:50%;top:50%;width:12px;height:4px;margin:-2px 0 0 -6px;border-radius:2px;background:#3a1210;box-shadow:inset 0 1px 1px #000}
+  .bar.on{background:#ff3424;box-shadow:0 0 6px 1px #ff3a2acc}
+  .led{border-radius:50%;background:radial-gradient(circle at 40% 35%,#5a1a18,#220606 70%);box-shadow:inset 0 1px 1px #000,0 0 0 1px #00000080}
+  .led.on{background:radial-gradient(circle at 40% 35%,#ffd6d0,#ff3a2a 40%,#c00f00 80%);box-shadow:0 0 7px 2px #ff3a2a99}
   .opt{cursor:pointer;touch-action:none}
-  #lcd{background:linear-gradient(#b9d48a,#9fbf6c);border:3px solid #0d0e10;border-radius:3px;box-shadow:inset 0 2px 6px #0006;
-    font-family:"Courier New",Courier,monospace;font-weight:700;color:#18240e;font-size:17px;line-height:22px;padding:4px 10px;white-space:pre;overflow:hidden}
-  .cyc{background:#0e1012;border:1px solid #000;border-radius:2px;color:#8fd0ff;font-family:"Courier New",monospace;font-weight:700;font-size:9.5px;
-    display:flex;align-items:center;justify-content:center;white-space:nowrap;cursor:pointer;touch-action:none}
-  .wk{background:linear-gradient(#f3f3f1,#dcdcd8);border:1px solid #777;border-radius:0 0 4px 4px;touch-action:none}
-  .bk{background:linear-gradient(#2a2b2e,#0c0c0d);border:1px solid #000;border-radius:0 0 3px 3px;box-shadow:0 3px 4px #0008;touch-action:none}
-  .wk.dn{background:linear-gradient(#c9d9ee,#9fb6d4)} .bk.dn{background:linear-gradient(#3b5d8c,#1d3456)}
-  #ribbon{background:linear-gradient(#0f1012,#1d1f22);border:1px solid #000;border-radius:3px;touch-action:none;box-shadow:inset 0 2px 4px #000}
-  #rbDot{border-radius:2px;background:#6fb4ff;opacity:0;transition:opacity .2s;box-shadow:0 0 8px #6fb4ff}
-  #lever{background:radial-gradient(circle,#2c2f34,#15171a);border:1px solid #000;border-radius:6px;touch-action:none;box-shadow:inset 0 2px 6px #000}
-  #lvH{border-radius:50%;background:radial-gradient(circle at 40% 35%,#eee,#888 60%,#444);box-shadow:0 2px 4px #000;pointer-events:none}
+  #lcd{background:#030503;border-radius:3px;box-shadow:inset 0 0 0 2px #000,inset 0 3px 8px #000;
+    font-family:"Courier New",Courier,monospace;font-weight:700;color:#7fe63a;font-size:15.5px;line-height:19px;padding:7px 12px;font-weight:400;letter-spacing:.04em;white-space:pre;overflow:hidden;text-shadow:0 0 4px #6cff2a66}
+  .wk{background:linear-gradient(#c9cad0,#f1f1f2 6%,#fbfbfa 30%,#ffffff 95%,#d9d9dc);border-left:1px solid #3a3d44;border-right:1px solid #8e9097;border-radius:0 0 3px 3px;touch-action:none}
+  .bk{background:linear-gradient(#000 0,#000 88%,#5a5b61 89%,#3a3b40 100%),linear-gradient(90deg,#000,#2a2b30 25%,#0a0a0b 55%,#000);background-blend-mode:screen;border-radius:0 0 3px 3px;box-shadow:0 4px 4px #0009,inset 2px 0 0 #ffffff12;touch-action:none}
+  .wk.dn{background:linear-gradient(#aebdd6,#c4d2e8 60%,#d7e3f4)} .bk.dn{background:linear-gradient(90deg,#16233a,#2f4a75 50%,#16233a)}
+  #ribbon{background:linear-gradient(#060708,#151619 70%,#232428);border-radius:3px;touch-action:none;box-shadow:inset 0 2px 4px #000,0 1px 0 #ffffff22}
+  #rbDot{border-radius:2px;background:#ff8a2e;opacity:0;transition:opacity .2s;box-shadow:0 0 8px #ff8a2e}
+  #lever{touch-action:none;cursor:grab}
+  .util{cursor:pointer;touch-action:none;border-radius:3px;background:#141a27;border:1px solid #3a4867;color:#cfd8ea;font-weight:700;font-size:10px;letter-spacing:.06em;
+    display:flex;align-items:center;justify-content:center;white-space:nowrap}
+  .util.on{border-color:#ff7a1c;color:#ffb37a}
 </style>
 </head>
 <body>
 <div id="rot">rotate to landscape for the full panel</div>
 <div id="stage"><div id="panel"></div></div>
 <script id="dsp" type="text/plain">
-/* ===== DSP core: shared by the AudioWorklet and the ScriptProcessor fallback ===== */
-const PK=['lfo1w','lfo1rate','lfo1fade','lfo2rate','o1w','o1c1','o1c2','o2w','sync','o2range','o2fine','o2c1','o2c2','xmod','bal','ring',
- 'pLfo','pEnv','pA','pD','pDest','fType','fSlope','cut','res','kf','fLfo','fEnv','fA','fD','fS','fR','level','aLfo2','aA','aD','aS','aR',
- 'mono','legato','porta','portaT','velo','bend','mod','cutMod','pitchMod','xmodAdd'];
+/* ===== DSP core: shared by the AudioWorklet and the ScriptProcessor fallback (stereo out) ===== */
+const PK=['lfo1w','lfo1rate','lfo1fade','lfo2rate','l2Pitch','l2Filter','l2Amp','o1w','o1c1','o1c2','o2w','sync','o2range','o2fine','o2c1','o2c2','xmod','bal','ring',
+ 'pLfo','pEnv','pA','pD','pDest','oscShift','fType','fSlope','cut','res','kf','fLfo','fEnv','fA','fD','fS','fR','level','aLfo1','panMode','aA','aD','aS','aR',
+ 'mono','legato','porta','portaT','velo','velDest','bendR','bend','mod','cutMod','pitchMod','xmodAdd'];
 const IX={}; PK.forEach((k,i)=>IX[k]=i);
-const SMK=['o1c1','o1c2','o2c1','o2c2','xmod','bal','cut','res','kf','fLfo','fEnv','level','aLfo2','pLfo','pEnv','o2fine','bend','mod','cutMod','pitchMod','xmodAdd'];
+const SMK=['o1c1','o1c2','o2c1','o2c2','xmod','bal','cut','res','kf','fLfo','fEnv','level','aLfo1','pLfo','pEnv','o2fine','l2Pitch','l2Filter','l2Amp','bend','mod','cutMod','pitchMod','xmodAdd'];
 const SMI=SMK.map(k=>IX[k]); const SMF=new Uint8Array(PK.length); SMI.forEach(i=>SMF[i]=1);
 /* published super-saw analysis curves (detune polynomial, side offsets, mix law) */
 const SSC=[10028.7312,-50818.8652,111363.4808,-138150.6761,106649.6679,-53046.9642,17019.9518,-3425.0836,404.2703,-24.1878,0.6717,0.0030];
@@ -68,17 +75,18 @@ function blep(t,dt){ if(t<dt){ t/=dt; return t+t-t*t-1; } if(t>1-dt){ t=(t-1)/dt
 function sc(x){ if(x>3) x=3; else if(x<-3) x=-3; return x*(27+x*x)/(27+9*x*x); }
 function fold(x){ x=(x+1)*0.25; x-=Math.floor(x); return 1-4*Math.abs(x-0.5); }
 function tri(p){ return 4*Math.abs(p-0.5)-1; }
-function mkVoice(){ return {note:-1,vel:0,gate:false,ord:0,pitch:60,target:60,ph:new Float64Array(7),p2:0,fb:new Float32Array(8192),fw:0,hp:0,nz:0,nz2:0,
-  aS:0,aV:0,fS:0,fV:0,pS:0,pV:0,a1:0,a2:0,b1:0,b2:0,g:0.1,k:2,cnt:0,lt:0,fade:1,pend:null,kill:false,wrap:false,o2p:0}; }
+const cl=(v,a,b)=>v<a?a:v>b?b:v;
+function mkVoice(){ return {note:-1,vel:0,gate:false,ord:0,pitch:60,target:60,ph:new Float64Array(7),p2:0,fb:new Float32Array(8192),fw:0,hp:0,n1:0,n2:0,
+  aS:0,aV:0,fS:0,fV:0,pS:0,pV:0,a1:0,a2:0,b1:0,b2:0,g:0.1,k:2,ng:0.1,nk:2,cnt:0,lt:0,fade:1,pend:null,kill:false,wrap:false,o2p:0}; }
 class Core{
   constructor(SR,nv){ this.SR=SR; this.P=new Float64Array(PK.length); this.S=new Float64Array(PK.length); this.V=[]; for(let i=0;i<nv;i++) this.V.push(mkVoice());
-    this.l1p=0; this.l2p=0; this.sh=0; this.ord=0; this.lastPitch=-1; this.stack=[]; this.set('level',100); this.set('cut',127); this.set('aS',127); }
+    this.l1p=0; this.l2p=0; this.sh=0; this.ord=0; this.lastPitch=-1; this.stack=[]; this.set('level',100); this.set('cut',127); this.set('aS',127); this.set('bendR',2); }
   set(k,v){ const i=IX[k]; if(i===undefined||typeof v!=='number'||!isFinite(v)) return; const was=this.P[i]; this.P[i]=v; if(!SMF[i]) this.S[i]=v;
     if((k==='mono'||k==='legato')&&was!==v) this.allOff(true); }
   trigger(v,n,vel,fresh){
     const P=this.P; v.note=n; v.vel=vel; v.gate=true; v.ord=++this.ord; v.target=n; v.kill=false;
     v.pitch=(P[IX.porta]>0.5&&this.lastPitch>=0)?this.lastPitch:n; this.lastPitch=n;
-    if(fresh){ v.aV=0; for(let k=0;k<7;k++) v.ph[k]=Math.random(); v.p2=0; v.fb.fill(0); v.hp=0; v.nz=v.nz2=0; v.a1=v.a2=v.b1=v.b2=0; v.fV=0; v.cnt=0; }
+    if(fresh){ v.aV=0; for(let k=0;k<7;k++) v.ph[k]=Math.random(); v.p2=0; v.fb.fill(0); v.hp=0; v.n1=v.n2=0; v.a1=v.a2=v.b1=v.b2=0; v.fV=0; v.cnt=0; }
     v.aS=1; v.fS=1; v.pS=1; v.pV=0; v.lt=0; v.fade=1;
   }
   noteOn(n,vel){
@@ -105,7 +113,7 @@ class Core{
   }
   allOff(hard){ this.stack=[]; for(const v of this.V){ v.gate=false; v.pend=null; if(v.aS){ v.aS=4; v.fS=4; if(hard) v.kill=true; } } }
   reset(){ for(const v of this.V){ const fb=v.fb; Object.assign(v,mkVoice()); v.fb=fb; fb.fill(0); } }
-  render(out,a,b){
+  render(L,R,a,b){
     const P=this.P,S=this.S,SR=this.SR,iSR=1/SR,V=this.V;
     let act=false; for(const v of V) if(v.aS||v.pend){ act=true; break; }
     if(!act){ for(let j=0;j<SMI.length;j++) S[SMI[j]]=P[SMI[j]]; return; }
@@ -115,17 +123,21 @@ class Core{
     const fInc=1/(tm(P[IX.fA])*SR), fDc=Math.exp(-5/(tm(P[IX.fD])*SR)), fSl=P[IX.fS]/127, fRc=Math.exp(-5/(tm(P[IX.fR])*SR));
     const pInc=1/(tm(P[IX.pA])*SR), pDc=Math.exp(-5/(tm(P[IX.pD])*SR));
     const r1=0.05*Math.pow(400,P[IX.lfo1rate]/127)*iSR, r2=0.05*Math.pow(400,P[IX.lfo2rate]/127)*iSR, fadeT=P[IX.lfo1fade]/127*4;
-    const lw=P[IX.lfo1w]|0,o1w=P[IX.o1w]|0,o2w=P[IX.o2w]|0,sync=P[IX.sync]>0.5,ring=P[IX.ring]>0.5,pDest=P[IX.pDest]|0,ft=P[IX.fType]|0,f24=P[IX.fSlope]>0.5,velo=P[IX.velo]>0.5;
-    const porta=P[IX.porta]>0.5, pc=porta?Math.exp(-3/(0.002*Math.pow(1000,P[IX.portaT]/127)*SR)):0, o2semi=P[IX.o2range], kd=1-Math.exp(-1/(0.004*SR));
+    const lw=P[IX.lfo1w]|0,o1w=P[IX.o1w]|0,o2w=P[IX.o2w]|0,sync=P[IX.sync]>0.5,ring=P[IX.ring]>0.5,pDest=P[IX.pDest]|0,ft=P[IX.fType]|0,f24=P[IX.fSlope]>0.5;
+    const velo=P[IX.velo]>0.5, vD=P[IX.velDest]|0, velLvl=velo&&vD!==1, velCut=velo&&vD!==0, pm=P[IX.panMode]|0, bR=P[IX.bendR];
+    const porta=P[IX.porta]>0.5, pc=porta?Math.exp(-3/(0.002*Math.pow(1000,P[IX.portaT]/127)*SR)):0, kd=1-Math.exp(-1/(0.004*SR));
+    const rg=P[IX.o2range]|0, shiftS=12*(P[IX.oscShift]|0);
     for(let i=a;i<b;i++){
       for(let j=0;j<SMI.length;j++){ const q=SMI[j]; S[q]+=(P[q]-S[q])*smk; }
       this.l1p+=r1; if(this.l1p>=1){ this.l1p-=1; this.sh=Math.random()*2-1; }
-      const p1=this.l1p, l1=lw===0?-tri(p1):lw===1?2*p1-1:lw===2?(p1<0.5?1:-1):this.sh;
-      this.l2p+=r2; if(this.l2p>=1) this.l2p-=1; const l2=Math.sin(6.283185307*this.l2p);
-      const c11=S[IX.o1c1]/127,c12=S[IX.o1c2]/127,c21=S[IX.o2c1]/127,c22=S[IX.o2c2]/127,xm=S[IX.xmod]/127+S[IX.xmodAdd],bal=S[IX.bal]/63;
-      const g1=bal>0?1-bal:1, g2=bal<0?1+bal:1, bend=S[IX.bend]*2+S[IX.pitchMod], modv=S[IX.mod], pL=S[IX.pLfo]/63*12, pE=S[IX.pEnv]/63*36;
-      const cutN=S[IX.cut]/127, resN=S[IX.res]/127, kf=S[IX.kf]/63, fL=S[IX.fLfo]/63, fE=S[IX.fEnv]/63, lvl=S[IX.level]/127, trd=S[IX.aLfo2]/63, cm=S[IX.cutMod];
-      let sum=0;
+      const p1=this.l1p, l1=lw===0?-tri(p1):lw===1?1-2*p1:lw===2?(p1<0.5?1:-1):this.sh;
+      this.l2p+=r2; if(this.l2p>=1) this.l2p-=1; const l2=-tri(this.l2p);
+      const c11=S[IX.o1c1]/127,c12=S[IX.o1c2]/127,c21=S[IX.o2c1]/127,c22=S[IX.o2c2]/127,bal=S[IX.bal]/64;
+      const g1=bal>0?1-bal:1, g2=bal<0?1+bal:1, bend=S[IX.bend]*bR+S[IX.pitchMod], modv=S[IX.mod], pL=S[IX.pLfo]/64, pE=S[IX.pEnv]/64;
+      const m2=modv*l2, l2P=m2*S[IX.l2Pitch]/64*2, l2F=m2*S[IX.l2Filter]/64*3, l2A=m2*S[IX.l2Amp]/64;
+      const cutN=S[IX.cut]/127, resN=S[IX.res]/127, kf=S[IX.kf]/64, fL=S[IX.fLfo]/64, fE=S[IX.fEnv]/64, lvl=S[IX.level]/127, aL1=S[IX.aLfo1]/64, cm=S[IX.cutMod];
+      const fine=S[IX.o2fine], o2semi=rg<=-25?-48*(1-(fine+64)/127):rg>=25?48*(fine+64)/127:rg+fine/64*0.5;
+      let sL=0,sR=0;
       for(let vi=0;vi<V.length;vi++){ const v=V[vi];
         if(v.aS===0&&!v.pend) continue;
         if(v.pend){ v.fade-=1/(0.003*SR); if(v.fade<=0){ const pd=v.pend; v.pend=null; this.trigger(v,pd.n,pd.v,true); if(pd.off){ v.gate=false; v.aS=4; v.fS=4; } } }
@@ -137,44 +149,56 @@ class Core{
         if(v.pS===1){ v.pV+=pInc; if(v.pV>=1){ v.pV=1; v.pS=2; } } else if(v.pS===2) v.pV*=pDc;
         v.lt+=iSR; const fd=fadeT>0?(v.lt<fadeT?v.lt/fadeT:1):1, l1v=l1*fd;
         v.pitch=porta?v.target+(v.pitch-v.target)*pc:v.target;
-        const com=v.pitch+bend+l1v*pL+modv*l1*0.6, pe=v.pV*pE;
-        const s1=com+(pDest===0?pe:0), s2=com+pe+o2semi+S[IX.o2fine]/63;
+        /* LFO 1 & ENV DESTINATION: OSC 1+2, OSC 2, or X-MOD depth */
+        const lm=l1v*pL, em=v.pV*pE;
+        const com=v.pitch+shiftS+bend+l2P;
+        const s1=com+(pDest===0?lm*12+em*36:0), s2=com+(pDest!==2?lm*12+em*36:0)+o2semi;
+        const xm=S[IX.xmod]/127+S[IX.xmodAdd]+(pDest===2?lm+em:0);
         const f1=440*Math.exp((s1-69)*0.0577622650), f2=440*Math.exp((s2-69)*0.0577622650);
-        /* ---- osc 2 ---- */
+        /* ---- osc 2: SQR (PWM) / SAW / TRI, CTRL 1 = pulse width, CTRL 2 = PWM depth (LFO 1) ---- */
         const dt2=Math.min(f2*iSR,0.45); if(sync&&v.wrap&&o1w!==2) v.p2=0;
         v.p2+=dt2; if(v.p2>=1) v.p2-=1; const t2=v.p2; let o2;
         if(o2w===0){ let pw=0.5-c21*0.45+c22*l1v*0.45; pw=pw<0.05?0.05:pw>0.95?0.95:pw; let q=t2-pw; if(q<0) q+=1; o2=(t2<pw?1:-1)+blep(t2,dt2)-blep(q,dt2); }
         else if(o2w===1) o2=2*t2-1-blep(t2,dt2);
-        else if(o2w===2) o2=tri(t2);
-        else o2=Math.random()*2-1;
+        else o2=tri(t2);
         /* ---- osc 1 (cross mod = osc 2 into osc 1 frequency) ---- */
         let fm=f1*(1+xm*v.o2p*2.5); if(fm<0) fm=0; const dt1=Math.min(fm*iSR,0.45); v.o2p=o2; v.wrap=false; let o1=0;
-        if(o1w===0){ const det=ssDet(c11), cg=-0.55366*c12+0.99785, sg=-0.73764*c12*c12+1.2841*c12+0.044372; let s=0;
+        if(o1w===0){ /* SUPER SAW: CTRL1 detune, CTRL2 mix */
+          const det=ssDet(c11), cg=-0.55366*c12+0.99785, sg=-0.73764*c12*c12+1.2841*c12+0.044372; let s=0;
           for(let k=0;k<7;k++){ const d=dt1*(1+det*SSO[k]); let ph=v.ph[k]+d; if(ph>=1){ ph-=1; if(k===3) v.wrap=true; } v.ph[k]=ph; s+=(2*ph-1-blep(ph,d))*(k===3?cg:sg); }
           const hc=Math.min(1,6.283*f1*iSR); v.hp+=(s-v.hp)*hc; o1=(s-v.hp)*0.42; }
+        else if(o1w===2){ /* NOISE: CTRL1 cutoff freq, CTRL2 resonance (up to self-oscillation) */
+          if((v.cnt&7)===0){ const fc=Math.min(SR*0.45,40*Math.pow(400,c11)); v.ng=Math.tan(Math.PI*fc*iSR); v.nk=2-1.99*c12; }
+          const w=Math.random()*2-1, g=v.ng, k=v.nk, A1=1/(1+g*(g+k)), A2=g*A1, A3=g*A2, v3=w-v.n2, v1=A1*v.n1+A2*v3, v2=v.n2+A2*v.n1+A3*v3;
+          v.n1=2*v1-v.n1; v.n2=2*v2-v.n2; o1=sc(v2*(0.6+c12*1.4)+ (1-c12)*0.15*w); v.ph[3]+=dt1; if(v.ph[3]>=1){ v.ph[3]-=1; v.wrap=true; } }
         else { let ph=v.ph[3]+dt1; if(ph>=1){ ph-=1; v.wrap=true; } v.ph[3]=ph;
-          if(o1w===1){ let sh=c11+c12*l1v; sh=sh<0?0:sh; o1=fold(tri(ph)*(1+4*sh)); }
-          else if(o1w===2){ const w=Math.random()*2-1; v.nz+=(w-v.nz)*(1-0.97*c11); v.nz2+=(v.nz-v.nz2)*c12*0.25; o1=(v.nz-v.nz2)*(1+c11*1.5); }
-          else if(o1w===3){ const saw=2*ph-1-blep(ph,dt1); let L=SR/Math.max(fm,5)*(1+c12*0.03); L=L<2?2:L>8000?8000:L;
-            let r=v.fw-L; if(r<0) r+=8192; const ri=r|0, fr=r-ri, rd=v.fb[ri]*(1-fr)+v.fb[(ri+1)&8191]*fr;
-            const y=sc(saw+c11*0.95*rd); v.fb[v.fw]=y; v.fw=(v.fw+1)&8191; o1=y*0.8; }
-          else if(o1w===4){ let pw=0.5-c11*0.45+c12*l1v*0.45; pw=pw<0.05?0.05:pw>0.95?0.95:pw; let q=ph-pw; if(q<0) q+=1; o1=(ph<pw?1:-1)+blep(ph,dt1)-blep(q,dt1); }
-          else if(o1w===5){ const d4=dt1*(1+c11*0.03); let p4=v.ph[4]+d4; if(p4>=1) p4-=1; v.ph[4]=p4; o1=(2*ph-1-blep(ph,dt1)+c12*(2*p4-1-blep(p4,d4)))/(1+c12*0.6); }
-          else { let q2=ph*2; q2-=Math.floor(q2); let q4=ph*4; q4-=Math.floor(q4); o1=(tri(ph)+c11*0.5*tri(q2)+c12*0.3*tri(q4))/(1+c11*0.4+c12*0.2); } }
+          if(o1w===1){ /* TRIANGLE MOD: CTRL1 offset, CTRL2 LFO 1 depth */ let sh=c11+c12*l1v; sh=sh<0?0:sh; o1=fold(tri(ph)*(1+3.2*sh)+sh*0.6); }
+          else if(o1w===3){ /* FEEDBACK OSC: CTRL1 harmonics, CTRL2 feedback amount */
+            const saw=2*ph-1-blep(ph,dt1), hN=1+Math.round(c11*7); let Ld=SR/Math.max(fm,5)/hN*(1+0.004*c11); Ld=Ld<2?2:Ld>8000?8000:Ld;
+            let r=v.fw-Ld; if(r<0) r+=8192; const ri=r|0, fr=r-ri, rd=v.fb[ri]*(1-fr)+v.fb[(ri+1)&8191]*fr;
+            const y=sc(saw+c12*0.96*rd); v.fb[v.fw]=y; v.fw=(v.fw+1)&8191; o1=y*0.8; }
+          else if(o1w===4){ /* SQUARE: CTRL1 PW, CTRL2 PWM depth */ let pw=0.5-c11*0.45+c12*l1v*0.45; pw=pw<0.05?0.05:pw>0.95?0.95:pw; let q=ph-pw; if(q<0) q+=1; o1=(ph<pw?1:-1)+blep(ph,dt1)-blep(q,dt1); }
+          else if(o1w===5){ /* SAW: CTRL1 shape (second ramp offset), CTRL2 LFO 1 depth */ const d=cl(0.5+0.45*(c12*l1v),0.05,0.95); let q=ph+d; if(q>=1) q-=1;
+            o1=(2*ph-1-blep(ph,dt1)+c11*(2*q-1-blep(q,dt1)))/(1+c11*0.5); }
+          else { /* TRIANGLE: CTRL1 shape (skew toward ramp), CTRL2 LFO 1 depth */ const pk=cl(0.5-0.47*(c11+c12*l1v),0.03,0.97); o1=ph<pk?-1+2*ph/pk:1-2*(ph-pk)/(1-pk); } }
+        v.cnt++;
         if(ring) o2=o1*o2;
         let x=sc((o1*g1+o2*g2)*0.75);
-        /* ---- filter: TPT state variable, -12 dB or -24 dB (two cascaded stages) ---- */
-        if((v.cnt++&7)===0){ const oct=4.3219+cutN*9.9658+kf*(v.pitch-60)/12+v.fV*fE*7+l1v*fL*3+cm*4; let fc=Math.exp(oct*0.6931472);
+        /* ---- filter: TPT state variable, -12 dB or -24 dB (two cascaded stages), HPF / BPF / LPF ---- */
+        if((v.cnt&7)===1){ const oct=4.3219+cutN*9.9658+kf*(v.pitch-60)/12+v.fV*fE*7+l1v*fL*3+cm*4+l2F+(velCut?(v.vel-0.7)*2.5:0); let fc=Math.exp(oct*0.6931472);
           fc=fc<15?15:fc>SR*0.45?SR*0.45:fc; v.g=Math.tan(Math.PI*fc*iSR); v.k=2-1.95*resN; }
         const g=v.g;
         if(f24){ const k0=1.41, A1=1/(1+g*(g+k0)), A2=g*A1, A3=g*A2; const v3=x-v.b2, v1=A1*v.b1+A2*v3, v2=v.b2+A2*v.b1+A3*v3; v.b1=2*v1-v.b1; v.b2=2*v2-v.b2;
           x=ft===2?v2:ft===1?v1:x-k0*v1-v2; }
         { const k=v.k, A1=1/(1+g*(g+k)), A2=g*A1, A3=g*A2; const v3=x-v.a2, v1=A1*v.a1+A2*v3, v2=v.a2+A2*v.a1+A3*v3; v.a1=2*v1-v.a1; v.a2=2*v2-v.a2;
           x=ft===2?v2:ft===1?v1*(0.5+k*0.5):x-k*v1-v2; }
-        let tr=1+trd*0.5*l2; if(tr<0) tr=0;
-        sum+=sc(x)*v.aV*lvl*(velo?0.25+0.75*v.vel:1)*tr*(v.pend?Math.max(v.fade,0):1);
+        /* ---- amp: level, LFO 1 depth (tremolo) or pan (AUTO = LFO 1 auto-pan, MANUAL = fixed pan), LFO 2 amp depth ---- */
+        let tr=1+(pm===0?aL1*0.5*l1v:0)+l2A*0.5; if(tr<0) tr=0;
+        const y=sc(x)*v.aV*lvl*(velLvl?0.25+0.75*v.vel:1)*tr*(v.pend?Math.max(v.fade,0):1);
+        const pan=pm===1?cl(aL1*l1v,-1,1):pm===2?cl(aL1,-1,1):0, a_=(pan+1)*0.7853982;
+        sL+=y*Math.cos(a_)*1.4142; sR+=y*Math.sin(a_)*1.4142;
       }
-      out[i]+=sum*0.3;
+      L[i]+=sL*0.3; R[i]+=sR*0.3;
     }
   }
 }
@@ -185,77 +209,87 @@ class Eng{
     if(d.type==='panic'){ this.ev.length=0; for(const c of this.cores) c.allOff(true); return; }
     const t=d.t||0; let i=this.ev.length; while(i>0&&this.ev[i-1].t>t) i--; this.ev.splice(i,0,d); }
   exec(d){ const c=this.cores[d.part]; if(!c) return; if(d.type==='on') c.noteOn(d.n,d.v); else if(d.type==='off') c.noteOff(d.n); else if(d.type==='alloff') c.allOff(false); }
-  render(out,len,t0){ out.fill(0); let i=0; const SR=this.SR;
+  render(L,R,len,t0){ L.fill(0); R.fill(0); let i=0; const SR=this.SR;
     while(i<len){ let end=len; while(this.ev.length){ const e=this.ev[0], fi=Math.ceil((e.t-t0)*SR); if(fi<=i){ this.ev.shift(); this.exec(e); } else { end=Math.min(len,fi); break; } }
-      for(const c of this.cores) c.render(out,i,end); i=end; }
-    let bad=false; for(let j=0;j<len;j++){ const x=out[j]; if(x!==x||x===Infinity||x===-Infinity){ out[j]=0; bad=true; } }
+      for(const c of this.cores) c.render(L,R,i,end); i=end; }
+    let bad=false; for(let j=0;j<len;j++){ const x=L[j]+R[j]; if(x!==x||x===Infinity||x===-Infinity){ L[j]=0; R[j]=0; bad=true; } }
     if(bad){ this.nan++; for(const c of this.cores) c.reset(); } }
 }
 </script>
+
 <script>
 'use strict';
 /* =============== parameters (display units, like the original's 0-127 / -63..+63) =============== */
-const OSC1W=['SUPER SAW','TRIANGLE MOD','NOISE','FEEDBACK OSC','SQUARE (PWM)','SAW','TRIANGLE'];
-const OSC2W=['SQUARE (PWM)','SAW','TRIANGLE','NOISE'];
-const LFOW=['TRI','SAW','SQR','S/H'];
+const OSC1W=['SUPER SAW','TRIANGLE MOD','NOISE','FEEDBACK OSC','SQR (PW)','SAW','TRI'];
+const OSC1C=[['DETUNE','MIX'],['OFFSET','LFO1 DEPTH'],['CUTOFF FREQ','RESONANCE'],['HARMONICS','FEEDBACK'],['PW','PWM DEPTH'],['SHAPE','LFO1 DEPTH'],['SHAPE','LFO1 DEPTH']];
+const OSC2W=['SQR (PW)','SAW','TRI'];
+const LFOW=['TRI','SAW','SQR','RANDOM'];
 const MFX=['SUPER CHORUS SLW','SUPER CHORUS MID','SUPER CHORUS FST','SUPER CHORUS CLR','FLANGER SLOW','FLANGER DEEP','FLANGER FAST',
-  'DEEP PHASING SLW','JET PHASING','TWISTING','FREEZE PHASE 1','FREEZE PHASE 2','DISTORTION'];
+  'DEEP PHASING SLW','JET PHASING','TWISTING','FREEZE PHASE 1','FREEZE PHASE 2'];
 const DLY=['PANNING L>R','PANNING R>L','PANNING SHORT','MONO SHORT','MONO LONG'];
 const ARPM=['UP','DOWN','UP&DOWN','RANDOM'];
 const ARPP=[{n:'1/4',d:1},{n:'1/6',d:1.5},{n:'1/8',d:2},{n:'1/12',d:3},{n:'1/16',d:4},{n:'1/32',d:8},
-  {n:'SEQ-A',d:4,g:[1,0,1,1,0,1,1,0,1,0,1,1,0,1,0,1]},{n:'SEQ-B',d:4,g:[0,0,1,0,0,0,1,0,0,0,1,0,0,1,1,0]},
-  {n:'SEQ-C',d:4,g:[1.8,0,1,.5,1.8,0,1,.5,1.8,0,1,.5,1,1,1,.5]},{n:'ECHO',d:4,echo:true}];
-const SPEC={ // key: [label, min, max, default, scope]  scope p=patch(part) f=effects g=global
-  lfo1w:['LFO 1 WAVEFORM',0,3,0,'p'],lfo1rate:['LFO 1 RATE',0,127,70,'p'],lfo1fade:['LFO 1 FADE',0,127,0,'p'],lfo2rate:['LFO 2 RATE',0,127,64,'p'],
+  {n:'SEQ-A 1',d:4,g:[1,0,1,1,0,1,1,0,1,0,1,1,0,1,0,1]},{n:'SEQ-B 1',d:4,g:[0,0,1,0,0,0,1,0,0,0,1,0,0,1,1,0]},
+  {n:'SEQ-C 1',d:4,g:[1.8,0,1,.5,1.8,0,1,.5,1.8,0,1,.5,1,1,1,.5]},{n:'ECHO 1',d:4,echo:true},
+  {n:'PORTA-A 1',d:4,g:[1.9,1.9,1.9,1.9]},{n:'PORTA-B 1',d:4,g:[1.9,0,1.9,1.9,0,1.9,1.9,0]},{n:'SEQ-D 1',d:4,g:[1,1,0,1,1,0,1,0,1,1,0,1,0,1,1,1]},
+  {n:'MUTE 1',d:4,g:[1.8,0,0,1,0,0,1,0,1.8,0,0,1,0,0,1,0]},{n:'STRUMMING 1',d:8,g:[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]},
+  {n:'REFRAIN 1',d:2,g:[1.8,1,1.8,0,1,1.8,0,1]},{n:'PERCUSSION',d:4,g:[1.8,0,.5,1,1.8,0,1,.5,1.8,.5,0,1,1.8,0,1,1]}];
+const SPEC={ // key: [label, min, max, default, scope]  scope p=patch(part) f=effects g=global; bipolar = -64..+63 like the original
+  lfo1w:['LFO 1 WAVEFORM',0,3,0,'p'],lfo1rate:['LFO 1 RATE',0,127,70,'p'],lfo1fade:['LFO 1 FADE',0,127,0,'p'],
+  lfo2rate:['LFO 2 RATE',0,127,72,'p'],l2Pitch:['LFO 2 DEPTH PITCH',-64,63,10,'p'],l2Filter:['LFO 2 DEPTH FILTER',-64,63,0,'p'],l2Amp:['LFO 2 DEPTH AMP',-64,63,0,'p'],
   o1w:['OSC 1 WAVEFORM',0,6,0,'p'],o1c1:['OSC 1 CTRL 1',0,127,90,'p'],o1c2:['OSC 1 CTRL 2',0,127,100,'p'],
-  o2w:['OSC 2 WAVEFORM',0,3,1,'p'],sync:['OSC 2 SYNC',0,1,0,'p'],o2range:['OSC 2 RANGE',-24,24,0,'p'],o2fine:['OSC 2 FINE/WIDE',-63,63,0,'p'],
-  o2c1:['OSC 2 CTRL 1',0,127,64,'p'],o2c2:['OSC 2 CTRL 2',0,127,0,'p'],xmod:['CROSS MOD DEPTH',0,127,0,'p'],
-  bal:['OSC BALANCE',-63,63,-63,'p'],ring:['RING',0,1,0,'p'],pLfo:['PITCH LFO1 DEPTH',-63,63,0,'p'],pEnv:['PITCH ENV DEPTH',-63,63,0,'p'],
-  pA:['PITCH ENV A',0,127,0,'p'],pD:['PITCH ENV D',0,127,40,'p'],pDest:['PITCH ENV DEST',0,1,0,'p'],
+  o2w:['OSC 2 WAVEFORM',0,2,1,'p'],sync:['OSC 2 SYNC',0,1,0,'p'],o2range:['OSC 2 RANGE',-25,25,0,'p'],o2fine:['OSC 2 FINE/WIDE',-64,63,0,'p'],
+  o2c1:['OSC 2 PULSE WIDTH',0,127,64,'p'],o2c2:['OSC 2 PWM DEPTH',0,127,0,'p'],xmod:['X-MOD DEPTH',0,127,0,'p'],
+  bal:['OSC BALANCE',-64,63,-64,'p'],ring:['RING',0,1,0,'p'],pLfo:['OSC LFO 1 DEPTH',-64,63,0,'p'],pEnv:['OSC ENV DEPTH',-64,63,0,'p'],
+  pA:['OSC ENV A',0,127,0,'p'],pD:['OSC ENV D',0,127,40,'p'],pDest:['LFO1&ENV DEST',0,2,0,'p'],oscShift:['OSC SHIFT',-2,2,0,'p'],
   fType:['FILTER TYPE',0,2,2,'p'],fSlope:['FILTER SLOPE',0,1,1,'p'],cut:['CUTOFF FREQ',0,127,90,'p'],res:['RESONANCE',0,127,20,'p'],
-  kf:['KEY FOLLOW',-63,63,20,'p'],fLfo:['FILTER LFO1 DPTH',-63,63,0,'p'],fEnv:['FILTER ENV DPTH',-63,63,20,'p'],
+  kf:['KEY FOLLOW',-64,63,20,'p'],fLfo:['FILTER LFO 1 DEPTH',-64,63,0,'p'],fEnv:['FILTER ENV DEPTH',-64,63,20,'p'],
   fA:['FILTER ENV A',0,127,0,'p'],fD:['FILTER ENV D',0,127,60,'p'],fS:['FILTER ENV S',0,127,70,'p'],fR:['FILTER ENV R',0,127,50,'p'],
-  level:['AMP LEVEL',0,127,100,'p'],aLfo2:['AMP LFO2 DEPTH',-63,63,0,'p'],aA:['AMP ENV A',0,127,0,'p'],aD:['AMP ENV D',0,127,80,'p'],
+  level:['AMP LEVEL',0,127,100,'p'],aLfo1:['AMP LFO1 DEPTH/PAN',-64,63,0,'p'],panMode:['PAN MODE',0,2,0,'p'],aA:['AMP ENV A',0,127,0,'p'],aD:['AMP ENV D',0,127,80,'p'],
   aS:['AMP ENV S',0,127,110,'p'],aR:['AMP ENV R',0,127,55,'p'],
-  mono:['MONO',0,1,0,'p'],legato:['LEGATO',0,1,0,'p'],porta:['PORTAMENTO',0,1,0,'p'],portaT:['PORTA TIME',0,127,40,'p'],velo:['VELOCITY',0,1,1,'p'],
-  bass:['TONE BASS',-63,63,0,'f'],treble:['TONE TREBLE',-63,63,0,'f'],mfx:['MULTI-FX TYPE',0,12,0,'f'],mfxLvl:['MULTI-FX LEVEL',0,127,60,'f'],
+  mono:['MONO',0,1,0,'p'],legato:['LEGATO',0,1,0,'p'],porta:['PORTAMENTO',0,1,0,'p'],portaT:['PORTAMENTO TIME',0,127,40,'p'],velo:['VELOCITY',0,1,1,'p'],
+  velDest:['VELOCITY ASSIGN',0,2,0,'p'],bendR:['BEND RANGE',0,12,2,'p'],
+  bass:['TONE BASS',-64,63,0,'f'],treble:['TONE TREBLE',-64,63,0,'f'],mfx:['CHORUS TYPE',0,11,0,'f'],mfxLvl:['CHORUS LEVEL',0,127,60,'f'],
   dly:['DELAY TYPE',0,4,0,'f'],dTime:['DELAY TIME',0,127,64,'f'],dFb:['DELAY FEEDBACK',0,127,50,'f'],dLvl:['DELAY LEVEL',0,127,40,'f'],
-  vol:['MASTER VOLUME',0,127,100,'g'],tempo:['TEMPO',20,250,138,'g'],arpOn:['ARPEGGIO',0,1,0,'g'],arpMode:['ARP MODE',0,3,0,'g'],arpRange:['ARP RANGE',0,3,1,'g'],
+  vol:['VOLUME',0,127,100,'g'],tempo:['TEMPO',20,250,138,'g'],arpOn:['ARPEGGIO',0,1,0,'g'],arpMode:['ARP MODE',0,3,0,'g'],arpRange:['ARP RANGE',0,3,1,'g'],
   arpHold:['ARP HOLD',0,1,0,'g'],arpPat:['BEAT PATTERN',0,ARPP.length-1,4,'g'],keyMode:['KEY MODE',0,2,0,'g'],panel:['PANEL SELECT',0,1,0,'g'],
-  oct:['OCTAVE SHIFT',-3,3,0,'g'],rbAsn:['RIBBON ASSIGN',0,2,0,'g'],mSet:['MOTION SET',0,1,0,'g'],
+  oct:['KEYBOARD SHIFT',-3,3,0,'g'],rbAsn:['RIBBON ASSIGN',0,2,0,'g'],rbRel:['RIBBON RELATIVE',0,1,0,'g'],rbHold:['RIBBON HOLD',0,1,0,'g'],
+  lfo2Sel:['DEPTH SELECT',0,2,0,'g'],splitPt:['SPLIT POINT',24,96,60,'g'],l2Depth:['LFO 2 DEPTH',-64,63,0,'v'],mSet:['MOTION SET',0,1,0,'g'],
 };
 const PKEYS=Object.keys(SPEC).filter(k=>SPEC[k][4]==='p'), FKEYS=Object.keys(SPEC).filter(k=>SPEC[k][4]==='f');
-const SELNAMES={lfo1w:LFOW,o1w:OSC1W,o2w:OSC2W,fType:['HPF','BPF','LPF'],fSlope:['-12dB','-24dB'],pDest:['OSC 1+2','OSC 2'],mfx:MFX,dly:DLY,
+const SELNAMES={lfo1w:LFOW,o1w:OSC1W,o2w:OSC2W,fType:['HPF','BPF','LPF'],fSlope:['-12dB','-24dB'],pDest:['OSC 1+2','OSC 2','X-MOD DEPTH'],mfx:MFX,dly:DLY,
   arpMode:ARPM,arpRange:['1 OCT','2 OCT','3 OCT','4 OCT'],arpPat:ARPP.map(p=>p.n),keyMode:['SINGLE','DUAL','SPLIT'],panel:['UPPER','LOWER'],
-  rbAsn:['CUTOFF','PITCH','X-MOD'],mSet:['SET 1','SET 2']};
+  rbAsn:['CUTOFF FREQ','PITCH BEND','X-MOD DEPTH'],mSet:['1','2'],panMode:['OFF (LFO1 DEPTH)','AUTO PAN','MANUAL PAN'],velDest:['LEVEL','CUTOFF','LEVEL+CUTOFF'],
+  lfo2Sel:['PITCH','FILTER','AMP']};
 const defPatch=()=>{ const o={}; for(const k of PKEYS) o[k]=SPEC[k][3]; return o; };
 const defFx=()=>{ const o={}; for(const k of FKEYS) o[k]=SPEC[k][3]; return o; };
 /* presets: patch (osc/filter/amp) + fx + a demo chord for the arpeggiator */
 const PRESETS=[
  {name:'SUPERSAW LEAD',p:{o1w:0,o1c1:92,o1c2:105,o2w:1,o2range:12,bal:-30,cut:92,res:22,kf:25,fEnv:18,fD:60,fS:80,fR:55,aA:0,aD:80,aS:115,aR:60,pLfo:1,lfo1rate:78,lfo1fade:40},
   f:{mfx:0,mfxLvl:70,dly:0,dTime:72,dFb:52,dLvl:42,bass:6,treble:8},chord:[69,72,76,79],arp:{arpPat:4,arpMode:0,arpRange:1}},
- {name:'TRANCE PLUCK',p:{o1w:0,o1c1:72,o1c2:92,o2w:1,bal:-63,cut:38,res:38,kf:30,fEnv:46,fA:0,fD:44,fS:0,fR:40,aA:0,aD:58,aS:0,aR:45},
+ {name:'TRANCE PLUCK',p:{o1w:0,o1c1:72,o1c2:92,o2w:1,bal:-64,cut:38,res:38,kf:30,fEnv:46,fA:0,fD:44,fS:0,fR:40,aA:0,aD:58,aS:0,aR:45},
   f:{mfx:2,mfxLvl:45,dly:0,dTime:64,dFb:62,dLvl:58},chord:[57,60,64,67],arp:{arpPat:4,arpMode:2,arpRange:2}},
  {name:'SUPER PAD',p:{o1w:0,o1c1:104,o1c2:127,o2w:1,o2range:-12,o2fine:8,bal:-10,cut:66,res:12,kf:10,fEnv:14,fA:78,fD:90,fS:90,fR:90,fLfo:6,lfo1rate:30,aA:78,aD:90,aS:118,aR:96},
   f:{mfx:0,mfxLvl:96,dly:4,dTime:96,dFb:45,dLvl:34},chord:[57,64,67,72],arp:{arpPat:0,arpMode:0,arpRange:0}},
  {name:'HOOVER-ISH',p:{o1w:4,o1c1:40,o1c2:90,o2w:1,o2range:-12,o2fine:6,bal:0,pEnv:-26,pA:0,pD:48,lfo1w:0,lfo1rate:74,cut:96,res:12,fEnv:10,aA:0,aD:80,aS:120,aR:50,porta:1,portaT:52},
   f:{mfx:2,mfxLvl:127,dly:3,dTime:40,dFb:30,dLvl:25,bass:10},chord:[50,53,57,62],arp:{arpPat:2,arpMode:2,arpRange:0}},
  {name:'FEEDBACK BASS',p:{o1w:3,o1c1:84,o1c2:22,o2w:0,o2range:-12,o2c1:30,bal:-20,cut:44,res:52,kf:30,fEnv:44,fD:40,fS:24,fR:30,aA:0,aD:70,aS:110,aR:25,mono:1,legato:1,velo:1},
-  f:{mfx:12,mfxLvl:26,dly:3,dTime:30,dFb:20,dLvl:0,bass:14},chord:[36,43,48],arp:{arpPat:4,arpMode:0,arpRange:1}},
+  f:{mfx:3,mfxLvl:20,dly:3,dTime:30,dFb:20,dLvl:0,bass:14},chord:[36,43,48],arp:{arpPat:4,arpMode:0,arpRange:1}},
  {name:'TRI-MOD BELL',p:{o1w:1,o1c1:66,o1c2:40,o2w:2,o2range:19,ring:1,bal:-22,cut:110,res:8,fEnv:0,aA:0,aD:76,aS:0,aR:72,lfo1rate:60},
   f:{mfx:3,mfxLvl:60,dly:1,dTime:80,dFb:58,dLvl:46},chord:[72,76,79,83],arp:{arpPat:3,arpMode:3,arpRange:1}},
  {name:'SYNC SWEEP',p:{o1w:5,o1c1:0,o1c2:0,o2w:1,sync:1,o2range:7,pEnv:40,pA:0,pD:70,pDest:1,bal:63,cut:104,res:18,fEnv:10,aA:0,aD:80,aS:100,aR:40},
   f:{mfx:6,mfxLvl:50,dly:2,dTime:60,dFb:40,dLvl:35},chord:[45,52,57],arp:{arpPat:2,arpMode:0,arpRange:2}},
- {name:'NOISE RISER',p:{o1w:2,o1c1:30,o1c2:10,o2w:3,bal:-63,fType:1,fSlope:0,cut:52,res:76,fLfo:40,lfo1w:1,lfo1rate:20,level:127,aA:80,aD:90,aS:127,aR:80,kf:0,fEnv:0},
+ {name:'NOISE RISER',p:{o1w:2,o1c1:30,o1c2:10,o2w:2,bal:-64,fType:1,fSlope:0,cut:52,res:76,fLfo:40,lfo1w:1,lfo1rate:20,level:127,aA:80,aD:90,aS:127,aR:80,kf:0,fEnv:0},
   f:{mfx:8,mfxLvl:90,dly:0,dTime:90,dFb:70,dLvl:40},chord:[60],arp:{arpPat:0,arpMode:0,arpRange:0}},
 ];
-const G={vol:100,tempo:138,arpOn:0,arpMode:0,arpRange:1,arpHold:0,arpPat:4,keyMode:0,panel:0,oct:0,rbAsn:0,mSet:0,bank:0,num:0,splitPt:60};
+const G={vol:100,tempo:138,arpOn:0,arpMode:0,arpRange:1,arpHold:0,arpPat:4,keyMode:0,panel:0,oct:0,rbAsn:0,rbRel:0,rbHold:0,lfo2Sel:0,mSet:0,bank:0,num:0,splitPt:60};
 const PARTS=[defPatch(),defPatch()]; let FX=defFx(); let USER=PRESETS.map(p=>JSON.parse(JSON.stringify(p)));
 let names=['INIT','INIT'], lastKey='cut';
 const LS='vs8k.v1';
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
-function getV(k){ const s=SPEC[k][4]; return s==='p'?PARTS[G.panel][k]:s==='f'?FX[k]:G[k]; }
-function fmtV(k,v){ if(SELNAMES[k]) return SELNAMES[k][v]; if(k==='tempo') return v+' BPM'; if(k==='oct') return (v>0?'+':'')+v;
+const L2K=['l2Pitch','l2Filter','l2Amp'];
+function getV(k){ if(k==='l2Depth') k=L2K[G.lfo2Sel]; const s=SPEC[k][4]; return s==='p'?PARTS[G.panel][k]:s==='f'?FX[k]:G[k]; }
+function fmtV(k,v){ if(k==='o2range'&&Math.abs(v)===25) return v<0?'-WIDE':'+WIDE'; if(k==='bendR') return v+' SEMI'; if(SELNAMES[k]) return SELNAMES[k][v]; if(k==='tempo') return v+' BPM'; if(k==='oct') return (v>0?'+':'')+v;
   if(SPEC[k][2]===1) return v?'ON':'OFF'; if(SPEC[k][1]<0) return (v>0?'+':'')+v; return String(v); }
 
 /* =============== audio =============== */
@@ -269,21 +303,21 @@ function ensureAudio(){
 function startEngine(){
   const src=document.getElementById('dsp').textContent;
   const done=()=>{ ready=true; sendPart(0); sendPart(1); const q=queue; queue=[]; q.forEach(post); };
-  const fallback=()=>{ try{ const E=new Function(src+';return Eng;')(); eng=new E(ctx.sampleRate); const sp=ctx.createScriptProcessor(1024,1,1);
-      sp.onaudioprocess=e=>{ const o=e.outputBuffer.getChannelData(0); eng.render(o,o.length,e.playbackTime||ctx.currentTime); }; sp.connect(FXN.in); node=sp;
+  const fallback=()=>{ try{ const E=new Function(src+';return Eng;')(); eng=new E(ctx.sampleRate); const sp=ctx.createScriptProcessor(1024,1,2);
+      sp.onaudioprocess=e=>{ const o=e.outputBuffer.getChannelData(0), r=e.outputBuffer.getChannelData(1); eng.render(o,r,o.length,e.playbackTime||ctx.currentTime); }; sp.connect(FXN.in); node=sp;
       const mt=ctx.createScriptProcessor(1024,1,1), z=ctx.createGain(); z.gain.value=0; FXN.out.connect(mt); mt.connect(z); z.connect(ctx.destination);
       mt.onaudioprocess=e=>{ const d=e.inputBuffer.getChannelData(0); let pk=0,nn=0; for(let j=0;j<d.length;j++){ const x=d[j]; if(x!==x) nn++; else { const a=x<0?-x:x; if(a>pk) pk=a; } } if(pk>meterPk) meterPk=pk; meterNan+=nn; meterRecent=Math.max(pk,meterRecent); };
       done(); }catch(e){ console.warn('engine',e); } };
   if(ctx.audioWorklet&&window.AudioWorkletNode){
     const code=src+`
 registerProcessor('vs8k',class extends AudioWorkletProcessor{constructor(){super();this.e=new Eng(sampleRate);this.port.onmessage=m=>this.e.msg(m.data);}
- process(i,o){const ch=o[0];this.e.render(ch[0],ch[0].length,currentTime);for(let c=1;c<ch.length;c++)ch[c].set(ch[0]);return true;}});
+ process(i,o){const ch=o[0];if(!this.t||this.t.length!==ch[0].length)this.t=new Float32Array(ch[0].length);this.e.render(ch[0],ch[1]||this.t,ch[0].length,currentTime);return true;}});
 registerProcessor('vs8k-meter',class extends AudioWorkletProcessor{constructor(){super();this.pk=0;this.nan=0;this.n=0;}
  process(i){const inp=i[0];for(const ch of inp)for(let j=0;j<ch.length;j++){const x=ch[j];if(x!==x)this.nan++;else{const a=x<0?-x:x;if(a>this.pk)this.pk=a;}}
  if(++this.n>=16){this.port.postMessage({pk:this.pk,nan:this.nan});this.pk=0;this.nan=0;this.n=0;}return true;}});`;
     const url=URL.createObjectURL(new Blob([code],{type:'application/javascript'}));
     const durl='data:application/javascript;base64,'+btoa(unescape(encodeURIComponent(code)));
-    ctx.audioWorklet.addModule(url).catch(()=>ctx.audioWorklet.addModule(durl)).then(()=>{ node=new AudioWorkletNode(ctx,'vs8k',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]}); node.connect(FXN.in);
+    ctx.audioWorklet.addModule(url).catch(()=>ctx.audioWorklet.addModule(durl)).then(()=>{ node=new AudioWorkletNode(ctx,'vs8k',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2]}); node.connect(FXN.in);
       const m=new AudioWorkletNode(ctx,'vs8k-meter',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]}); FXN.out.connect(m); const z=ctx.createGain(); z.gain.value=0; m.connect(z); z.connect(ctx.destination);
       m.port.onmessage=e=>{ const d=e.data; if(d.pk>meterPk) meterPk=d.pk; meterNan+=d.nan; meterRecent=Math.max(d.pk,meterRecent); }; done(); })
       .catch(e=>{ console.warn('worklet unavailable, using fallback',e&&e.message); fallback(); });
@@ -303,9 +337,6 @@ function buildFx(){
   for(let i=0;i<6;i++){ const a=c.createBiquadFilter(); a.type='allpass'; a.frequency.value=800; a.Q.value=0.6; N.phOG.connect(a.frequency); last.connect(a); last=a; N.ap.push(a); }
   N.phFbD=c.createDelay(0.01); N.phFbD.delayTime.value=0.0005; N.phFb=G_(0); last.connect(N.phFbD); N.phFbD.connect(N.phFb); N.phFb.connect(N.ap[0]);
   N.phW=G_(0); last.connect(N.phW); N.phW.connect(N.sum);
-  /* distortion */
-  N.dsIn=G_(0); N.pre.connect(N.dsIn); N.ds=c.createWaveShaper(); const cv=new Float32Array(2048); for(let i=0;i<2048;i++){ const x=i/1023.5-1; cv[i]=Math.tanh(x*8)*0.5; } N.ds.curve=cv; N.ds.oversample='2x';
-  N.dsLp=c.createBiquadFilter(); N.dsLp.type='lowpass'; N.dsLp.frequency.value=5200; N.dsW=G_(0); N.dsIn.connect(N.ds); N.ds.connect(N.dsLp); N.dsLp.connect(N.dsW); N.dsW.connect(N.sum);
   /* delay: stereo panning (ping-pong) or mono */
   N.master=G_(0.8); N.sum.connect(N.master);
   N.dL=c.createDelay(2.5); N.dR=c.createDelay(2.5); N.inL=G_(1); N.inR=G_(0); N.LR=G_(1); N.RL=G_(0.4); N.sL=G_(0); N.sR=G_(0);
@@ -323,9 +354,9 @@ const tc=(p,v,t=0.02)=>{ if(!ctx) return; p.setTargetAtTime(v,ctx.currentTime,t)
 let fxFrozen=0;
 function applyFx(){
   if(!FXN) return; const N=FXN, T=FX.mfx, L=FX.mfxLvl/127;
-  tc(N.bass.gain,FX.bass/63*12); tc(N.treb.gain,FX.treble/63*12); tc(N.master.gain,Math.pow(G.vol/127,1.6)*0.85);
-  const ch=T<=3, fl=T>=4&&T<=6, ph=T>=7&&T<=11, ds=T===12;
-  tc(N.mdIn.gain,ch||fl?1:0); tc(N.phIn.gain,ph?1:0); tc(N.dsIn.gain,ds?1:0); tc(N.dry.gain,ds?1-0.75*L:1);
+  tc(N.bass.gain,FX.bass/64*12); tc(N.treb.gain,FX.treble/64*12); tc(N.master.gain,Math.pow(G.vol/127,1.6)*0.85);
+  const ch=T<=3, fl=T>=4&&T<=6, ph=T>=7&&T<=11;
+  tc(N.mdIn.gain,ch||fl?1:0); tc(N.phIn.gain,ph?1:0);
   const CH=[[0.18,4.5,14],[0.45,3.6,12],[1.1,2.6,10],[0.32,2.0,16]][T]||null, FLC=[[0.12,2.2,3.2,0.62],[0.25,3.4,4.2,0.82],[1.4,1.4,2.2,0.6]][T-4]||null;
   N.md.forEach((m,i)=>{ const rr=[1,1.13,0.87][i];
     if(ch){ tc(m.o.frequency,CH[0]*rr); tc(m.og.gain,CH[1]/1000); tc(m.d.delayTime,(CH[2]+i*2.3)/1000,0.05); tc(m.fb.gain,0); tc(m.w.gain,L*(T===3?0.35:0.5)); }
@@ -333,7 +364,7 @@ function applyFx(){
     else { tc(m.w.gain,0); tc(m.fb.gain,0); } });
   const PH=[[0.18,600,700,0.5],[0.08,900,900,0.78],[2.4,500,600,0.55],[0.001,0,650,0.7],[0.001,0,1700,0.8]][T-7];
   if(PH){ tc(N.phO.frequency,PH[0]); tc(N.phOG.gain,PH[1]); N.ap.forEach(a=>tc(a.frequency,PH[2])); tc(N.phFb.gain,fxFrozen?0:PH[3]); } else tc(N.phFb.gain,0);
-  tc(N.phW.gain,ph?L*0.9:0); tc(N.dsW.gain,ds?L*0.9:0);
+  tc(N.phW.gain,ph?L*0.9:0);
   const D=FX.dly, short=D===2||D===3, tm=(0.02+FX.dTime/127*1.2)*(short?0.35:1), fb=fxFrozen?0:FX.dFb/127*0.88;
   tc(N.dL.delayTime,tm,0.06); tc(N.dR.delayTime,tm,0.06);
   const set=(inL,inR,LR,RL,sL,sR)=>{ tc(N.inL.gain,inL); tc(N.inR.gain,inR); tc(N.LR.gain,LR); tc(N.RL.gain,RL); tc(N.sL.gain,sL); tc(N.sR.gain,sR); };
@@ -415,7 +446,7 @@ function arpToggleRun(){ ensureAudio(); wake();
   arpRun=true; arpEnsure(); refresh(); }
 
 /* =============== motion control: records knob moves over a 4-bar loop, SET 1 / SET 2 =============== */
-const motion={sets:[[],[]],rec:false,play:false,t0:0,last:0,timer:0};
+const motion={sets:[[],[]],armed:false,rec:false,play:false,t0:0,last:0,timer:0};
 const loopLen=()=>16*60/G.tempo;
 function motionPos(){ return ctx?((ctx.currentTime-motion.t0)/loopLen()):0; }
 function motionStart(){ ensureAudio(); motion.t0=ctx.currentTime; motion.last=0; if(!motion.timer) motion.timer=setInterval(motionTick,25); }
@@ -430,17 +461,18 @@ function motionTick(){
 
 /* =============== value set / apply =============== */
 function setV(k,v,o={}){
+  if(k==='l2Depth') k=L2K[G.lfo2Sel];
   const S=SPEC[k]; if(!S) return; v=clamp(Math.round(v),S[1],S[2]); const sc=S[4];
   if(sc==='p'){ const part=o.part??G.panel; if(PARTS[part][k]===v&&!o.force) return; PARTS[part][k]=v; post({type:'p',part,k,v}); }
   else if(sc==='f'){ if(FX[k]===v&&!o.force) return; FX[k]=v; applyFx(); }
   else { const old=G[k]; G[k]=v; applyGlobal(k,old); }
   if(!o.motion){ lastKey=k; showParam(k);
     if(motion.rec&&(sc==='p'||sc==='f')){ const pos=motionPos(); motion.sets[G.mSet].push({pos:pos-Math.floor(pos),k,v,part:G.panel}); } }
-  if(CTL[k]) CTL[k].render(); save(); if(sc==='g') refresh();
+  if(CTL[k]) CTL[k].render(); if(k.startsWith('l2')&&CTL.l2Depth) CTL.l2Depth.render(); save(); if(sc==='g') refresh();
 }
 function applyGlobal(k,old){
   if(k==='vol') applyFx();
-  if(k==='panel'){ lcdTop=(G.bank?'B':'A')+(G.num+1)+' '+names[G.panel]; renderAll(); }
+  if(k==='panel'){ menu=null; clearTimeout(idleT); idleT=0; renderAll(); }
   if((k==='keyMode'||k==='oct')&&old!==G[k]){ for(const p of [0,1]) post({type:'alloff',part:p,t:0}); }
   if(k==='arpOn'&&!G.arpOn) arpStop();
   if(k==='arpHold'&&!G.arpHold&&!arpRun){ for(const n of [...arpNotes]) if(!held.has(n)) arpNotes.delete(n); }
@@ -449,10 +481,10 @@ function loadPatch(i,bank=G.bank){
   const pr=(bank?USER:PRESETS)[i]; if(!pr) return; G.bank=bank; G.num=i;
   PARTS[G.panel]=Object.assign(defPatch(),pr.p); names[G.panel]=pr.name; sendPart(G.panel);
   FX=Object.assign(defFx(),pr.f); applyFx(); if(pr.arp) Object.assign(G,pr.arp);
-  lcdTop=(bank?'B':'A')+(i+1)+' '+pr.name; lcdBot='PATCH LOADED'; save(); refresh();
+  menu=null; clearTimeout(idleT); idleT=0; save(); refresh();
 }
 function writePatch(){ USER[G.num]={name:names[G.panel]==='INIT'?'USER '+(G.num+1):names[G.panel],p:{...PARTS[G.panel]},f:{...FX},chord:(PRESETS[G.num]||{}).chord,arp:{arpPat:G.arpPat,arpMode:G.arpMode,arpRange:G.arpRange}};
-  G.bank=1; lcdTop='B'+(G.num+1)+' '+USER[G.num].name; flash('WRITTEN TO B'+(G.num+1)); save(); refresh(); }
+  G.bank=1; flash('WRITTEN TO B'+(G.num+1)); save(); refresh(); }
 
 /* =============== MIDI export: SMF format 0, the arpeggio pattern over 4 bars =============== */
 const vlq=n=>{ const b=[n&127]; while(n>>=7) b.unshift((n&127)|128); return b; };
@@ -490,200 +522,270 @@ function onMidi(e){ const [s,a,b]=e.data, t=s&0xF0;
 </script>
 <script>
 'use strict';
-/* =============== panel construction (1400 x 660 grid, scaled to fit) =============== */
-const W=1400, H=660, panel=document.getElementById('panel'); panel.style.width=W+'px'; panel.style.height=H+'px';
-function mk(cls,x,y,w,h,parent=panel){ const e=document.createElement('div'); if(cls) e.className=cls; e.style.left=x+'px'; e.style.top=y+'px'; if(w!=null) e.style.width=w+'px'; if(h!=null) e.style.height=h+'px'; parent.appendChild(e); return e; }
-function T(txt,x,y,cls='',parent=panel){ const e=mk('lb '+cls,x,y,null,null,parent); e.textContent=txt; return e; }
-function sec(title,x,y,w,h){ mk('sec',x,y,w,h); const t=mk('st',x+w/2,y); t.textContent=title; }
-function hl(x,y,w){ mk('ln',x,y,w,1); }
-function led(x,y,cls=''){ return mk('led '+cls,x-4,y-4,8,8); }
+/* =============== panel construction: one unit = one pixel of the straight-on reference photo (2096 x 778 crop) =============== */
+const OX=96, OY=0, W=2096, H=778, panel=document.getElementById('panel'); panel.style.width=W+'px'; panel.style.height=H+'px';
+const root=document.createElement('div'); root.style.cssText='left:'+(-OX)+'px;top:'+(-OY)+'px;width:2290px;height:778px'; panel.appendChild(root);
+function mk(cls,x,y,w,h,parent=root){ const e=document.createElement('div'); if(cls) e.className=cls; e.style.left=x+'px'; e.style.top=y+'px'; if(w!=null) e.style.width=w+'px'; if(h!=null) e.style.height=h+'px'; parent.appendChild(e); return e; }
+function box(cls,x0,y0,x1,y1,parent){ return mk(cls,x0,y0,x1-x0,y1-y0,parent); }
+function T(txt,x,y,cls='',parent=root){ const e=mk('lb '+cls,x,y,null,null,parent); e.innerHTML=txt; return e; }
+function title(txt,x,y,tab){ if(tab){ const w=txt.length*10.2+18; box('tab',x-w/2,y-14,x+w/2,y+10); } const e=mk('tt',x,y); e.textContent=txt; return e; }
+function svgAt(x,y,w,h,inner){ const e=mk('',x,y,w,h); e.style.pointerEvents='none'; e.innerHTML=`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block">${inner}</svg>`; return e; }
+/* bracket line helper: ─ text ─ */
+function dashT(txt,x0,x1,y,cls=''){ svgAt(x0,y-1,x1-x0,2,`<line x1="0" y1="1" x2="${x1-x0}" y2="1" stroke="#e8eaef" stroke-width="1"/>`); const t=T(txt,(x0+x1)/2,y,cls); t.style.background='#25375a'; t.style.padding='0 3px'; return t; }
+function led(x,y){ return mk('led',x-3.5,y-3.5,7,7); }
 const CTL={};
 let panelScale=1;
-function knob(k,x,y,r,label,opts={}){
-  const R=r+9, e=mk('knob',x-R,y-R,2*R,2*R), S=SPEC[k];
-  let tk=''; for(let i=0;i<11;i++){ const a=(-135+27*i)*Math.PI/180, l=(i%5===0?6:4); tk+=`<line x1="${(Math.sin(a)*(r+2)).toFixed(2)}" y1="${(-Math.cos(a)*(r+2)).toFixed(2)}" x2="${(Math.sin(a)*(r+l)).toFixed(2)}" y2="${(-Math.cos(a)*(r+l)).toFixed(2)}" stroke="#9aa6b4" stroke-width="1"/>`; }
-  e.innerHTML=`<svg width="${2*R}" height="${2*R}" viewBox="${-R} ${-R} ${2*R} ${2*R}" style="position:static;overflow:visible">${tk}
-    <circle r="${r}" cy="1.5" fill="#000a"/><circle r="${r}" fill="${opts.col||'#17181b'}" stroke="#000" stroke-width="1"/>
-    <circle r="${r*0.78}" fill="url(#kg)" stroke="#2a2c30" stroke-width=".8"/>
-    <g class="rot"><rect x="-1.1" y="${-r+1.5}" width="2.2" height="${r*0.62}" rx="1" fill="#f2f4f6"/></g></svg>`;
-  const rot=e.querySelector('.rot'), span=S[2]-S[1];
-  if(label) T(label,x,y+r+11,'s');
-  const render=()=>{ rot.setAttribute('transform',`rotate(${-135+270*(getV(k)-S[1])/span})`); };
-  let y0=null,v0=0;
-  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); y0=ev.clientY; v0=getV(k); try{e.setPointerCapture(ev.pointerId);}catch(_){} showParam(k); });
-  e.addEventListener('pointermove',ev=>{ if(y0===null) return; ev.preventDefault(); const dy=(y0-ev.clientY)/(panelScale||1); setV(k,v0+dy*(ev.shiftKey?0.1:0.7)*span/127); });
+function drag(e,k,sens,onDown){ const S=SPEC[k], span=S[2]-S[1]; let y0=null,v0=0; e.dataset.k=k;
+  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); y0=ev.clientY; v0=getV(k); try{e.setPointerCapture(ev.pointerId);}catch(_){} if(onDown) onDown(); showParam(k); });
+  e.addEventListener('pointermove',ev=>{ if(y0===null) return; ev.preventDefault(); const dy=(y0-ev.clientY)/(panelScale||1); setV(k,v0+dy*(ev.shiftKey?0.15:1)*sens*span); });
   const up=()=>{ y0=null; }; e.addEventListener('pointerup',up); e.addEventListener('pointercancel',up);
   e.addEventListener('wheel',ev=>{ ev.preventDefault(); setV(k,getV(k)+(ev.deltaY<0?1:-1)*Math.max(1,Math.round(span/64))); },{passive:false});
-  e.addEventListener('dblclick',()=>setV(k,S[3]));
-  CTL[k]={render}; render(); return e;
+  e.addEventListener('dblclick',()=>setV(k,S[3])); }
+/* knob: black skirt, light-grey cap with a black pointer, dotted scale (21 dots, big dot at 12 o'clock) */
+function knob(k,x,y,label,ly){
+  const R=31, e=mk('knob',x-R,y-R,2*R,2*R), S=SPEC[k];
+  let dots=''; for(let i=0;i<=20;i++){ const a=(-135+13.5*i)*Math.PI/180, rr=26.5, big=i===10?1.7:(i===0||i===20)?1.3:0.95;
+    dots+=`<circle cx="${(R+Math.sin(a)*rr).toFixed(2)}" cy="${(R-Math.cos(a)*rr).toFixed(2)}" r="${big}" fill="#e9ecf2"/>`; }
+  e.innerHTML=`<svg width="${2*R}" height="${2*R}" style="display:block;overflow:visible">${dots}
+    <circle cx="${R}" cy="${R+2}" r="19.5" fill="#0008"/><circle cx="${R}" cy="${R}" r="19.5" fill="url(#ksk)" stroke="#000" stroke-width="1"/>
+    <g class="rot" style="transform-origin:${R}px ${R}px"><circle cx="${R}" cy="${R}" r="11.2" fill="url(#kcap)" stroke="#3b3e44" stroke-width=".8"/>
+    <rect x="${R-1.2}" y="${R-11.2}" width="2.4" height="8.2" rx="1" fill="#0b0c0e"/></g></svg>`;
+  const rot=e.querySelector('.rot'); if(label) T(label,x,ly??(y-32));
+  const render=()=>{ rot.style.transform=`rotate(${-135+270*(getV(k)-S[1])/(S[2]-S[1])}deg)`; };
+  drag(e,k,1/170); CTL[k]={render}; render(); return e;
 }
-function slider(k,x,y,len,label){
-  const e=mk('sld',x-10,y-6,20,len+12), S=SPEC[k];
-  const tr=mk('',9,4,2,len+4,e); tr.style.cssText+=';background:#08090a;border-radius:1px;box-shadow:0 0 0 1px #3a3f46';
-  for(let i=0;i<=10;i++){ mk('',-4,6+len*i/10,4,1,e).style.background='#6f7a86'; mk('',20,6+len*i/10,4,1,e).style.background='#6f7a86'; }
-  const cap=mk('',1,0,18,12,e); cap.style.cssText+=';background:linear-gradient(#e9ebee,#9ea4ab 45%,#2d3035 50%,#c5c9ce 55%,#8d939a);border-radius:2px;border:1px solid #111;box-shadow:0 2px 3px #000a';
-  if(label) T(label,x,y+len+14,'s');
-  const render=()=>{ cap.style.top=(len*(1-(getV(k)-S[1])/(S[2]-S[1])))+'px'; };
-  let y0=null,v0=0;
-  e.addEventListener('pointerdown',ev=>{ ev.preventDefault(); y0=ev.clientY; v0=getV(k); try{e.setPointerCapture(ev.pointerId);}catch(_){} showParam(k); });
-  e.addEventListener('pointermove',ev=>{ if(y0===null) return; ev.preventDefault(); const dy=(y0-ev.clientY)/(panelScale||1); setV(k,v0+dy/len*(S[2]-S[1])); });
-  const up=()=>{ y0=null; }; e.addEventListener('pointerup',up); e.addEventListener('pointercancel',up);
-  e.addEventListener('wheel',ev=>{ ev.preventDefault(); setV(k,getV(k)+(ev.deltaY<0?1:-1)); },{passive:false});
-  e.addEventListener('dblclick',()=>setV(k,S[3]));
-  CTL[k]={render}; render(); return e;
+/* slider: black slot, black cap with a light centre line, white tick marks on the right */
+function slider(k,x,y0=175,y1=266,label,ly){
+  const len=y1-y0, e=mk('sld',x-18,y0-10,40,len+20), S=SPEC[k];
+  const sl=mk('',14,8,8,len+4,e); sl.style.cssText+=';background:#020203;border-radius:2px;box-shadow:0 0 0 1px #ffffff14';
+  for(let i=0;i<=10;i++){ const t=mk('',30,10+(len-4)*i/10+2,6,1.6,e); t.style.background='#e8ebf0'; }
+  const cap=mk('',3,0,30,19,e); cap.style.cssText+=';background:linear-gradient(#2c2e33,#0e0f11 35%,#1d1f23 46%,#9fa3aa 50%,#1d1f23 54%,#0b0c0e 70%,#25272b);border-radius:2px;border:1px solid #000;box-shadow:0 3px 3px #000b';
+  if(label) T(label,x,ly??(y0-12));
+  const render=()=>{ cap.style.top=(len*(1-(getV(k)-S[1])/(S[2]-S[1]))+0.5)+'px'; };
+  drag(e,k,1/len); CTL[k]={render}; render(); return e;
 }
-function button(x,y,w,h,label,onclick,cls=''){
-  const b=mk('btn '+cls,x,y,w,h); b.addEventListener('pointerdown',ev=>{ ev.preventDefault(); b.classList.add('press'); onclick(ev); });
+/* rubber button (optionally with a red LED bar inside) */
+function btn(x0,y0,x1,y1,fn,{bar=false}={}){
+  const b=box('btn',x0,y0,x1,y1); let lb=null; if(bar) lb=mk('bar',null,null,null,null,b);
+  b.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); b.classList.add('press'); fn(ev); });
   const rel=()=>b.classList.remove('press'); b.addEventListener('pointerup',rel); b.addEventListener('pointerleave',rel); b.addEventListener('pointercancel',rel);
-  if(label) T(label,x+w/2,y+h+10,'s'); return b;
+  b.bar=lb; return b;
 }
-/* LED selector: LEDs with option names, a button steps through them, tap a name to jump */
-function selector(k,x,y,label,{bx=null,by=null,dy=13,cls='',lw=86}={}){
-  const opts=SELNAMES[k], leds=[];
-  if(label) T(label,x,y-13,'l b');
-  opts.forEach((o,i)=>{ leds.push(led(x+4,y+i*dy,cls)); T(o,x+12,y+i*dy,'l s');
-    const hit=mk('opt',x-4,y+i*dy-dy/2,lw,dy); hit.addEventListener('pointerdown',ev=>{ ev.preventDefault(); setV(k,i); }); });
-  button(bx??x,by??(y+opts.length*dy),30,13,'',()=>setV(k,(getV(k)+1)%opts.length));
-  const render=()=>{ const v=getV(k); leds.forEach((l,i)=>l.classList.toggle('on',i===v)); };
-  CTL[k]={render}; render();
+/* LED column chooser: one button steps through the options; tapping an option's LED/label jumps to it */
+function ledSel(k,leds,{order=null,hit=70}={}){
+  const L=leds.map(([x,y])=>led(x,y));
+  leds.forEach(([x,y],i)=>{ const h=mk('opt',x-8,y-6,hit,12); h.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); setV(k,i); }); });
+  const render=()=>{ const v=getV(k); L.forEach((l,i)=>l.classList.toggle('on',i===v)); }; CTL[k]={render}; render(); return L;
 }
-function toggle(k,x,y,label,cls=''){
-  const l=led(x+15,y-7,cls); button(x,y,30,13,label,()=>setV(k,getV(k)?0:1));
-  const render=()=>l.classList.toggle('on',!!getV(k)); CTL[k]={render}; render();
-}
-/* LCD-style cycler for long lists (multi-fx type, delay type, beat pattern, ribbon assign) */
-function cycler(k,x,y,w,label){
-  const box=mk('cyc',x,y,w,16); if(label) T(label,x+w/2,y-8,'s');
-  const n=()=>SELNAMES[k].length, step=d=>setV(k,(getV(k)+d+n())%n());
-  box.addEventListener('pointerdown',ev=>{ ev.preventDefault(); const r=box.getBoundingClientRect(); step(ev.clientX<r.left+r.width/3?-1:1); });
-  const render=()=>{ box.textContent='◂  '+SELNAMES[k][getV(k)]+'  ▸'; }; CTL[k]={render}; render(); return box;
+const step=(k,d=1)=>{ const S=SPEC[k], n=S[2]-S[1]+1; setV(k,S[1]+((getV(k)-S[1]+d)%n+n)%n); };
+/* waveform icons */
+const ICON={tri:'M0 7 L4 1 L8 7 L12 1 L16 7',saw:'M0 7 L6 1 L6 7 L12 1 L12 7',sqr:'M0 7 L0 1 L6 1 L6 7 L12 7 L12 1 L16 1',
+  rnd:'M0 5 L2 5 L2 2 L4 2 L4 6 L6 6 L6 1 L8 1 L8 4 L10 4 L10 7 L12 7 L12 3 L14 3'};
+function icon(name,x,y,w=17){ return svgAt(x,y-4,w,9,`<path d="${ICON[name]}" fill="none" stroke="#f1f3f7" stroke-width="1.6" stroke-linejoin="round"/>`); }
+/* envelope graphic above slider groups: A D [S] [R] */
+function envG(x0,x1,y,segs){
+  const n=segs.length, w=x1-x0, xs=segs.map((_,i)=>w*i/n); let p=`M0 ${14} `;
+  const peak=2, sus=6;
+  if(n===2) p+=`L${w/2} ${peak} L${w} 14`; else p+=`L${w/4} ${peak} L${w/2} ${sus} L${w*3/4} ${sus} L${w} 14`;
+  let s=`<path d="${p}" fill="none" stroke="#eef0f4" stroke-width="1.3"/><line x1="0" y1="14" x2="${w}" y2="14" stroke="#eef0f4" stroke-width="1.2"/>
+    <path d="M${w-5} 11 L${w} 14 L${w-5} 17" fill="none" stroke="#eef0f4" stroke-width="1.2"/>`;
+  for(let i=1;i<n;i++) s+=`<line x1="${xs[i]}" y1="${n===2?peak:i===1?peak:sus}" x2="${xs[i]}" y2="16" stroke="#eef0f4" stroke-width="1"/>`;
+  svgAt(x0,y-14,w,18,s);
+  segs.forEach((t,i)=>{ const l=T(t,x0+xs[i]+w/n/2,y-1,'s'); l.style.background='#27395c'; l.style.padding='0 2px'; });
 }
 const defs=document.createElementNS('http://www.w3.org/2000/svg','svg'); defs.setAttribute('width','0'); defs.setAttribute('height','0'); defs.style.position='absolute';
-defs.innerHTML='<defs><radialGradient id="kg" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#4a4e55"/><stop offset=".6" stop-color="#25272b"/><stop offset="1" stop-color="#151619"/></radialGradient></defs>';
+defs.innerHTML='<defs><radialGradient id="kcap" cx="40%" cy="32%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#d5d8de"/><stop offset="1" stop-color="#8d929b"/></radialGradient>'+
+  '<radialGradient id="ksk" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#2e3036"/><stop offset=".7" stop-color="#121316"/><stop offset="1" stop-color="#050506"/></radialGradient></defs>';
 document.body.appendChild(defs);
+/* ---------------- casing ---------------- */
+box('bd',100,4,2186,770);
+{ const t=box('tx',100,4,2186,770); t.style.borderRadius='26px 30px 14px 14px'; t.style.opacity='.3'; }
+{ const b=box('',150,470,520,770); b.style.cssText+=';background:radial-gradient(ellipse 60% 48% at 38% 46%,#30426699,#2a3c6000 70%);pointer-events:none'; }   /* the lever bulge */
+{ const c=box('',2090,410,2186,770); c.style.cssText+=';background:linear-gradient(90deg,#26354f,#2e3d5a 40%,#223049);border-radius:0 0 14px 0;pointer-events:none'; }
+{ const c=box('',486,410,507,770); c.style.cssText+=';background:linear-gradient(90deg,#2a3a5c,#1b2640);pointer-events:none'; }
+T('POWER',365,61,'k'); T('AC',460,61,'k');
+/* our own name in the logo area (no brand, no product name) */
+{ const n=T('VS-8K',290,178,''); n.style.cssText+=';font-size:58px;font-weight:300;letter-spacing:.14em;color:#c9ccd6;font-style:italic;text-shadow:0 1px 0 #0008';
+  const s=T('virtual analog synthesizer',290,128,''); s.style.cssText+=';font-size:17px;font-weight:400;letter-spacing:.06em;color:#c9ccd6'; }
+const UT={};
+[['run','RUN / STOP',150],['midi','MIDI IN',236],['exp','EXPORT .MID',322],['panic','PANIC',420]].forEach(([id,t,x],i)=>{
+  const u=mk('util',x,248,i===2?92:i===3?62:80,22); u.textContent=t; u.dataset.id=id; UT[id]=u;
+  u.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); ({run:arpToggleRun,midi:midiIn,exp:exportMidi,panic:()=>{ stopAll(); flash('ALL SOUND OFF'); }})[id](); }); });
+T('SPACE = RUN/STOP · A W S E D F T G Y H U J K = KEYS · Z/X = OCTAVE',290,284,'k').style.opacity='.75';
 
-/* ---- header ---- */
-T('VS-8K',24,21,'l').style.cssText+=';font-size:20px;color:#e9edf2;letter-spacing:.2em;font-style:italic';
-T('VIRTUAL ANALOG SYNTHESIZER',112,22,'l b');
-T('8 VOICE · 2 PART · SUPER SAW · MOTION CONTROL',1384,22,'l s').style.transform='translate(-100%,-50%)';
+/* ---------------- upper control frame ---------------- */
+box('frm',561,55,2050,398);
+const R1=[[567,713],[719,1050],[1056,1270],[1275,1490],[1495,1840],[1845,2050]]; R1.forEach(([a,b])=>box('sc',a,66,b,277));
+const R2=[[567,650],[656,1053],[1058,1190],[1196,1630],[1636,2050]]; R2.forEach(([a,b])=>box('sc',a,284,b,392));
+title('LFO 1',638,72,1); title('OSC COMMON',884,72,1); title('OSC 1',1163,74,1); title('OSC 2',1382,74,1); title('FILTER',1612,74,1); title('AMP',1958,74,1);
+T('PHONES',637,58,'k'); T('L (MONO)',690,58,'k'); T('R',727,58,'k'); T('HOLD',779,58,'k'); T('CONTROL',817,58,'k'); T('IN —— MIDI —— OUT',910,58,'k');
 
-/* ---- row 1 ---- */
-sec('MASTER',10,44,74,156); knob('vol',47,100,20,'VOLUME');
-const mlv=mk('',29,152,36,6); mlv.style.cssText+=';background:#0b0c0d;border:1px solid #000;border-radius:1px'; const mlvb=mk('',0,0,0,4,mlv); mlvb.style.cssText+=';background:linear-gradient(90deg,#3d9bff,#3d9bff 70%,#ff3a2a)';
-T('OUTPUT',47,170,'s');
+/* LFO 1 */
+T('WAVEFORM',640,97); const bLfoW=btn(620,104,662,121,()=>step('lfo1w')); bLfoW.dataset.id='lfo1w';
+ledSel('lfo1w',[[670,94],[670,106],[670,119],[670,131]],{hit:34}); icon('tri',678,94); icon('saw',678,106,13); icon('sqr',678,119); icon('rnd',678,131,15);
+knob('lfo1rate',606,216,'RATE'); knob('lfo1fade',669,216,'FADE');
 
-sec('MOTION CONTROL',90,44,150,156);
-selector('mSet',100,80,null,{bx:100,by:110,cls:'bu',lw:56});
-const recL=led(185,72); button(170,80,30,13,'REC',()=>{ ensureAudio(); if(motion.rec){ motion.rec=false; } else { motion.sets[G.mSet]=[]; motion.rec=true; motion.play=false; motionStart(); flash('MOTION REC: MOVE KNOBS'); } refresh(); },'rd');
-const mpL=led(220,72); button(205,80,30,13,'PLAY',()=>{ ensureAudio(); motion.play=!motion.play; motion.rec=false; if(motion.play) motionStart(); refresh(); });
-button(170,128,65,13,'CLEAR',()=>{ motion.sets[G.mSet]=[]; motion.rec=false; flash('MOTION '+(G.mSet+1)+' CLEARED'); refresh(); });
-T('4-BAR LOOP',165,180,'s');
+/* OSC COMMON */
+T('RING',760,97); const bRing=btn(740,104,780,121,()=>setV('ring',getV('ring')?0:1)); bRing.dataset.id='ring';
+T('LFO 1 &amp; ENV<br>DESTINATION',851,93,'s'); btn(834,104,874,121,()=>step('pDest'));
+const destL=[led(887,108),led(887,121)]; T('OSC 1+2',894,108,'l s'); T('OSC 2',894,121,'l s');
+svgAt(927,104,6,22,'<path d="M0 0.5 H4 V21.5 H0" fill="none" stroke="#eef0f4" stroke-width="1"/>'); T('X-MOD<br>DEPTH',952,114,'s');
+[[0,887,108],[1,887,121]].forEach(([i,x,y])=>{ const h=mk('opt',x-6,y-6,40,12); h.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); setV('pDest',i); }); });
+CTL.pDest={render:()=>{ const v=getV('pDest'); destL[0].classList.toggle('on',v===0||v===2); destL[1].classList.toggle('on',v===1||v===2); }};
+knob('pEnv',991,112.5,'ENV DEPTH',80);
+const envSym=(x,y,inv)=>svgAt(x-7,y-5,14,9,`<path d="${inv?'M0 1 L3 8 L8 6 L14 1':'M0 8 L3 1 L8 3 L14 8'}" fill="none" stroke="#eef0f4" stroke-width="1.2"/>`);
+envSym(964,140,1); envSym(1016,140,0);
+envG(940,1041,164,['A','D']); slider('pA',965); slider('pD',1015.5);
+knob('bal',761,216,'OSC<br>BALANCE',178); T('OSC 1',736,243,'s'); T('OSC 2',785,243,'s');
+knob('xmod',823.5,216,'X-MOD<br>DEPTH',180);
+knob('pLfo',886,217,'LFO 1 DEPTH',184); T('–',861,243,'s'); T('+',909,243,'s');
 
-sec('ARPEGGIATOR',246,44,300,156);
-const arpL=led(271,72); button(256,80,30,13,'ON/OFF',()=>setV('arpOn',G.arpOn?0:1));
-toggle('arpHold',256,134,'HOLD');
-selector('arpMode',306,74,'MODE',{bx:306,by:130,lw:64});
-selector('arpRange',384,74,'RANGE',{bx:384,by:130,lw:56});
-cycler('arpPat',306,174,120,'BEAT PATTERN');
-knob('tempo',496,92,20,'TEMPO');
-const runL=led(496,138); button(468,146,56,16,'RUN / STOP',arpToggleRun,'bl');
+/* OSC 1: waveform table with CTRL 1 / CTRL 2 meanings */
+T('CTRL 1',1183,85,'s'); T('CTRL 2',1238,85,'s');
+const o1L=[]; const o1Y=[95,108.5,121,133.5,146,159,171.5];
+o1Y.forEach((y,i)=>{ const r=box('',1068,y-6,1260,y+6); r.style.cssText+=';background:#1b2740;border-radius:1px';
+  o1L.push(led(1076,y)); if(i<4) T(OSC1W[i],1084,y,'l s'); else icon(['sqr','saw','tri'][i-4],1084,y,i===5?13:17);
+  const h=mk('opt',1068,y-6,192,12); h.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); setV('o1w',i); }); });
+[['DETUNE','MIX'],['OFFSET','LFO 1 DEPTH'],['CUTOFF<br>FREQ','RESONANCE'],['HARMONICS','FEEDBACK<br>AMOUNT'],['PW','PWM DEPTH'],['SHAPE','LFO 1 DEPTH']].forEach(([a,b],i)=>{
+  const y=i===5?(159+171.5)/2:o1Y[i], c=a.includes('<br>')||b.includes('<br>'); const t1=T(a,1183,y,c?'k':'s'), t2=T(b,1238,y,c?'k':'s'); if(c){ t1.style.lineHeight=t2.style.lineHeight='.95'; } });
+CTL.o1w={render:()=>{ const v=getV('o1w'); o1L.forEach((l,i)=>l.classList.toggle('on',i===v)); }};
+T('WAVEFORM',1098,202); const bO1=btn(1078,208,1118,225,()=>step('o1w')); bO1.dataset.id='o1w';
+slider('o1c1',1184); slider('o1c2',1234.5);
 
-sec('PATCH',552,44,340,156);
-const lcd=mk('',566,56,312,58); lcd.id='lcd';
-['A','B'].forEach((b,i)=>{ const l=led(588+i*34,124,'bu'); button(574+i*34,131,28,13,'BANK '+b,()=>loadPatch(G.num,i)); CTL['bank'+i]={render:()=>l.classList.toggle('on',G.bank===i)}; });
-const numL=[]; for(let i=0;i<8;i++){ numL.push(led(660+i*28,124)); button(647+i*28,131,26,13,String(i+1),()=>loadPatch(i)); }
-button(574,166,40,12,'VALUE -',()=>setV(lastKey,getV(lastKey)-1));
-button(620,166,40,12,'VALUE +',()=>setV(lastKey,getV(lastKey)+1));
-button(666,166,40,12,'WRITE',writePatch,'rd');
-const midiL=led(744,159,'bu'); button(726,166,36,12,'MIDI IN',midiIn);
-button(770,166,52,12,'EXPORT .MID',exportMidi,'bl');
-button(830,166,48,12,'PANIC',()=>{ stopAll(); flash('ALL SOUND OFF'); });
+/* OSC 2 */
+knob('o2range',1322.5,113,'RANGE',72); T('0',1321,82,'k'); T('–12',1292,100,'k'); T('+12',1350,100,'k'); T('–24',1290,131,'k'); T('+24',1352,131,'k');
+svgAt(1291,128,60,14,'<path d="M8 2 L3 9" stroke="#ff8a2e" stroke-width="3" stroke-linecap="round"/><path d="M52 2 L57 9" stroke="#ff8a2e" stroke-width="3" stroke-linecap="round"/>');
+T('–WIDE',1291,146,'o s'); T('+WIDE',1352,146,'o s');
+T('FINE /',1321,177,'s'); T('WIDE',1321,186,'o s'); knob('o2fine',1322,217.5,null);
+T('SYNC',1385,98); btn(1362,107,1404,123,()=>setV('sync',getV('sync')?0:1)).dataset.id='sync';
+T('WAVEFORM',1429,98); btn(1408,107,1450,123,()=>step('o2w')).dataset.id='o2w';
+ledSel('o2w',[[1471,104],[1471,115],[1471,127]],{hit:30}); icon('sqr',1478,104,14); icon('saw',1478,115,12); icon('tri',1478,127,14);
+T('PULSE<br>WIDTH',1387,160,'s'); T('PWM<br>DEPTH',1438,160,'s'); slider('o2c1',1387); slider('o2c2',1438);
 
-sec('KEY MODE / VOICE',898,44,492,156);
-selector('keyMode',910,76,'KEY MODE',{bx:910,by:116,lw:60});
-selector('panel',986,76,'PANEL SELECT',{bx:986,by:116,cls:'bu',lw:60});
-T('SPLIT AT C4: LOWER PART BELOW',910,176,'l s');
-toggle('mono',1074,84,'MONO'); toggle('legato',1114,84,'LEGATO'); toggle('porta',1154,84,'PORTA'); knob('portaT',1214,90,15,'TIME');
-toggle('velo',1074,140,'VELOCITY');
-button(1114,140,30,13,'OCT ▾',()=>setV('oct',G.oct-1)); button(1154,140,30,13,'OCT ▴',()=>setV('oct',G.oct+1));
-const octL=T('0',1214,147,'b'); octL.style.fontSize='13px';
-T('UPPER',1262,68,'l b'); T('LOWER',1262,124,'l b');
-const nb0=mk('cyc',1262,78,118,20), nb1=mk('cyc',1262,134,118,20); nb0.style.pointerEvents=nb1.style.pointerEvents='none';
+/* FILTER */
+T('–12dB',1541,97,'k'); T('–24dB',1541,104,'k'); const bSl=btn(1520,110,1562,126,()=>setV('fSlope',getV('fSlope')?0:1),{bar:true}); bSl.dataset.id='fSlope';
+T('TYPE',1590,98); btn(1570,110,1612,126,()=>step('fType',-1)).dataset.id='fType';
+{ const L=[led(1623,106),led(1623,118),led(1623,130)]; T('HPF',1630,106,'l s'); T('BPF',1630,118,'l s'); T('LPF',1630,130,'l s');
+  [0,1,2].forEach(i=>{ const h=mk('opt',1616,100+12*i,40,12); h.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); setV('fType',i); }); });
+  CTL.fType={render:()=>{ const v=getV('fType'); L.forEach((l,i)=>l.classList.toggle('on',i===v)); }}; }
+knob('kf',1682,115.5,'KEY FOLLOW',82); T('–',1662,145,'s'); T('+',1702,145,'s');
+knob('fLfo',1745,115.5,'LFO 1 DEPTH',82); T('–',1725,145,'s'); T('+',1765,145,'s');
+knob('fEnv',1808,115.5,'ENV DEPTH',82); envSym(1790,145,1); envSym(1826,145,0);
+T('CUTOFF<br>FREQ',1541,160,'s'); T('RESONANCE',1592,164,'s'); slider('cut',1540.5); slider('res',1592.5);
+envG(1657,1823,166,['A','D','S↑','R']); ['fA','fD','fS','fR'].forEach((k,i)=>slider(k,1678+i*41.5));
 
-/* ---- row 2 ---- */
-const R2=212, R2H=238;
-sec('LFO',10,R2,140,R2H); T('LFO 1',22,R2+22,'l b');
-selector('lfo1w',22,R2+56,'WAVEFORM',{bx:22,by:R2+110,lw:50});
-knob('lfo1rate',114,R2+60,16,'RATE'); knob('lfo1fade',114,R2+128,16,'FADE');
-hl(18,R2+164,124); T('LFO 2',22,R2+180,'l b'); knob('lfo2rate',114,R2+200,14,'RATE');
+/* AMP */
+knob('aLfo1',1899,115.5,'LFO 1 DEPTH',77); T('/PAN',1897,86,'o s'); T('L',1876,146,'o s'); T('+R',1919,146,'o s');
+T('AUTO/<br>MANUAL',1958,99,'o s'); const bPan=btn(1937,110,1979,126,()=>step('panMode')); bPan.dataset.id='panMode';
+knob('level',2024,115.5,'LEVEL',82);
+envG(1872,2038,166,['A','D','S↑','R']); ['aA','aD','aS','aR'].forEach((k,i)=>slider(k,1892.5+i*41.5));
 
-sec('OSC 1',156,R2,160,R2H);
-selector('o1w',166,R2+40,'WAVEFORM',{bx:166,by:R2+132,lw:92});
-knob('o1c1',282,R2+60,18,'CTRL 1'); knob('o1c2',282,R2+140,18,'CTRL 2');
-T('SUPER SAW: DETUNE / MIX',236,R2+220,'s');
+/* ---------------- row 2 ---------------- */
+title('VOLUME',602,291,1); knob('vol',605,352,null);
+title('ARPEGGIATOR/RPS',853,291,1);
+T('TEMPO',699,313,'s'); T('120',699,322,'k'); T('90 •',667,351,'k'); T('• 150',730,351,'k'); T('20',681,381,'k'); T('250',718,381,'k'); knob('tempo',697,352,null);
+T('MODE',760,314); btn(740,323,781,337,()=>step('arpMode')).dataset.id='arpMode';
+const amL=[led(795,308),led(795,321),led(795,335)]; T('UP',802,308,'l s'); T('DOWN',802,321,'l s'); T('RND',802,335,'l s');
+svgAt(822,307,8,30,'<path d="M0 .5 H4 V28.5 H0 M4 14 H8" fill="none" stroke="#eef0f4" stroke-width="1"/>'); T('RPS',841,321,'s');
+[[0,308],[1,321],[3,335]].forEach(([v,y])=>{ const h=mk('opt',788,y-6,40,12); h.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); setV('arpMode',v); }); });
+CTL.arpMode={render:()=>{ const v=G.arpMode; amL[0].classList.toggle('on',v===0||v===2); amL[1].classList.toggle('on',v===1||v===2); amL[2].classList.toggle('on',v===3); }};
+const arpL=led(795,349); svgAt(781,349,12,32,'<path d="M10 4 V12 H0" fill="none" stroke="#eef0f4" stroke-width="1"/>');
+T('ON/OFF',760,363); btn(740,372,781,387,()=>setV('arpOn',G.arpOn?0:1)).dataset.id='arpOn';
+T('RANGE',886,314); btn(864,323,907,337,()=>step('arpRange')).dataset.id='arpRange';
+ledSel('arpRange',[[919,310],[919,323],[919,336],[919,349]],{hit:44}); ['1 OCT','2 OCT','3 OCT','4 OCT'].forEach((t,i)=>T(t,926,310+13*i,'l s'));
+T('ARP HOLD',886,365); btn(864,372,907,387,()=>setV('arpHold',G.arpHold?0:1)).dataset.id='arpHold';
+T('● REC',935,365,'r'); const bRec=btn(914,372,957,387,()=>{ ensureAudio(); motion.armed=!motion.armed; if(!motion.armed&&motion.rec){ motion.rec=false; } flash(motion.armed?'REC: PRESS 1 OR 2':'REC OFF'); refresh(); }); bRec.dataset.id='rec';
+svgAt(866,389,90,8,'<path d="M.5 0 V5 H20 M70 5 H89.5 V0" fill="none" stroke="#eef0f4" stroke-width="1"/>'); T('ROM PLAY',911,394,'k');
+T('MOTION<br>CONTROL',1015,302,'o').style.fontSize='11.5px';
+T('1',1015,317,'s'); T('2',1015,364,'s');
+const bM=[btn(994,323,1036,337,()=>motionBtn(0),{bar:true}),btn(994,372,1036,387,()=>motionBtn(1),{bar:true})]; bM[0].dataset.id='m1'; bM[1].dataset.id='m2';
+function motionBtn(i){ ensureAudio(); wake();
+  if(motion.armed){ G.mSet=i; motion.sets[i]=[]; motion.rec=true; motion.play=false; motion.armed=false; motionStart(); flash('MOTION '+(i+1)+' REC'); }
+  else if((motion.play||motion.rec)&&G.mSet===i){ motion.play=false; motion.rec=false; flash('MOTION '+(i+1)+' STOP'); }
+  else { G.mSet=i; motion.rec=false; motion.play=true; motionStart(); flash(motion.sets[i].length?'MOTION '+(i+1)+' PLAY':'MOTION '+(i+1)+' EMPTY'); }
+  refresh(); }
 
-sec('OSC 2',322,R2,180,R2H);
-selector('o2w',332,R2+40,'WAVEFORM',{bx:332,by:R2+92,lw:80});
-toggle('sync',332,R2+150,'SYNC');
-knob('o2range',428,R2+52,16,'RANGE'); knob('o2fine',476,R2+52,16,'FINE/WIDE');
-knob('o2c1',428,R2+124,16,'CTRL 1'); knob('o2c2',476,R2+124,16,'CTRL 2');
-knob('xmod',452,R2+190,17,'CROSS MOD DEPTH');
+title('KEY & PANEL',1121,291,1);
+T('KEY MODE',1098,315); btn(1077,323,1120,337,()=>step('keyMode')).dataset.id='keyMode';
+ledSel('keyMode',[[1130,317],[1130,329],[1130,341]],{hit:52}); ['SINGLE','DUAL','SPLIT'].forEach((t,i)=>T(t,1137,317+12*i,'l s'));
+dashT('PANEL SELECT',1080,1166,356,'s'); T('LOWER',1098,364,'s'); T('UPPER',1149,364,'s');
+const bLo=btn(1077,372,1119,388,()=>setV('panel',1),{bar:true}), bUp=btn(1128,372,1169,388,()=>setV('panel',0),{bar:true}); bLo.dataset.id='lower'; bUp.dataset.id='upper';
 
-sec('OSC COMMON',508,R2,170,R2H);
-knob('bal',546,R2+60,18,'BALANCE'); T('◂ OSC 1',528,R2+102,'s'); T('OSC 2 ▸',566,R2+102,'s');
-toggle('ring',531,R2+150,'RING');
-T('PITCH',628,R2+22,'b');
-knob('pLfo',602,R2+56,15,'LFO1 DEPTH'); knob('pEnv',654,R2+56,15,'ENV DEPTH');
-knob('pA',602,R2+122,15,'A'); knob('pD',654,R2+122,15,'D');
-selector('pDest',592,R2+178,'ENV DEST',{bx:592,by:R2+206,lw:70});
+/* display block */
+dashT('BANK/VALUE',1212,1276,307,'s'); T('DOWN',1226,316,'s'); T('UP',1263,316,'s');
+btn(1212,323,1240,339,()=>valStep(-1)).dataset.id='down'; btn(1250,323,1276,339,()=>valStep(1)).dataset.id='up';
+T('PERFORM<br>/PATCH',1317,314,'s'); btn(1305,324,1330,340,()=>{ lcdMode=lcdMode?0:1; menu=null; idle(); }).dataset.id='pp'; T('NAME',1317,348,'box');
+const lcd=box('',1352,293,1538,345); lcd.id='lcd';
+T('SHIFT',1562,306,'s'); T('EXIT',1562,316,'s'); const bShift=btn(1550,324,1575,340,()=>{ if(menu){ menu=null; shift=false; idle(); } else { shift=!shift; flash(shift?'SHIFT':'');  } refresh(); }); bShift.dataset.id='shift';
+T('WRITE',1599,316,'box'); btn(1587,324,1611,340,()=>{ if(shift){ shift=false; sendPart(G.panel); flash('MANUAL'); refresh(); } else writePatch(); }).dataset.id='write';
+svgAt(1556,343,50,6,'<path d="M.5 0 V3.5 H10 M40 3.5 H49.5 V0" fill="none" stroke="#eef0f4" stroke-width="1"/>'); T('MANUAL',1581,347,'k');
+const NUMX=[1240,1288,1336,1386,1437,1488,1538,1590], NUMW=['PFM COMMON','PFM PART','INDIV TRIG','MIDI PRM','MIDI SW','SETUP','INIT/UTIL','EFFECTS'], NUMR=['LOOP LENGTH','QUANTIZE','GATE TIME','METRONOME','ERASE','CLEAR'];
+const numB=NUMX.map((x,i)=>{ T(NUMW[i],x,365,'plate'); if(NUMR[i]) T(NUMR[i],x,376,'r s'); T(String(i+1),x,404,'s');
+  const b=btn(x-21,381,x+21,396,()=>numPress(i),{bar:true}); b.dataset.id='n'+(i+1); return b; });
+T('C4 ▼',1270,416,'k');
 
-sec('FILTER',684,R2,340,R2H);
-selector('fType',696,R2+44,'TYPE',{bx:696,by:R2+84,lw:46});
-selector('fSlope',696,R2+132,'SLOPE',{bx:696,by:R2+160,lw:46});
-knob('cut',790,R2+62,25,'CUTOFF FREQ',{col:'#1b2433'}); knob('res',858,R2+62,18,'RESONANCE');
-knob('kf',766,R2+156,15,'KEY FOLLOW'); knob('fLfo',818,R2+156,15,'LFO1 DEPTH'); knob('fEnv',870,R2+156,15,'ENV DEPTH');
-T('ENVELOPE',956,R2+22,'b'); ['fA','fD','fS','fR'].forEach((k,i)=>slider(k,922+i*23,R2+44,150,'ADSR'[i]));
+/* EFFECTS */
+title('EFFECTS',1846,293,1);
+dashT('TONE CONTROL',1660,1764,316,'k'); dashT('CHORUS',1782,1828,316,'k'); dashT('DELAY',1874,2044,316,'k');
+knob('bass',1681,355.5,'BASS',326); T('–',1663,385,'k'); T('+',1700,385,'k');
+knob('treble',1743,355.5,'TREBLE',326); T('–',1725,385,'k'); T('+',1762,385,'k');
+knob('mfxLvl',1806,356,'LEVEL',326); knob('dTime',1897,358,'TIME',326); knob('dFb',1960,358,'FEEDBACK',326); knob('dLvl',2023,358,'LEVEL',326);
 
-sec('AMP',1030,R2,160,R2H);
-knob('level',1066,R2+62,18,'LEVEL'); knob('aLfo2',1066,R2+156,15,'LFO 2 DEPTH');
-T('ENVELOPE',1146,R2+22,'b'); ['aA','aD','aS','aR'].forEach((k,i)=>slider(k,1112+i*23,R2+44,150,'ADSR'[i]));
+/* ---------------- left: controller / LFO 2 / keyboard, lever, ribbon ---------------- */
+box('frm',138,330,485,556);
+box('sc',143,350,217,510); box('sc',221,350,356,510); box('sc',360,350,481,550);
+title('CONTROLLER',180,341,0).style.fontSize='13px'; title('LFO 2',288,341,0).style.fontSize='13px'; title('KEYBOARD',420,341,0).style.fontSize='13px';
+T('RIBBON<br>ASSIGN',182,366,'s'); const bRA=btn(162,378,202,394,()=>{ step('rbAsn'); },{bar:true}); bRA.dataset.id='rbAsn';
+T('VELOCITY<br>ASSIGN',182,417,'s'); btn(162,428,202,444,()=>step('velDest')).dataset.id='velDest';
+T('BEND<br>RANGE',182,467,'s'); btn(162,478,202,494,()=>{ const L=[1,2,3,4,5,7,12], i=L.indexOf(getV('bendR')); setV('bendR',L[(i+1)%L.length]); }).dataset.id='bendR';
+knob('lfo2rate',251,399,'RATE',362); knob('l2Depth',313.5,399,'DEPTH',362); T('–',300,425,'s'); T('+',338,425,'s');
+T('DEPTH<br>SELECT',258,471,'s'); btn(237,478,278,494,()=>step('lfo2Sel')).dataset.id='lfo2Sel';
+ledSel('lfo2Sel',[[288,474],[288,487],[288,500]],{hit:56}); ['PITCH','FILTER','AMP'].forEach((t,i)=>T(t,296,474+13*i,'l s'));
+T('MODULATION (LFO 2)',276,531,'s'); T('▲',276,542,'s');
+knob('portaT',390,400,'TIME',362); svgAt(391,420,2,48,'<line x1="1" y1="0" x2="1" y2="48" stroke="#eef0f4" stroke-width="1.2"/>');
+T('VELOCITY',445,423,'s'); btn(423,430,466,446,()=>setV('velo',getV('velo')?0:1)).dataset.id='velo';
+T('PORTAMENTO',395,474,'s'); btn(373,481,416,497,()=>setV('porta',getV('porta')?0:1),{bar:true}).dataset.id='porta';
+T('LEGATO',445,464,'box').style.fontSize='8px'; T('MONO',445,475,'s');
+btn(423,481,466,497,()=>{ const m=getV('mono'), l=getV('legato'); if(!m){ setV('mono',1); setV('legato',0); flash('MONO'); } else if(!l){ setV('legato',1); flash('MONO LEGATO'); } else { setV('mono',0); setV('legato',0); flash('POLY'); } refresh(); },{bar:true}).dataset.id='mono';
+dashT('OSC SHIFT',370,468,506,'s'); T('KEYBOARD SHIFT',419,516,'box').style.fontSize='8px';
+T('–OCT',395,526,'s'); T('+OCT',445,526,'s');
+btn(373,532,416,547,()=>{ if(shift) setV('oscShift',getV('oscShift')-1); else setV('oct',G.oct-1); }).dataset.id='octDn';
+btn(423,532,466,547,()=>{ if(shift) setV('oscShift',getV('oscShift')+1); else setV('oct',G.oct+1); }).dataset.id='octUp';
 
-sec('EFFECTS',1196,R2,194,R2H);
-T('TONE CONTROL',1241,R2+22,'b'); knob('bass',1220,R2+56,14,'BASS'); knob('treble',1262,R2+56,14,'TREBLE');
-T('MULTI-FX',1342,R2+22,'b'); knob('mfxLvl',1342,R2+56,14,'LEVEL');
-cycler('mfx',1206,R2+98,174,'');
-hl(1204,R2+126,178); T('DELAY',1293,R2+140,'b');
-knob('dTime',1224,R2+172,14,'TIME'); knob('dFb',1293,R2+172,14,'FEEDBACK'); knob('dLvl',1362,R2+172,14,'LEVEL');
-cycler('dly',1206,R2+210,174,'');
-
-/* ---- bottom: bend/mod lever, ribbon, keyboard ---- */
-const KY=490;
-sec('BEND / MOD',10,R2+R2H+10,140,H-R2-R2H-20);
-const lever=mk('',30,KY-20,100,100); lever.id='lever'; const lvH=mk('',41,41,18,18,lever); lvH.id='lvH';
-T('◂ BEND ▸  ·  ▴ MOD',80,KY+90,'s');
-cycler('rbAsn',22,KY+122,116,'RIBBON ASSIGN');
+/* bend / modulation lever: horizontal paddle; left-right = bend, push forward (up) = LFO 2 modulation */
+const lever=box('',214,552,336,620); lever.id='lever';
+lever.innerHTML='<svg width="122" height="68" style="display:block"><rect x="6" y="8" width="110" height="52" rx="4" fill="#060708" stroke="#000"/><rect x="10" y="12" width="102" height="44" rx="3" fill="#121317"/></svg>';
+const lvP=mk('',30,20,62,26,lever); lvP.style.cssText+=';background:linear-gradient(#3a3c42,#141518 30%,#060607 70%,#26282d);border-radius:3px;box-shadow:0 3px 4px #000c,inset 0 1px 0 #ffffff33;pointer-events:none';
 let lvId=null;
 function lvSend(x,y){ for(const p of [0,1]){ post({type:'p',part:p,k:'bend',v:x}); post({type:'p',part:p,k:'mod',v:y}); } }
-function lvMove(ev){ const r=lever.getBoundingClientRect(), x=clamp((ev.clientX-r.left)/r.width*2-1,-1,1), y=clamp(1-(ev.clientY-r.top)/r.height*2,-1,1);
-  lvH.style.left=(41+x*40)+'px'; lvH.style.top=(41-y*40)+'px'; lvSend(x,Math.max(0,y)); }
-lever.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ensureAudio(); lvId=ev.pointerId; try{lever.setPointerCapture(ev.pointerId);}catch(_){} lvMove(ev); });
+function lvMove(ev){ const r=lever.getBoundingClientRect(), x=clamp((ev.clientX-r.left)/r.width*2-1,-1,1), y=clamp(1-(ev.clientY-r.top)/r.height*2,0,1);
+  lvP.style.left=(30+x*26)+'px'; lvP.style.top=(20-y*12)+'px'; lvSend(x,y); }
+lever.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); ensureAudio(); wake(); lvId=ev.pointerId; try{lever.setPointerCapture(ev.pointerId);}catch(_){} lvMove(ev); });
 lever.addEventListener('pointermove',ev=>{ if(ev.pointerId===lvId){ ev.preventDefault(); lvMove(ev); } });
-const lvUp=ev=>{ if(ev.pointerId!==lvId) return; lvId=null; lvH.style.left='41px'; lvH.style.top='41px'; lvSend(0,0); };
+const lvUp=ev=>{ if(ev.pointerId!==lvId) return; lvId=null; lvP.style.left='30px'; lvP.style.top='20px'; lvSend(0,0); };
 lever.addEventListener('pointerup',lvUp); lever.addEventListener('pointercancel',lvUp);
-const KX=160, KW=W-KX-10;
-const ribbon=mk('',KX,KY-32,KW,24); ribbon.id='ribbon'; { const t=T('RIBBON CONTROLLER',KW/2,12,'s',ribbon); t.style.color='#4b5560'; t.style.pointerEvents='none'; } const rbDot=mk('',0,1,6,20,ribbon); rbDot.id='rbDot';
-let rbId=null;
-function rbSend(v){ for(const p of [0,1]){ post({type:'p',part:p,k:'cutMod',v:G.rbAsn===0?v:0}); post({type:'p',part:p,k:'pitchMod',v:G.rbAsn===1?v*12:0}); post({type:'p',part:p,k:'xmodAdd',v:G.rbAsn===2?Math.max(0,v):0}); } }
-function rbMove(ev){ const r=ribbon.getBoundingClientRect(), f=clamp((ev.clientX-r.left)/r.width,0,1); rbDot.style.left=(f*(KW-8))+'px'; rbDot.style.opacity=1; rbSend(f*2-1); }
-ribbon.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ensureAudio(); rbId=ev.pointerId; try{ribbon.setPointerCapture(ev.pointerId);}catch(_){} rbMove(ev); });
-ribbon.addEventListener('pointermove',ev=>{ if(ev.pointerId===rbId){ ev.preventDefault(); rbMove(ev); } });
-const rbUp=ev=>{ if(ev.pointerId!==rbId) return; rbId=null; rbDot.style.opacity=0; rbSend(0); }; ribbon.addEventListener('pointerup',rbUp); ribbon.addEventListener('pointercancel',rbUp);
-/* keyboard: 3 octaves + top C (C3..C6 at octave shift 0), multi-touch, glide across keys, velocity from where you touch */
-const kbd=[], BASE=48, NW=22, WKW=KW/NW, KH=H-KY-10;
+T('RIBBON<br>CONTROLLER',419,580,'s');
+T('RELATIVE',395,592,'s'); T('HOLD',445,592,'s');
+btn(373,598,416,614,()=>setV('rbRel',G.rbRel?0:1)).dataset.id='rbRel'; btn(423,598,466,614,()=>{ setV('rbHold',G.rbHold?0:1); if(!G.rbHold){ rbVal=0; rbSend(0); rbDot.style.opacity=0; } }).dataset.id='rbHold';
+const ribbon=box('',186,670,436,708); ribbon.id='ribbon'; const rbDot=mk('',0,3,8,32,ribbon); rbDot.id='rbDot';
+let rbId=null, rbVal=0, rbX0=0, rbV0=0, rbActive=false;
+function rbSend(v){ for(const p of [0,1]){ post({type:'p',part:p,k:'cutMod',v:G.rbAsn===0?v:0}); post({type:'p',part:p,k:'pitchMod',v:G.rbAsn===1?v*12:0}); post({type:'p',part:p,k:'xmodAdd',v:G.rbAsn===2?Math.max(0,(v+1)/2):0}); } }
+function rbMove(ev,first){ const r=ribbon.getBoundingClientRect(), f=clamp((ev.clientX-r.left)/r.width,0,1);
+  if(G.rbRel){ if(first){ rbX0=f; rbV0=rbVal; } rbVal=clamp(rbV0+(f-rbX0)*2,-1,1); } else rbVal=f*2-1;
+  rbDot.style.left=((rbVal+1)/2*(250-10))+'px'; rbDot.style.opacity=1; rbSend(rbVal); }
+ribbon.addEventListener('pointerdown',ev=>{ ev.preventDefault(); ev.stopPropagation(); ensureAudio(); wake(); rbId=ev.pointerId; rbActive=true; try{ribbon.setPointerCapture(ev.pointerId);}catch(_){} rbMove(ev,true); refresh(); });
+ribbon.addEventListener('pointermove',ev=>{ if(ev.pointerId===rbId){ ev.preventDefault(); rbMove(ev,false); } });
+const rbUp=ev=>{ if(ev.pointerId!==rbId) return; rbId=null; rbActive=false; if(!G.rbHold){ rbVal=0; rbDot.style.opacity=0; rbSend(0); } refresh(); };
+ribbon.addEventListener('pointerup',rbUp); ribbon.addEventListener('pointercancel',rbUp);
+T('RPS STOP',527,410,'k'); T('▼',527,418,'k');
+
+/* ---------------- 49-key keyboard (C2..C6), multi-touch, glide, velocity from touch depth ---------------- */
+{ const l=box('',486,421,2090,441); l.style.cssText+=';background:linear-gradient(#26314b,#1a2234 60%,#0c1018);pointer-events:none'; }
+const kbd=[], BASE=36, KX=507, WKW=54.5, KT=440, KB=755, BKB=640;
 const isBlack=n=>[1,3,6,8,10].includes(n%12);
-let wi=0; for(let n=BASE;n<=BASE+36;n++){ if(!isBlack(n)){ const e=mk('wk',KX+wi*WKW,KY,WKW+1,KH); e.dataset.n=n; kbd.push({n,el:e}); wi++; } }
-wi=0; for(let n=BASE;n<=BASE+36;n++){ if(isBlack(n)){ const e=mk('bk',KX+wi*WKW-WKW*0.32,KY,WKW*0.64,KH*0.6); e.dataset.n=n; kbd.push({n,el:e}); } else wi++; }
-for(let i=0;i<4;i++){ const t=T('C'+(3+i),KX+i*7*WKW+WKW/2,H-22,'s'); t.style.color='#666'; t.style.pointerEvents='none'; }
+let wi=0; for(let n=BASE;n<=BASE+48;n++){ if(!isBlack(n)){ const e=mk('wk',KX+wi*WKW,KT,WKW,KB-KT); e.dataset.n=n; kbd.push({n,el:e}); wi++; } }
+wi=0; for(let n=BASE;n<=BASE+48;n++){ if(isBlack(n)){ const off={1:-18,3:-6,6:-20,8:-12.5,10:-4.5}[n%12]; const e=mk('bk',KX+wi*WKW+off,KT,32,BKB-KT); e.dataset.n=n; kbd.push({n,el:e}); } else wi++; }
+{ const f=box('',486,756,2090,770); f.style.cssText+=';background:linear-gradient(#1a2338,#2b3a5c);border-radius:0 0 4px 4px;pointer-events:none'; }
 const touchNote=new Map();
 function keyAt(x,y){ const el=document.elementFromPoint(x,y); return el&&el.dataset&&el.dataset.n?el:null; }
 function velAt(el,y){ const r=el.getBoundingClientRect(); return clamp(0.35+0.65*(y-r.top)/r.height,0.2,1); }
@@ -708,38 +810,73 @@ addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; const
 addEventListener('keyup',e=>{ const c=e.code; if(kDown.has(c)){ noteUp(kDown.get(c)); kDown.delete(c); } });
 addEventListener('blur',()=>{ for(const [,n] of kDown) noteUp(n); kDown.clear(); });
 
-/* =============== display / refresh =============== */
-let lcdTop='A1 SUPERSAW LEAD', lcdBot='';
-function showParam(k){ if(k) lcdBot=SPEC[k][0].slice(0,16).padEnd(17)+fmtV(k,getV(k)); drawLcd(); }
-function flash(m){ lcdBot=m; drawLcd(); }
-function drawLcd(){ const tag=G.keyMode?(G.panel?' LO':' UP'):''; lcd.textContent=(lcdTop.slice(0,25-tag.length).padEnd(25-tag.length)+tag)+'\n'+lcdBot.slice(0,25); }
+/* =============== 16 x 2 display, SHIFT + number menus, BANK/VALUE =============== */
+let lcdTop='', lcdBot='', lcdMode=1, shift=false, menu=null, idleT=0;
+const MENUS=[
+  {n:'PFM COMMON',k:['arpPat','splitPt','tempo']},{n:'PFM PART',k:['oscShift','bendR','velDest']},{n:'INDIV TRIG',k:['legato']},
+  {n:'MIDI PRM',act:()=>midiIn()},{n:'MIDI SW',act:()=>midiIn()},{n:'SETUP',k:['rbAsn','velDest','bendR','splitPt']},
+  {n:'INIT/UTIL',k:['_init','_export']},{n:'EFFECTS',k:['mfx','dly','bass','treble']}];
+const ACT={_init:['INIT PATCH','VALUE UP = DO',()=>{ PARTS[G.panel]=defPatch(); names[G.panel]='INIT'; sendPart(G.panel); renderAll(); flash('PATCH INIT'); }],
+  _export:['EXPORT MIDI','VALUE UP = DO',()=>exportMidi()]};
+function numPress(i){ ensureAudio();
+  if(shift||menu){ const M=MENUS[i]; shift=false;
+    if(M.act){ menu=null; M.act(); refresh(); return; }
+    if(menu&&menu.i===i) menu.p=(menu.p+1)%M.k.length; else menu={i,p:0};
+    drawMenu(); refresh(); return; }
+  loadPatch(i); }
+function drawMenu(){ const M=MENUS[menu.i], k=M.k[menu.p];
+  if(ACT[k]){ lcdTop=(M.n+' '+(menu.p+1)+'/'+M.k.length); lcdBot=ACT[k][0]; }
+  else { lcdTop=SPEC[k][0]; lcdBot='= '+fmtV(k,getV(k)); }
+  clearTimeout(idleT); drawLcd(); }
+function valStep(d){ ensureAudio();
+  if(menu){ const k=MENUS[menu.i].k[menu.p]; if(ACT[k]){ if(d>0) ACT[k][2](); return; } setV(k,getV(k)+d); drawMenu(); return; }
+  if(lastKey&&lastShown&&performance.now()-lastShown<2500){ setV(lastKey,getV(lastKey)+d); return; }
+  loadPatch(G.num,d>0?1:0); }
+let lastShown=0;
+function patchLines(){ const b=(G.bank?'B':'A')+(G.num+1), part=G.keyMode?(G.panel?' LO':' UP'):'';
+  return lcdMode?['PATCH '+b+':'+part,names[G.panel]]:['PERFORM '+b+part,names[0]+(G.keyMode?' / '+names[1]:'')]; }
+function idle(){ clearTimeout(idleT); idleT=0; if(menu) return; const [a,b]=patchLines(); lcdTop=a; lcdBot=b; drawLcd(); }
+function showParam(k){ if(!k||menu) return; lastShown=performance.now(); lcdTop=SPEC[k][0]; lcdBot='= '+fmtV(k,getV(k)); drawLcd(); clearTimeout(idleT); idleT=setTimeout(idle,1800); }
+function flash(m){ if(menu) menu=null; lcdTop=patchLines()[0]; lcdBot=m||patchLines()[1]; drawLcd(); clearTimeout(idleT); idleT=setTimeout(idle,1800); }
+function drawLcd(){ const f=s=>String(s).toUpperCase().slice(0,16).padEnd(16); lcd.textContent=f(lcdTop)+'\n'+f(lcdBot); }
 function renderAll(){ for(const k in CTL) CTL[k].render(); }
 function refresh(){
-  arpL.classList.toggle('on',!!G.arpOn); runL.classList.toggle('on',!!(arpRun||arpTimer)); recL.classList.toggle('on',motion.rec); mpL.classList.toggle('on',motion.play);
-  numL.forEach((l,i)=>l.classList.toggle('on',i===G.num)); midiL.classList.toggle('on',midiOn); octL.textContent=(G.oct>0?'+':'')+G.oct;
-  nb0.textContent=names[0].slice(0,16); nb1.textContent=G.keyMode?names[1].slice(0,16):'—';
-  renderAll(); drawLcd(); refreshKeys();
+  arpL.classList.toggle('on',!!G.arpOn&&!(arpRun||arpTimer)?true:!!G.arpOn);
+  bSl.bar.classList.toggle('on',!!getV('fSlope'));
+  root.querySelector('[data-id="porta"]').bar.classList.toggle('on',!!getV('porta'));
+  root.querySelector('[data-id="mono"]').bar.classList.toggle('on',!!getV('mono'));
+  bRA.bar.classList.toggle('on',rbActive||(G.rbHold&&rbVal!==0));
+  bLo.bar.classList.toggle('on',G.panel===1); bUp.bar.classList.toggle('on',G.panel===0);
+  numB.forEach((b,i)=>b.bar.classList.toggle('on',menu?menu.i===i:i===G.num));
+  bM.forEach((b,i)=>b.bar.classList.toggle('on',G.mSet===i&&(motion.play||motion.rec)));
+  UT.run.classList.toggle('on',!!(arpRun||arpTimer)); UT.midi.classList.toggle('on',midiOn);
+  renderAll(); if(menu) drawMenu(); else if(!idleT) idle(); else drawLcd(); refreshKeys();
 }
 (function loop(){
+  const t=performance.now();
   if(ctx&&arpVis.length){ const now=ctx.currentTime-(ctx.outputLatency||0); while(arpVis.length&&arpVis[0].t<=now){ arpCur=arpVis.shift().k; arpL.classList.toggle('on',arpCur%2===0); } }
-  meterRecent*=0.92; mlvb.style.width=Math.min(34,34*Math.sqrt(meterRecent/0.94))+'px';
+  if(motion.rec) bM[G.mSet].bar.classList.toggle('on',(t%400)<200);
+  if(motion.armed) root.querySelector('[data-id="rec"]').style.boxShadow=(t%500)<250?'0 0 8px 2px #ff3a2a99':'';
+  else root.querySelector('[data-id="rec"]').style.boxShadow='';
   requestAnimationFrame(loop);
 })();
 
 /* =============== fit to the viewport (inside an iframe this is the frame's own viewport) =============== */
 function fit(){ const vv=window.visualViewport, vw=(vv?vv.width:innerWidth), rot=document.getElementById('rot'), rh=rot.offsetHeight?rot.offsetHeight+12:0, vh=(vv?vv.height:innerHeight)-rh;
-  const m=vw<1000?4:20, s=Math.max(0.1,Math.min((vw-m)/W,(vh-m)/H)); panelScale=s; panel.style.transform=`scale(${s})`; const st=document.getElementById('stage'); st.style.width=W*s+'px'; st.style.height=H*s+'px'; }
+  const m=vw<1000?2:16, s=Math.max(0.1,Math.min((vw-m)/W,(vh-m)/H)); panelScale=s; panel.style.transform=`scale(${s})`; const st=document.getElementById('stage'); st.style.width=W*s+'px'; st.style.height=H*s+'px'; }
 addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,250)); if(window.visualViewport) visualViewport.addEventListener('resize',fit); fit();
 
 /* =============== persistence (silently skipped when storage is blocked, e.g. sandboxed iframes) =============== */
 let saveT=0; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(LS,JSON.stringify({G:{...G,arpOn:0,arpHold:0},PARTS,FX,USER,names,motion:motion.sets})); }catch(e){} },300); }
 let restored=false;
 try{ const o=JSON.parse(localStorage.getItem(LS)||'null'); if(o&&o.PARTS&&o.PARTS.length===2){ Object.assign(G,o.G||{}); o.PARTS.forEach((p,i)=>PARTS[i]=Object.assign(defPatch(),p)); FX=Object.assign(defFx(),o.FX||{});
-  if(Array.isArray(o.USER)&&o.USER.length===8) USER=o.USER; if(Array.isArray(o.names)) names=o.names; if(Array.isArray(o.motion)) motion.sets=o.motion; restored=true; lcdTop=(G.bank?'B':'A')+(G.num+1)+' '+names[G.panel]; } }catch(e){}
+  if(Array.isArray(o.USER)&&o.USER.length===8) USER=o.USER; if(Array.isArray(o.names)) names=o.names; if(Array.isArray(o.motion)) motion.sets=o.motion; restored=true; } }catch(e){}
 if(!restored){ G.panel=1; loadPatch(2,0); G.panel=0; loadPatch(0,0); }
-showParam(lastKey); refresh();
-window.VS8K={G,PARTS,get FX(){return FX;},SPEC,setV,getV,noteDown,noteUp,loadPatch,buildMidi,exportMidi,arpToggleRun,stopAll,ensureAudio,
-  get ready(){return ready;},get ctx(){return ctx;},meter:()=>({peak:meterPk,nan:meterNan}),resetMeter:()=>{meterPk=0;meterNan=0;},get worklet(){return !!(node&&node.port);},motion,PRESETS,get arpRunning(){return !!arpTimer;}};
+idle(); refresh();
+window.VS8K={G,PARTS,get FX(){return FX;},SPEC,setV,getV,noteDown,noteUp,loadPatch,buildMidi,exportMidi,arpToggleRun,stopAll,ensureAudio,numPress,valStep,motionBtn,
+  get ready(){return ready;},get ctx(){return ctx;},meter:()=>({peak:meterPk,nan:meterNan}),resetMeter:()=>{meterPk=0;meterNan=0;},get worklet(){return !!(node&&node.port);},motion,PRESETS,
+  get arpRunning(){return !!arpTimer;},get lcd(){return lcd.textContent;}};
 </script>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-// headless test for /workspace/vsynths/supersaw-8k/index.html
+// headless test for ../supersaw-8k/index.html
 const puppeteer = require('/tmp/pt/node_modules/puppeteer-core');
 const path = require('path'), fs = require('fs');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -46,15 +46,15 @@ function parseSmf(b) { // minimal SMF validator: header + tracks + balanced note
   // every osc1 / osc2 waveform, filter type/slope, multi-fx, delay type, with extreme knobs (stress: max resonance, x-mod, ring, sync)
   await page.evaluate(() => { VS8K.stopAll(); VS8K.loadPatch(0, 0); }); await sleep(1700);
   let worst = 0, nans = 0, silent = [];
-  for (let w = 0; w < 7; w++) for (const o2 of [0, 3]) {
-    await page.evaluate((w, o2) => { const s = VS8K.setV; s('o1w', w); s('o2w', o2); s('res', 127); s('xmod', 127); s('ring', 1); s('sync', 1); s('o1c1', 127); s('o1c2', 127); s('cut', 127); s('fType', w % 3); s('fSlope', w % 2); s('mfx', (w * 2 + o2) % 13); s('dly', w % 5); s('mfxLvl', 127); s('dLvl', 127); s('dFb', 127);
+  for (let w = 0; w < 7; w++) for (const o2 of [0, 2]) {
+    await page.evaluate((w, o2) => { const s = VS8K.setV; s('o1w', w); s('o2w', o2); s('res', 127); s('xmod', 127); s('ring', 1); s('sync', 1); s('o1c1', 127); s('o1c2', 127); s('cut', 127); s('fType', w % 3); s('fSlope', w % 2); s('mfx', (w * 2 + o2) % 12); s('panMode', w % 3); s('aLfo1', 63); s('pDest', w % 3); s('o2range', w % 2 ? 25 : -25); s('dly', w % 5); s('mfxLvl', 127); s('dLvl', 127); s('dFb', 127);
       for (const n of [36, 60, 96]) VS8K.noteDown(n, 1); }, w, o2);
     const r = await meter(500); await page.evaluate(() => { for (const n of [36, 60, 96]) VS8K.noteUp(n); }); worst = Math.max(worst, r.peak); nans += r.nan; if (r.peak < 0.005) silent.push(w + '/' + o2);
   }
   ok(worst < 1 && nans === 0 && !silent.length, `stress all waveforms/filters/fx: worst peak ${worst.toFixed(3)} (${(20 * Math.log10(worst)).toFixed(2)} dBFS), nan ${nans}, silent ${silent.join(',') || 'none'}`);
   // ribbon, lever, motion control record + play
   await page.evaluate(() => { VS8K.stopAll(); VS8K.loadPatch(1, 0); }); await sleep(1700);
-  const mo = await page.evaluate(async () => { VS8K.arpToggleRun(); document.querySelectorAll('.btn.rd')[0].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+  const mo = await page.evaluate(async () => { VS8K.arpToggleRun(); const pd = id => document.querySelector(`[data-id="${id}"]`).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); pd('rec'); pd('m1');
     for (let i = 0; i < 20; i++) { VS8K.setV('cut', 20 + i * 5); await new Promise(r => setTimeout(r, 40)); } return VS8K.motion.sets[0].length; });
   ok(mo >= 15, 'motion control recorded ' + mo + ' knob events');
   m = await meter(800); ok(m.peak > 0.01 && m.peak < 1, 'arp + motion running: peak ' + m.peak.toFixed(3));
@@ -69,10 +69,20 @@ function parseSmf(b) { // minimal SMF validator: header + tracks + balanced note
   ok(typeof smf === 'object' && smf.ons > 8 && smf.ons === smf.offs && smf.end, 'MIDI export valid SMF: ' + JSON.stringify(smf));
   const dl = await page.evaluate(() => new Promise(res => { const o = URL.createObjectURL; let got = null; HTMLAnchorElement.prototype.click = function () { got = this.download; }; VS8K.exportMidi(); setTimeout(() => res(got), 50); }));
   ok(/\.mid$/.test(dl || ''), 'export button downloads ' + dl);
-  // knob drag
-  const kn = await page.evaluate(() => { const e = [...document.querySelectorAll('.knob')].find(k => k.nextSibling && k.nextSibling.textContent === 'CUTOFF FREQ'); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2, v: VS8K.getV('cut') }; });
-  await page.mouse.move(kn.x, kn.y); await page.mouse.down(); await page.mouse.move(kn.x, kn.y - 40, { steps: 5 }); await page.mouse.up();
-  const v2 = await page.evaluate(() => VS8K.getV('cut')); ok(v2 !== kn.v, `knob drag changes cutoff ${kn.v} -> ${v2}`);
+  // panel inventory (same count as the original: 22 rotaries + volume + tempo, 16 sliders, 49 keys)
+  const inv = await page.evaluate(() => ({ knobs: document.querySelectorAll('.knob').length, sliders: document.querySelectorAll('.sld').length, keys: document.querySelectorAll('.wk,.bk').length }));
+  ok(inv.knobs === 24 && inv.sliders === 16 && inv.keys === 49, 'panel inventory ' + JSON.stringify(inv));
+  // slider drag + knob drag
+  const drag = async (sel, k, dy) => { const kn = await page.evaluate((sel, k) => { const e = document.querySelector(sel); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2, v: VS8K.getV(k) }; }, sel, k);
+    await page.mouse.move(kn.x, kn.y); await page.mouse.down(); await page.mouse.move(kn.x, kn.y + dy, { steps: 5 }); await page.mouse.up(); return [kn.v, await page.evaluate(k => VS8K.getV(k), k)]; };
+  await page.evaluate(() => VS8K.setV('cut', 64)); let dv = await drag('.sld[data-k="cut"]', 'cut', -25); ok(dv[1] > dv[0], `slider drag raises CUTOFF FREQ ${dv[0]} -> ${dv[1]}`);
+  dv = await drag('.knob[data-k="kf"]', 'kf', -40); ok(dv[1] !== dv[0], `knob drag changes KEY FOLLOW ${dv[0]} -> ${dv[1]}`);
+  // panel buttons: OSC 2 waveform cycles 3 shapes, SHIFT + 8 (EFFECTS) menu edits the chorus type with VALUE UP, EXIT closes, number button loads a patch
+  const bt = await page.evaluate(() => { const pd = id => document.querySelector(`[data-id="${id}"]`).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); const o = {};
+    VS8K.setV('o2w', 0); const seen = []; for (let i = 0; i < 3; i++) { pd('o2w'); seen.push(VS8K.getV('o2w')); } o.o2w = seen.join('');
+    VS8K.setV('mfx', 0); pd('shift'); pd('n8'); o.menu = VS8K.lcd.split('\n')[0].trim(); pd('up'); o.mfx = VS8K.getV('mfx'); pd('shift'); o.closed = VS8K.lcd.split('\n')[0].trim();
+    pd('n3'); o.patch = VS8K.G.num; pd('keyMode'); o.km = VS8K.G.keyMode; pd('keyMode'); pd('keyMode'); pd('lfo2Sel'); o.l2 = VS8K.G.lfo2Sel; return o; });
+  ok(bt.o2w === '120' && bt.menu === 'CHORUS TYPE' && bt.mfx === 1 && /^PATCH/.test(bt.closed) && bt.patch === 2 && bt.km === 1 && bt.l2 === 1, 'panel buttons/menus ' + JSON.stringify(bt));
   // iframe embedding with allow attr + stop message from parent
   const host = '/tmp/vs8k-host.html'; fs.writeFileSync(host, `<!doctype html><body style="margin:0;height:2000px"><iframe id=f src="${URL_}" allow="autoplay; midi" style="width:900px;height:450px;border:0"></iframe><p id=p>below</p></body>`);
   const p2 = await browser.newPage(); const err2 = []; p2.on('pageerror', e => err2.push(e.message)); p2.on('console', m => { if (m.type() === 'error') err2.push(m.text()); });

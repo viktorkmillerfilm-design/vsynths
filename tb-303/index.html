@@ -83,7 +83,10 @@ class Engine{
   constructor(ctx){
     const c=this.ctx=ctx, g=()=>c.createGain();
     this.lim=c.createDynamicsCompressor(); this.lim.threshold.value=-4; this.lim.ratio.value=16; this.lim.attack.value=0.002; this.lim.release.value=0.08;
-    this.out=g(); this.out.gain.value=0.9; this.out.connect(this.lim); this.lim.connect(c.destination);
+    this.out=g(); this.out.gain.value=0.9; this.out.connect(this.lim);
+    /* hard ceiling after the compressor: tanh soft-clip (no oversampling, so it cannot overshoot) + output trim keeps peaks < 0 dBFS */
+    this.clip=c.createWaveShaper(); const cc=new Float32Array(4096); for(let i=0;i<4096;i++){ const x=i/4095*2-1; cc[i]=Math.tanh(1.5*x)/Math.tanh(1.5); } this.clip.curve=cc; this.clip.oversample='none';
+    this.ceil=g(); this.ceil.gain.value=0.93; this.lim.connect(this.clip); this.clip.connect(this.ceil); this.ceil.connect(c.destination);
     this.osc=c.createOscillator(); this.f1=c.createBiquadFilter(); this.f2=c.createBiquadFilter(); this.f1.type=this.f2.type='lowpass';
     this.vca=g(); this.vca.gain.value=0; this.pre=g(); this.post=g(); this.duck=g(); this.vol=g();
     this.sh=c.createWaveShaper(); const cv=new Float32Array(2048);

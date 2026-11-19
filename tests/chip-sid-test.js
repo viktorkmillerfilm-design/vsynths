@@ -1,4 +1,8 @@
 require('./chip-common.js')('chip-sid', async (page, res, fail, sleep) => {
+  await page.click('#fk .key:nth-child(2)'); await sleep(200); res.fkey = await page.evaluate(() => VS.S.preset); if (res.fkey !== 1) fail('f3 key did not load preset 2');
+  const m0 = await page.evaluate(() => VS.S.model); await page.click('.dip'); await sleep(100);
+  res.chipToggle = [m0, await page.evaluate(() => VS.S.model), await page.evaluate(() => document.querySelector('.dip .l1').textContent)];
+  if (res.chipToggle[0] === res.chipToggle[1]) fail('chip click did not switch model');
   const kn = (await page.$$('.st .kn'))[0]; const b = await kn.boundingBox();
   const before = await page.evaluate(() => VS.S.v[0].pw);
   await page.mouse.move(b.x + b.width / 2, b.y + 30); await page.mouse.down(); await page.mouse.move(b.x + b.width / 2, b.y - 40, { steps: 8 }); await page.mouse.up();

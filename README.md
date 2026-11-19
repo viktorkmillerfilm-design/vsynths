@@ -16,12 +16,12 @@ Open `index.html#<slug>` to jump straight to one instrument; the last pick is re
 | `obx-a/` | obx-a | 8-voice analog-style poly | vmorphs workers |
 | `chip-2a03/` | pulsar 8 | 8-bit console APU chip (2 pulse, triangle, noise, DPCM), cycle-clocked | vmorphs workers |
 | `chip-sid/` | trivox 64 | 3-voice 8-bit home-computer sound chip (6581 / 8580 filter flavours), cycle-clocked | vmorphs workers |
-| `minimoog/` | mono-3 | 3-oscillator mono, ladder filter | vable |
-| `moog-modular/` | system-5 | patchable modular | vable |
-| `arp-soloist/` | pro-solo | 30-voice preset mono synth | vable |
-| `juno-60/` | ju-6 | 6-voice DCO poly with arpeggio | vable |
-| `juno-106/` | ju-106 | 6-voice DCO poly, 128 patches | vable |
-| `alpha-juno/` | alpha-6 | 6-voice DCO poly, alpha dial | vable |
+| `minimoog/` | trident | 3-oscillator mono, ladder filter | vable |
+| `moog-modular/` | patchwall | patchable modular | vable |
+| `arp-soloist/` | tabula | 30-voice preset mono synth | vable |
+| `juno-60/` | ember-6 | 6-voice DCO poly with arpeggio | vable |
+| `juno-106/` | tide-6 | 6-voice DCO poly, 128 patches | vable |
+| `alpha-juno/` | orbit-6 | 6-voice DCO poly, alpha dial | vable |
 | `tb-303/` | acid line | bass line groovebox | vable |
 
 Credits: the six instruments `minimoog/`, `moog-modular/`, `arp-soloist/`, `juno-60/`, `juno-106/`, `alpha-juno/` and the acid groovebox `tb-303/` were built by **vable** (the original groovebox lives at https://viktorkmillerfilm-design.github.io/vacid-acid-groovebox/). The other eight and the picker were built by vmorphs and its workers.

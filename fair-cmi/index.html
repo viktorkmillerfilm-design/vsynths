@@ -19,24 +19,38 @@ body{position:fixed;inset:0;display:flex;align-items:center;justify-content:cent
 .vkb{position:relative;touch-action:none} .vkb-w,.vkb-b{position:absolute;top:0;box-sizing:border-box;cursor:pointer}
 .vkb-b{z-index:2}
 
-body{background:#151412;font-family:"Helvetica Neue",Arial,sans-serif}
-#panel{background:linear-gradient(#d9d1bf,#c4bba7);border-radius:8px;box-shadow:0 20px 60px #000c;color:#2b2720}
-.bezel{position:absolute;background:linear-gradient(#e6dfcf,#c9c0ab);border-radius:14px;box-shadow:inset 0 2px 0 #fff8,inset 0 -3px 6px #0003,0 3px 8px #0004}
-.crt{position:absolute;background:#020803;border-radius:18px/22px;box-shadow:inset 0 0 40px #000,inset 0 0 4px #0f0a,0 0 0 6px #2b2a26,0 0 0 8px #8f8774;overflow:hidden}
+body{background:#141311;font-family:"Helvetica Neue",Arial,sans-serif}
+#panel{background:linear-gradient(#ddd6cb,#cfc6b8 60%,#c4baa9);border-radius:6px;box-shadow:0 20px 60px #000c;color:#2b2720;overflow:hidden}
+.house{position:absolute;background:linear-gradient(#2a2924,#161511);border-radius:10px 10px 4px 4px;box-shadow:0 6px 14px #0007,inset 0 1px 0 #555}
+.bezel{position:absolute;background:linear-gradient(160deg,#e3d4b0,#d3c095 55%,#c4b085);border-radius:6px;box-shadow:inset 0 2px 0 #fff6,inset 0 -2px 4px #0003}
+.tube{position:absolute;background:#24251f;border-radius:34px/40px;box-shadow:inset 0 3px 8px #000,0 1px 0 #fff5}
+.crt{position:absolute;background:#020a06;border-radius:28px/34px;box-shadow:inset 0 0 40px #000,0 0 0 3px #3b3d34;overflow:hidden}
 .crt canvas{position:absolute;left:0;top:0;touch-action:none;cursor:crosshair}
-.crt:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(#0000 0 2px,#0004 2px 3px);border-radius:inherit;box-shadow:inset 0 0 60px #000a}
-.brand{position:absolute;font-size:20px;font-weight:800;letter-spacing:.3em;color:#3a352c} .sub{position:absolute;font-size:8.5px;letter-spacing:.24em;color:#6a6152}
-.key{position:absolute;background:linear-gradient(#f4efe3,#d6cdb9);border:1px solid #8c8370;border-radius:4px;box-shadow:0 3px 0 #8c8370,0 4px 5px #0004;font-size:10px;font-weight:700;color:#2b2720;font-family:Menlo,monospace}
-.key.dn{transform:translateY(2px);box-shadow:0 1px 0 #8c8370} .key.g{background:linear-gradient(#7d8a72,#5c6a52);color:#eaf5df;border-color:#3e4a37;box-shadow:0 3px 0 #3e4a37}
-.key.o{background:linear-gradient(#d98a4a,#b4682c);color:#fff;border-color:#7a4419;box-shadow:0 3px 0 #7a4419} .key.lit{outline:2px solid #33ff66;outline-offset:1px}
-.lbl{position:absolute;font-size:8px;font-weight:700;letter-spacing:.14em;color:#5c5446;text-transform:uppercase}
-.vf-t{background:#2b2a26;border-radius:3px;box-shadow:inset 0 2px 4px #000} .vf-s{background:#000} .vf-h{background:linear-gradient(#f4efe3,#b9b09c 45%,#5c5446 50%,#c9c0ab 55%,#efe9dc);border-radius:2px;box-shadow:0 2px 3px #0008}
-.vf-l{font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#5c5446;margin-top:4px}
-.sw{position:absolute;width:34px;height:40px;background:#2b2a26;border-radius:3px;cursor:pointer;box-shadow:inset 0 2px 4px #000} .sw i{position:absolute;left:8px;width:18px;height:18px;border-radius:2px;background:linear-gradient(#f4efe3,#a99f89);top:19px;transition:top .08s;display:block}
-.sw.on i{top:3px} .sw.on{box-shadow:inset 0 2px 4px #000,0 0 0 1px #33ff66}
-.vkb{background:#2b2a26;border-radius:3px} .vkb-w{background:linear-gradient(#fbf8f0,#e6dfcf);border:1px solid #8c8370;border-radius:0 0 4px 4px} .vkb-w.on{background:linear-gradient(#c6f5cf,#8fe0a0)}
-.vkb-b{background:linear-gradient(#3a3630,#151412);border:1px solid #000;border-radius:0 0 3px 3px} .vkb-b.on{background:linear-gradient(#2f8f4a,#155a2a)}
-.foot{position:absolute;font-size:8px;color:#7a7060;letter-spacing:.1em;text-align:right}
+.crt:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(#0000 0 2px,#0003 2px 3px),radial-gradient(ellipse at 35% 25%,#ffffff14,#0000 45%);border-radius:inherit;box-shadow:inset 0 0 50px #000b}
+.badge{position:absolute;font:800 11px "Helvetica Neue",Arial,sans-serif;letter-spacing:.08em;color:#2b2720;line-height:12px}
+.badge small{display:block;font-size:7px;letter-spacing:.2em;font-weight:700;color:#5a5040}
+.base{position:absolute;background:linear-gradient(#24231e,#0f0e0b);border-radius:2px}
+.brand{position:absolute;font-size:18px;font-weight:800;letter-spacing:.32em;color:#5a5244} .sub{position:absolute;font-size:8.5px;letter-spacing:.24em;color:#7a7060}
+.acase{position:absolute;background:radial-gradient(#26251f 1px,#0000 1.5px) 0 0/4px 4px,linear-gradient(#1c1b16,#0e0d0a);border-radius:8px 8px 10px 10px;box-shadow:0 8px 14px #0007,inset 0 1px 0 #4a4a40}
+.key{position:absolute;background:linear-gradient(#efe2bf,#dccb9c 70%,#c7b483);border:1px solid #6d6145;border-radius:3px;box-shadow:0 3px 0 #5a4f36,0 4px 4px #0006;font-size:9.5px;font-weight:700;color:#3a3224;font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.05}
+.key.dn{transform:translateY(2px);box-shadow:0 1px 0 #5a4f36} .key.lit{color:#b5481a;background:linear-gradient(#f6e9c8,#e3d2a4)}
+.kpl{position:absolute;font-size:6px;font-weight:700;letter-spacing:.08em;color:#9c927c;text-align:center;white-space:nowrap}
+.chas{position:absolute;background:linear-gradient(#e2d4b1,#d4c296);box-shadow:inset 0 1px 0 #fff8}
+.lip{position:absolute;background:linear-gradient(#cbb88c,#a8956b);box-shadow:inset 0 1px 0 #f3e6c4}
+.blk{position:absolute;background:linear-gradient(#2d2a24,#1a1814);border-radius:3px;box-shadow:inset 0 2px 5px #000,0 1px 0 #fff6}
+.win{position:absolute;background:linear-gradient(#1a0905,#2a120a);border-radius:2px;box-shadow:inset 0 2px 4px #000;color:#ff5a2a;font:700 13px "Courier New",monospace;letter-spacing:.12em;display:flex;align-items:center;justify-content:center;text-shadow:0 0 6px #f40}
+.lbl{position:absolute;font-size:6.5px;font-weight:700;letter-spacing:.12em;color:#a89e88;text-transform:uppercase;white-space:nowrap}
+.lbl.d{color:#6a6050}
+.vf-t{background:#0b0a08;border-radius:2px;box-shadow:inset 0 1px 3px #000} .vf-s{background:#000;left:50%;width:3px;margin-left:-1.5px}
+.vf-h{background:linear-gradient(#4a4740,#1b1a16 50%,#2c2a25);border-radius:2px;box-shadow:0 2px 3px #000a,inset 0 1px 0 #6a665c}
+.vf.am .vf-h{background:linear-gradient(#9a6a3c,#5a3818 50%,#7a4e28)}
+.vf-l{font-size:6.5px;font-weight:700;letter-spacing:.1em;color:#a89e88;margin-top:3px}
+.sw{position:absolute;width:30px;height:22px;border-radius:50%;cursor:pointer;background:radial-gradient(ellipse at 50% 35%,#efe6d0,#bfb39a 70%,#8a806c);box-shadow:0 2px 3px #000,inset 0 -2px 3px #0004}
+.sw.on{background:radial-gradient(ellipse at 50% 35%,#fff6d8,#ffd27a 55%,#c9832a);box-shadow:0 0 10px #ffb84a,0 2px 3px #000}
+.vkb{background:#121110;border-radius:2px} .vkb-w{background:linear-gradient(#fbfaf2,#ece8da);border:1px solid #9a9480;border-radius:0 0 3px 3px} .vkb-w.on{background:linear-gradient(#d6f7e8,#a8e8cc)}
+.vkb-b{background:linear-gradient(#34322c,#121110);border:1px solid #000;border-radius:0 0 2px 2px;box-shadow:inset 0 -6px 2px #3d3a33} .vkb-b.on{background:linear-gradient(#2c8f6a,#155a40)}
+.foot{position:absolute;font-size:8px;color:#8a8070;letter-spacing:.1em;text-align:right}
+.pen{position:absolute;overflow:visible;pointer-events:none}
 </style></head><body>
 <div id="stage"><div id="panel"></div></div>
 <script type="text/plain" id="dspsrc">// 8-register sampler: zero-order-hold playback at a note-dependent sample clock (no interpolation, like early digital samplers), per-voice tracking lowpass
@@ -205,7 +219,7 @@ V.computerKeys=o=>{ const map='awsedftgyhujkolp;'; let oct=0; const held=new Map
   return {get oct(){return oct}}; };
 /* Web MIDI in */
 V.midiIn=o=>{ if(!navigator.requestMIDIAccess) return; navigator.requestMIDIAccess().then(acc=>{ const hook=i=>i.onmidimessage=m=>{ const [s,a,b]=m.data, c=s&0xf0;
-  if(c===0x90&&b>0) o.down(a,b); else if(c===0x80||(c===0x90&&b===0)) o.up(a); else if(c===0xB0) o.cc&&o.cc(a,b); else if(c===0xE0) o.bend&&o.bend(((b<<7)|a)/8192-1); };
+  if(c===0x90&&b>0) o.down(a,b); else if(c===0x80||(c===0x90&&b===0)) o.up(a); else if(c===0xB0) o.cc&&o.cc(a,b); else if(c===0xE0) o.bend&&o.bend(((b<<7)|a)/8192-1); else if(c===0xD0) o.at&&o.at(a); };
   acc.inputs.forEach(hook); acc.onstatechange=e=>{ if(e.port.type==='input'&&e.port.state==='connected') hook(e.port); }; o.ok&&o.ok(acc.inputs.size); }).catch(()=>{}); };
 /* ---------- clock: lookahead step scheduler ---------- */
 V.clock=o=>{ const c={bpm:o.bpm||120,div:o.div||4,running:false,step:0,swing:0}; let next=0,id=0;
@@ -276,7 +290,7 @@ const SMP=(()=>{ const N=16384; const R=s=>()=>{ s=(s*1664525+1013904223)>>>0; r
     ['FLUTE','flute',24000],['SHAKU','shaku',20000],['KICK1','kick',12000],['SNARE1','snare',20000],['CLAP1','clap',20000],['HIHAT1','hihat',30000],['TOM1','tom',14000]];
   return {G,LIB,N,render(key,rate){ return G[key](rate); }}; })();
 
-const W=1300,H=640, panel=document.getElementById('panel'), $=(c,x,y,w,h,html,parent)=>{const e=VS.el('div',c,parent||panel,html); e.style.cssText+=`position:absolute;left:${x}px;top:${y}px;`+(w!==undefined?`width:${w}px;`:'')+(h!==undefined?`height:${h}px;`:''); return e;};
+const W=1300,H=680, panel=document.getElementById('panel'), $=(c,x,y,w,h,html,parent)=>{const e=VS.el('div',c,parent||panel,html); e.style.cssText+=`position:absolute;left:${x}px;top:${y}px;`+(w!==undefined?`width:${w}px;`:'')+(h!==undefined?`height:${h}px;`:''); return e;};
 const LS='vsynths.cmi.v1';
 /* ---------- state ---------- */
 const DEFP=()=>({level:80,attack:0,damp:40,sus:1,loop:0,filter:75,vibR:40,vibD:0,vibDl:20,porta:0,tune:0,fine:0});
@@ -305,46 +319,68 @@ const clk=VS.clock({bpm:SEQ.tempo,div:4,onStep:(s,t,d)=>{ const P=SEQ.pats[SEQ.p
 function seqMidi(){ const P=SEQ.pats[SEQ.pat], notes=[]; for(let b=0;b<4;b++) for(let r=0;r<8;r++) for(let s=0;s<SEQ.len;s++) if(P[r][s]) notes.push({t:(b*SEQ.len+s)*24,d:20,n:SEQ.note[r],v:Math.round(SEQ.vol[r]/99*127*(P[r][s]===2?1:.8)),ch:r});
   return VS.smf(notes,{bpm:SEQ.tempo,name:'cmi8_page_r',ppq:96,total:SEQ.len*24*4}); }
 let saveT=0; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(LS,JSON.stringify({seq:{pats:SEQ.pats,note:SEQ.note,vol:SEQ.vol,tempo:SEQ.tempo,len:SEQ.len},regs:regs.map(r=>({lib:r.lib,src:r.src,rate:r.rate,bits:r.bits,p:r.p,kbd:r.kbd,trans:r.trans,name:r.name,raw:r.src!=='lib'?Array.from(r.raw):null,ls0:r.ls0,le0:r.le0}))})); }catch(e){} },400); }
-/* ---------- chrome ---------- */
-$('brand',30,14,undefined,undefined,'CMI-8'); $('sub',150,22,undefined,undefined,'COMPUTER MUSICAL INSTRUMENT  ·  8 VOICE  ·  8-BIT SAMPLING');
-$('foot',700,624,580,undefined,'inspired by the classic early-eighties computer sampling workstation · no affiliation');
-$('bezel',20,40,760,404); const crt=$('crt',44,60,712,364); const cv=VS.el('canvas','',crt); cv.width=1424; cv.height=728; cv.style.width='712px'; cv.style.height='364px'; const g=cv.getContext('2d');
-$('lbl',44,428,300,undefined,'light pen: touch / mouse on screen');
-/* page keys */
-$('lbl',800,44,200,undefined,'PAGE SELECT');
+/* ---------- chrome: monitor ---------- */
+$('brand',820,22,undefined,undefined,'CMI-8'); $('sub',820,48,460,undefined,'COMPUTER MUSICAL INSTRUMENT  ·  8 VOICE  ·  8-BIT SAMPLING');
+$('foot',820,64,460,undefined,'inspired by the classic early-eighties computer sampling workstation · no affiliation').style.textAlign='left';
+$('house',14,10,780,424); $('bezel',24,18,760,394); $('tube',38,30,632,368);
+const crt=$('crt',54,46,600,307); const cv=VS.el('canvas','',crt); cv.width=1424; cv.height=728; cv.style.width='600px'; cv.style.height='307px'; const g=cv.getContext('2d');
+$('base',14,434,780,10);
+{ const s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('class','pen'); s.setAttribute('width','110'); s.setAttribute('height','400'); s.style.left='676px'; s.style.top='18px';
+  let coil=''; for(let i=0;i<=46;i++){ const y=62+i*4.6, x=34+Math.sin(i*1.9)*9+(i>30?(i-30)*.6:0); coil+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1); }
+  s.innerHTML=`<defs><linearGradient id="pm" x1="0" x2="1"><stop offset="0" stop-color="#6d6c66"/><stop offset=".45" stop-color="#e8e7e0"/><stop offset="1" stop-color="#5a5953"/></linearGradient>
+  <radialGradient id="ck" cx=".4" cy=".35"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#a9a79c"/><stop offset="1" stop-color="#4c4a43"/></radialGradient></defs>
+  <ellipse cx="44" cy="268" rx="40" ry="62" fill="#00000010"/>
+  <circle cx="78" cy="30" r="13" fill="url(#ck)" stroke="#3a3832"/><circle cx="78" cy="30" r="6" fill="#2a2924"/>
+  <path d="M78 42 C76 52 46 50 40 62" fill="none" stroke="#1b1a17" stroke-width="5"/><path d="${coil}" fill="none" stroke="#1b1a17" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M40 62 L40 112" stroke="#1b1a17" stroke-width="4"/>
+  <rect x="35" y="110" width="12" height="190" rx="4" fill="url(#pm)" stroke="#3f3e39" stroke-width=".8"/><rect x="33" y="282" width="16" height="10" rx="2" fill="url(#pm)" stroke="#3f3e39" stroke-width=".8"/>
+  <path d="M37 300 L41 320 L45 300 Z" fill="#9c9a92" stroke="#3f3e39" stroke-width=".8"/>`;
+  panel.appendChild(s); }
+$('badge',694,360,82,undefined,'CMI-8<small>LIGHT PEN</small>');
+$('lbl d',60,358,400,undefined,'touch the screen with the light pen (finger / mouse)');
+/* ---------- chrome: alphanumeric keyboard ---------- */
+const KX=806,KY=262,KP=28; $('acase',KX-8,KY-10,492,170);
+const typeK=ch=>{ VS.ensure(); cmd+=ch; draw(); };
+const ROWS=['1234567890-=','QWERTYUIOP[]','ASDFGHJKL;\'','ZXCVBNM,./'];
+ROWS.forEach((r,ri)=>[...r].forEach((ch,ci)=>VS.btn(panel,{cls:'key',x:KX+[0,8,13,20][ri]+ci*KP,y:KY+ri*KP,w:KP-4,h:KP-5,html:ch,onDown:()=>typeK(ch)})));
+VS.btn(panel,{cls:'key',x:KX+13+11*KP,y:KY+2*KP,w:KP+6,h:KP-5,html:'RET',onDown:()=>exec()});
+VS.btn(panel,{cls:'key',x:KX+20+10*KP,y:KY+3*KP,w:KP*2-10,h:KP-5,html:'DEL',onDown:()=>{ cmd=cmd.slice(0,-1); draw(); }});
+VS.btn(panel,{cls:'key',x:KX+0,y:KY+4*KP,w:KP*2-4,h:KP-5,html:'CTRL',onDown:()=>{ cmd=''; draw(); }});
+VS.btn(panel,{cls:'key',x:KX+2*KP+6,y:KY+4*KP,w:KP*8-4,h:KP-5,html:'',onDown:()=>typeK(' ')});
+VS.btn(panel,{cls:'key',x:KX+10*KP+8,y:KY+4*KP,w:KP*2-10,h:KP-5,html:'ESC',onDown:()=>go('1')});
+/* numeric pad = direct page select */
 const PAGES=[['1','INDEX'],['2','DISK / LIBRARY'],['3','KEYBOARD CONTROL'],['4','HARMONIC PROFILE'],['6','WAVEFORM DRAWING'],['7','CONTROL PARAMETERS'],['8','SAMPLING'],['D','WAVEFORM DISPLAY'],['R','RHYTHM SEQUENCER']];
-const pageK={}; PAGES.forEach(([k,t],i)=>{ pageK[k]=VS.btn(panel,{cls:'key g',x:800+(i%5)*56,y:58+Math.floor(i/5)*48,w:48,h:40,html:k,onDown:()=>{VS.ensure(); go(k);}}); });
-$('lbl',800,160,200,undefined,'VOICE (REGISTER)');
-const regK=[]; for(let i=0;i<8;i++) regK.push(VS.btn(panel,{cls:'key',x:800+(i%4)*56,y:174+Math.floor(i/4)*44,w:48,h:36,html:String(i+1),onDown:()=>{ VS.ensure(); cur=i; if(!['7','R','3'].includes(page)){} draw(); keysUi(); }}));
-$('lbl',1030,160,200,undefined,'SEQUENCER');
-const playK=VS.btn(panel,{cls:'key o',x:1030,y:174,w:70,h:36,html:'PLAY',onDown:()=>{ VS.ensure(); clk.bpm=SEQ.tempo; clk.toggle(); playK.classList.toggle('lit',clk.running); if(clk.running&&page!=='R') {} }});
-VS.btn(panel,{cls:'key',x:1106,y:174,w:56,h:36,html:'PAT',onDown:()=>{ SEQ.pat=(SEQ.pat+1)%4; draw(); }});
-VS.btn(panel,{cls:'key',x:1030,y:218,w:34,h:36,html:'−',onDown:()=>{ SEQ.tempo=Math.max(40,SEQ.tempo-2); clk.bpm=SEQ.tempo; draw(); }});
-VS.btn(panel,{cls:'key',x:1068,y:218,w:34,h:36,html:'+',onDown:()=>{ SEQ.tempo=Math.min(240,SEQ.tempo+2); clk.bpm=SEQ.tempo; draw(); }});
-VS.btn(panel,{cls:'key',x:1106,y:218,w:56,h:36,html:'MIDI',onDown:()=>{ VS.download(seqMidi(),`cmi8_pattern${'ABCD'[SEQ.pat]}_${SEQ.tempo}bpm.mid`); msg('MIDI FILE WRITTEN: PATTERN '+'ABCD'[SEQ.pat]); }});
-$('lbl',1172,160,120,undefined,'VALUE');
-VS.btn(panel,{cls:'key',x:1172,y:174,w:48,h:36,html:'▲',onDown:()=>adj(1)}); VS.btn(panel,{cls:'key',x:1172,y:218,w:48,h:36,html:'▼',onDown:()=>adj(-1)});
-VS.btn(panel,{cls:'key',x:1226,y:174,w:52,h:80,html:'RE-<br>TURN',onDown:()=>exec()});
-/* command line keyboard (alpha rows) */
-$('lbl',800,268,300,undefined,'COMMAND KEYBOARD');
-const ROWS=['1234567890','QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
-ROWS.forEach((r,ri)=>[...r].forEach((ch,ci)=>VS.btn(panel,{cls:'key',x:800+ri*14+ci*46,y:282+ri*40,w:42,h:34,html:ch,onDown:()=>{ cmd+=ch; draw(); }})));
-VS.btn(panel,{cls:'key',x:1166,y:402,w:54,h:34,html:'SPACE',onDown:()=>{ cmd+=' '; draw(); }}); VS.btn(panel,{cls:'key',x:1224,y:402,w:54,h:34,html:'DEL',onDown:()=>{ cmd=cmd.slice(0,-1); draw(); }});
-/* musical keyboard + control sliders */
-$('lbl',26,452,200,undefined,'CONTROL');
-const s1=VS.fader(panel,{x:30,y:470,h:118,w:22,label:'FILTER',min:0,max:1,value:1,onChange:v=>E({t:'ctl',c:{f:.2+v*.8}})});
-const s2=VS.fader(panel,{x:72,y:470,h:118,w:22,label:'VIBRATO',min:0,max:1,value:0,onChange:v=>E({t:'ctl',c:{vib:v}})});
-const s3=VS.fader(panel,{x:114,y:470,h:118,w:22,label:'LEVEL',min:0,max:1,value:1,onChange:v=>E({t:'ctl',c:{lvl:v}})});
-const swS=$('sw',160,474,34,40,'<i></i>'), swL=$('sw',160,540,34,40,'<i></i>'); $('lbl',152,518,60,undefined,'SUSTAIN'); $('lbl',160,584,60,undefined,'LOOP');
+const pageK={}; const PX=KX+12*KP+22;
+$('kpl',PX,KY-9,KP*3,undefined,'PAGE');
+[['7','8','9'],['4','5','6'],['1','2','3'],['D','0','R']].forEach((r,ri)=>r.forEach((k,ci)=>{ const b=VS.btn(panel,{cls:'key',x:PX+ci*KP,y:KY+ri*KP,w:KP-4,h:KP-5,html:k,onDown:()=>{ VS.ensure(); if(PAGES.some(p=>p[0]===k)) go(k); else msg('?NO PAGE '+k); }}); if(PAGES.some(p=>p[0]===k)) pageK[k]=b; }));
+VS.btn(panel,{cls:'key',x:PX,y:KY+4*KP,w:KP*3-4,h:KP-5,html:'RETURN',onDown:()=>exec()});
+VS.btn(panel,{cls:'key',x:PX+3*KP+12,y:KY+KP,w:KP-4,h:KP*2-5,html:'↵',onDown:()=>exec()});
+/* ---------- chrome: music keyboard chassis ---------- */
+$('chas',0,444,W,26); $('lip',0,652,W,28);
+/* left control panel: three sliders + two lamp switches */
+$('blk',10,470,112,182);
+const s1=VS.fader(panel,{x:24,y:482,h:66,w:16,thumb:14,label:'FILTER',min:0,max:1,value:1,onChange:v=>E({t:'ctl',c:{f:.2+v*.8}})});
+const s2=VS.fader(panel,{x:56,y:482,h:66,w:16,thumb:14,label:'VIB',min:0,max:1,value:0,onChange:v=>E({t:'ctl',c:{vib:v}})});
+const s3=VS.fader(panel,{x:88,y:482,h:66,w:16,thumb:14,label:'LEVEL',cls:'am',min:0,max:1,value:1,onChange:v=>E({t:'ctl',c:{lvl:v}})});
+const swS=$('sw',22,580,30,22,''), swL=$('sw',64,580,30,22,''); $('lbl',18,606,40,undefined,'SUSTAIN'); $('lbl',66,606,40,undefined,'LOOP');
+$('',20,620,80,6,'').style.cssText+='border:1px solid #8a806c;border-top:none';
 const swUi=()=>{ swS.classList.toggle('on',!!regs[cur].p.sus); swL.classList.toggle('on',!!regs[cur].p.loop); };
 swS.addEventListener('pointerdown',e=>{ e.preventDefault(); regs[cur].p.sus=regs[cur].p.sus?0:1; pushPar(cur); swUi(); draw(); });
 swL.addEventListener('pointerdown',e=>{ e.preventDefault(); regs[cur].p.loop=regs[cur].p.loop?0:1; pushPar(cur); swUi(); draw(); });
-const kb=VS.keyboard(panel,{x:212,y:456,w:1066,h:160,lo:36,hi:96,down:(n,v)=>noteOn(n,v),up:n=>noteOff(n)});
+/* right keypad: display window + 4x4 keys (voices / sequencer / value) */
+$('blk',1158,470,132,182); const ledW=$('win',1170,482,108,26,'');
+const regK=[]; const KPX=1170, KPY=528, KQ=27;
+const kp=(r,c,html,f,lab)=>{ if(lab) $('kpl',KPX+c*KQ-3,KPY+r*30-8,KQ+2,undefined,lab); return VS.btn(panel,{cls:'key',x:KPX+c*KQ,y:KPY+r*30,w:KQ-5,h:20,html,onDown:f}); };
+for(let i=0;i<8;i++) regK.push(kp(i>>2,i%4,String(i+1),()=>{ VS.ensure(); cur=i; draw(); keysUi(); },i===0?'VOICE':''));
+const togglePlay=()=>{ VS.ensure(); clk.bpm=SEQ.tempo; clk.toggle(); playK.classList.toggle('lit',clk.running); draw(); };
+const playK=kp(2,0,'▶',togglePlay,'PLAY'); kp(2,1,'P',()=>{ SEQ.pat=(SEQ.pat+1)%4; draw(); },'PAT'); kp(2,2,'▼',()=>adj(-1),'VALUE'); kp(2,3,'▲',()=>adj(1));
+kp(3,0,'M',()=>{ VS.download(seqMidi(),`cmi8_pattern${'ABCD'[SEQ.pat]}_${SEQ.tempo}bpm.mid`); msg('MIDI FILE WRITTEN: PATTERN '+'ABCD'[SEQ.pat]); },'MIDI'); kp(3,1,'I',()=>go('1'),'INDEX'); kp(3,2,'R',()=>go('R'),'PG R'); kp(3,3,'↵',()=>exec(),'RET');
+const kb=VS.keyboard(panel,{x:126,y:470,w:1028,h:182,lo:29,hi:101,down:(n,v)=>noteOn(n,v),up:n=>noteOff(n)});
 VS.computerKeys({base:60,down:(n,v)=>noteOn(n,v),up:n=>noteOff(n),oct:o=>msg('KEYBOARD OCTAVE '+o)});
 VS.midiIn({down:(n,v)=>noteOn(n,v),up:n=>noteOff(n),bend:v=>E({t:'bend',v})});
 /* ---------- screen ---------- */
 let page='R', cmd='', status='', stT=0, sel={row:0,col:0};
-const GR='#33ff66', GD='#1a8f3a', CW=8.6, LH=15.5;
+const GR='#5af2b0', GD='#2a9a6e', CW=8.6, LH=15.5;
 function msg(t){ status=t; clearTimeout(stT); stT=setTimeout(()=>{status='';draw();},2200); draw(); }
 function txt(s,col,row,c){ g.fillStyle=c||GR; g.fillText(s,10+col*CW,14+row*LH); }
 function box(x,y,w,h,c){ g.strokeStyle=c||GD; g.strokeRect(x+.5,y+.5,w,h); }
@@ -365,41 +401,43 @@ function adj(d){ VS.ensure(); if(page==='7'){ const [k,mn,mx]=PARS[sel.row]; con
   save(); draw(); }
 const PARS=[['level',0,99,'LEVEL'],['attack',0,99,'ATTACK'],['damp',0,99,'DAMPING'],['sus',0,1,'SUSTAIN'],['loop',0,1,'LOOP'],['filter',0,99,'FILTER'],['vibR',0,99,'VIB RATE'],['vibD',0,99,'VIB DEPTH'],['vibDl',0,99,'VIB DELAY'],['porta',0,99,'PORTAMENTO'],['tune',-24,24,'TUNE (SEMI)'],['fine',-50,50,'FINE TUNE']];
 let drawBuf=new Float32Array(256).map((_,i)=>Math.sin(2*Math.PI*i/256)*.8), harm=new Float32Array(32); harm[0]=1; harm[2]=.33; harm[4]=.2;
-function header(t){ g.font='700 13px "Courier New",monospace'; g.textBaseline='middle'; txt(`PAGE ${page}`,0,0); txt(t,10,0); txt(`VOICE ${cur+1} ${regs[cur].name}`,58,0);
-  g.strokeStyle=GD; g.beginPath(); g.moveTo(8,24); g.lineTo(704,24); g.stroke(); }
-function footer(){ g.strokeStyle=GD; g.beginPath(); g.moveTo(8,334); g.lineTo(704,334); g.stroke(); txt('COMMAND: '+cmd+(Date.now()%1000<500?'_':' '),0,21.1); if(status) txt(status,38,21.1,'#a6ffbd'); }
+function header(t){ g.font='700 13px "Courier New",monospace'; g.textBaseline='middle'; txt('INDEX',0,-.15); txt('COMMAND:',0,.72);
+  g.fillStyle=GR; g.fillRect(84,4,470,13); g.fillRect(84,18,470,13); g.save(); g.shadowBlur=0; g.fillStyle='#03140c'; g.textAlign='center'; g.fillText(`***  PAGE ${page}  ${t}  ***`,319,11);
+  g.textAlign='left'; g.fillText(cmd+(Date.now()%1000<500?'_':' '),90,25); g.restore(); txt(`VOICE: ${cur+1}`,64,-.15); txt(regs[cur].name,64,.72);
+  hit(8,2,72,16,()=>go('1')); g.strokeStyle=GD; g.beginPath(); g.moveTo(8,36); g.lineTo(704,36); g.stroke(); }
+function footer(){ g.strokeStyle=GD; g.beginPath(); g.moveTo(8,334); g.lineTo(704,334); g.stroke(); txt(status||'READY',0,21.1,status?'#c4ffe4':GD); txt(`PAT ${'ABCD'[SEQ.pat]}  ${SEQ.tempo} BPM  ${clk.running?'PLAY':'STOP'}`,58,21.1,GD); hit(10+58*CW,322,140,22,togglePlay); ledW.textContent=`${cur+1}.${String(SEQ.tempo).padStart(3,'0')}`; }
 function wave(d,x,y,w,h,ls,le){ g.strokeStyle=GR; g.lineWidth=1.2; g.beginPath(); const L=d.length; for(let i=0;i<w;i++){ const a=Math.floor(i/w*L), b=Math.floor((i+1)/w*L); let mn=1,mx=-1; for(let j=a;j<Math.max(a+1,b);j++){ const v=d[j]||0; if(v<mn)mn=v; if(v>mx)mx=v; } g.moveTo(x+i+.5,y+h/2-mx*h/2); g.lineTo(x+i+.5,y+h/2-mn*h/2+1); } g.stroke();
-  if(ls!==undefined&&le<L){ g.strokeStyle='#a6ffbd'; [ls,le].forEach(p=>{ const X=x+p/L*w; g.beginPath(); g.moveTo(X,y); g.lineTo(X,y+h); g.stroke(); }); } }
+  if(ls!==undefined&&le<L){ g.strokeStyle='#c4ffe4'; [ls,le].forEach(p=>{ const X=x+p/L*w; g.beginPath(); g.moveTo(X,y); g.lineTo(X,y+h); g.stroke(); }); } }
 function draw(){ g.setTransform(2,0,0,2,0,0); g.fillStyle='#020803'; g.fillRect(0,0,712,364); g.shadowColor=GR; g.shadowBlur=4; hits.length=0; g.lineWidth=1;
   const R=regs[cur];
   switch(page){
   case '1': header('INDEX'); PAGES.forEach(([k,t],i)=>{ txt(`${k}   ${t}`,4,2.5+i*1.6); hit(30,30+i*24.8,400,22,()=>go(k)); }); txt('TOUCH A LINE WITH THE LIGHT PEN OR TYPE A PAGE NUMBER + RETURN',4,18,GD); break;
-  case '2': header('DISK  -  VOICE LIBRARY'); txt('LOAD INTO VOICE:',0,2); for(let i=0;i<8;i++){ txt(`${i+1}`,18+i*4,2,i===cur?'#a6ffbd':GD); if(i===cur) box(10+(18+i*4)*CW-4,14+2*LH-9,CW+8,18,GR); hit(10+(18+i*4)*CW-6,14+2*LH-11,CW+12,22,()=>{cur=i;keysUi();draw();}); }
-    SMP.LIB.forEach(([n,k,r],i)=>{ const c=i%2, row=4+Math.floor(i/2)*1.7; const on=R.lib===i&&R.src==='lib'; txt(`${on?'>':' '} ${n.padEnd(8)} ${String(r).padStart(5)} HZ`,2+c*38,row,on?'#a6ffbd':GR); hit(10+(2+c*38)*CW,14+row*LH-10,300,22,()=>loadLib(cur,i)); });
+  case '2': header('DISK  -  VOICE LIBRARY'); txt('LOAD INTO VOICE:',0,2); for(let i=0;i<8;i++){ txt(`${i+1}`,18+i*4,2,i===cur?'#c4ffe4':GD); if(i===cur) box(10+(18+i*4)*CW-4,14+2*LH-9,CW+8,18,GR); hit(10+(18+i*4)*CW-6,14+2*LH-11,CW+12,22,()=>{cur=i;keysUi();draw();}); }
+    SMP.LIB.forEach(([n,k,r],i)=>{ const c=i%2, row=4+Math.floor(i/2)*1.7; const on=R.lib===i&&R.src==='lib'; txt(`${on?'>':' '} ${n.padEnd(8)} ${String(r).padStart(5)} HZ`,2+c*38,row,on?'#c4ffe4':GR); hit(10+(2+c*38)*CW,14+row*LH-10,300,22,()=>loadLib(cur,i)); });
     txt('TOUCH A FILE NAME TO LOAD  ·  CMD: LOAD ORCHIT',2,18,GD); break;
   case '3': header('KEYBOARD CONTROL'); txt('VOICE   NAME      KEYBOARD   TRANSPOSE   SAMPLE RATE',1,2,GD);
-    regs.forEach((r,i)=>{ const row=3.6+i*1.75; txt(`${i+1}       ${r.name.padEnd(9)} ${r.kbd?'ON ':'OFF'}        ${(r.trans>0?'+':'')+r.trans}`.padEnd(46)+`${r.rate} HZ`,1,row,i===cur?'#a6ffbd':GR);
+    regs.forEach((r,i)=>{ const row=3.6+i*1.75; txt(`${i+1}       ${r.name.padEnd(9)} ${r.kbd?'ON ':'OFF'}        ${(r.trans>0?'+':'')+r.trans}`.padEnd(46)+`${r.rate} HZ`,1,row,i===cur?'#c4ffe4':GR);
       hit(10+28*CW,14+row*LH-10,60,22,()=>{ r.kbd=r.kbd?0:1; save(); draw(); }); hit(10,14+row*LH-10,200,22,()=>{ cur=i; keysUi(); draw(); }); });
     txt('TOUCH ON/OFF TO LAYER VOICES ON THE KEYBOARD  ·  ▲▼ TRANSPOSE',1,18.4,GD); break;
   case '4': header('HARMONIC PROFILE'); { const x0=30,y0=40,w=640,h=200,bw=w/32; box(x0,y0,w,h);
       for(let i=0;i<32;i++){ const v=harm[i]; g.fillStyle=GR; g.fillRect(x0+i*bw+3,y0+h-v*h,bw-6,v*h); if(i%4===0) txt(String(i+1),(x0+i*bw)/CW-.6,16.4,GD); }
       hit(x0,y0,w,h,(x,y)=>{ const i=Math.floor((x-x0)/bw); if(i>=0&&i<32){ harm[i]=VS.clamp(1-(y-y0)/h,0,1); draw(); } },true);
-      txt('[ COMPUTE ]',56,18.4,'#a6ffbd'); hit(10+56*CW-4,14+18.4*LH-10,110,22,()=>computeHarm()); txt('[ CLEAR ]',42,18.4); hit(10+42*CW-4,14+18.4*LH-10,90,22,()=>{ harm.fill(0); harm[0]=1; draw(); });
+      txt('[ COMPUTE ]',56,18.4,'#c4ffe4'); hit(10+56*CW-4,14+18.4*LH-10,110,22,()=>computeHarm()); txt('[ CLEAR ]',42,18.4); hit(10+42*CW-4,14+18.4*LH-10,90,22,()=>{ harm.fill(0); harm[0]=1; draw(); });
       txt('DRAW HARMONIC LEVELS, THEN COMPUTE INTO VOICE '+(cur+1),1,18.4,GD); } break;
   case '6': header('WAVEFORM DRAWING'); { const x0=30,y0=40,w=640,h=220; box(x0,y0,w,h); g.strokeStyle=GD; g.beginPath(); g.moveTo(x0,y0+h/2); g.lineTo(x0+w,y0+h/2); g.stroke();
       g.strokeStyle=GR; g.lineWidth=1.6; g.beginPath(); for(let i=0;i<256;i++){ const X=x0+i/255*w, Y=y0+h/2-drawBuf[i]*h/2*.95; i?g.lineTo(X,Y):g.moveTo(X,Y); } g.stroke(); g.lineWidth=1;
       let last=null; hit(x0,y0,w,h,(x,y,first)=>{ const i=VS.clamp(Math.round((x-x0)/w*255),0,255), v=VS.clamp(-(y-y0-h/2)/(h/2*.95),-1,1); if(first||last===null) last=[i,v];
         const [i0,v0]=last, n=Math.abs(i-i0)||1; for(let k=0;k<=n;k++){ const ii=Math.round(i0+(i-i0)*k/n); drawBuf[ii]=v0+(v-v0)*k/n; } last=[i,v]; draw(); },true);
-      txt('[ COMPUTE ]',56,18.4,'#a6ffbd'); hit(10+56*CW-4,14+18.4*LH-10,110,22,()=>computeDraw()); txt('[ SMOOTH ]',42,18.4); hit(10+42*CW-4,14+18.4*LH-10,100,22,()=>{ const b=drawBuf.slice(); for(let i=0;i<256;i++) drawBuf[i]=(b[(i+255)%256]+2*b[i]+b[(i+1)%256])/4; draw(); });
+      txt('[ COMPUTE ]',56,18.4,'#c4ffe4'); hit(10+56*CW-4,14+18.4*LH-10,110,22,()=>computeDraw()); txt('[ SMOOTH ]',42,18.4); hit(10+42*CW-4,14+18.4*LH-10,100,22,()=>{ const b=drawBuf.slice(); for(let i=0;i<256;i++) drawBuf[i]=(b[(i+255)%256]+2*b[i]+b[(i+1)%256])/4; draw(); });
       txt('[ CLEAR ]',30,18.4); hit(10+30*CW-4,14+18.4*LH-10,90,22,()=>{ drawBuf.fill(0); draw(); }); txt('DRAW ONE CYCLE WITH THE PEN',1,18.4,GD); } break;
-  case '7': header('CONTROL PARAMETERS'); txt('PARAMETER',1,2,GD); for(let c=0;c<8;c++) txt(String(c+1).padStart(4),15+c*7,2,c===cur?'#a6ffbd':GD);
+  case '7': header('CONTROL PARAMETERS'); txt('PARAMETER',1,2,GD); for(let c=0;c<8;c++) txt(String(c+1).padStart(4),15+c*7,2,c===cur?'#c4ffe4':GD);
     PARS.forEach(([k,mn,mx,l],r)=>{ const row=3.3+r*1.38; txt(l,1,row,GD); for(let c=0;c<8;c++){ const v=regs[c].p[k]; const s=mx===1?(v?'YES':' NO'):String(v); const isSel=sel.row===r&&sel.col===c;
-        if(isSel){ g.fillStyle='#0d3a18'; g.fillRect(10+(15+c*7)*CW,14+row*LH-9,CW*5,18); } txt(s.padStart(4),15+c*7,row,isSel?'#d6ffe0':GR);
+        if(isSel){ g.fillStyle='#0d3a18'; g.fillRect(10+(15+c*7)*CW,14+row*LH-9,CW*5,18); } txt(s.padStart(4),15+c*7,row,isSel?'#e2fff2':GR);
         let y0=null,v0=0; hit(10+(15+c*7)*CW,14+row*LH-10,CW*6,20,(x,y,first)=>{ if(first){ sel={row:r,col:c}; y0=y; v0=regs[c].p[k]; if(mx===1){ regs[c].p[k]=v0?0:1; pushPar(c); y0=null; } draw(); return; } if(y0===null) return;
           const nv=VS.clamp(Math.round(v0+(y0-y)/3),mn,mx); if(nv!==regs[c].p[k]){ regs[c].p[k]=nv; pushPar(c); draw(); } },true); } });
     txt('TOUCH A VALUE, DRAG UP/DOWN OR USE ▲▼',1,21.1-1.4,GD); break;
   case '8': header('SAMPLING'); { const rows=[['SAMPLE RATE',R.rate+' HZ'],['RESOLUTION',R.bits+' BIT'],['LENGTH',R.d.length+' SAMPLES  ('+(R.d.length/R.rate).toFixed(2)+' S)'],['LOOP',R.p.loop?'ON  '+R.ls+' - '+R.le:'OFF'],['SOURCE',R.src==='lib'?'LIBRARY '+R.name:R.name]];
-      rows.forEach(([a,b],i)=>{ const sl=sel.row===i&&i<2; txt((sl?'> ':'  ')+a.padEnd(14)+b,1,2+i*1.5,sl?'#d6ffe0':GR); if(i<2) hit(10,14+(2+i*1.5)*LH-10,400,20,()=>{ sel={row:i,col:0}; draw(); }); });
+      rows.forEach(([a,b],i)=>{ const sl=sel.row===i&&i<2; txt((sl?'> ':'  ')+a.padEnd(14)+b,1,2+i*1.5,sl?'#e2fff2':GR); if(i<2) hit(10,14+(2+i*1.5)*LH-10,400,20,()=>{ sel={row:i,col:0}; draw(); }); });
       const x0=30,y0=152,w=640,h=136; box(x0,y0,w,h); wave(R.d,x0,y0,w,h,R.ls,R.le);
       hit(x0,y0,w,h,(x,y,first)=>{ const p=Math.round(VS.clamp((x-x0)/w,0,1)*R.d.length); if(first) R._drag=Math.abs(p-R.ls)<Math.abs(p-R.le)?'ls':'le'; if(R._drag==='ls') R.ls=Math.min(p,R.le-64); else R.le=Math.max(p,R.ls+64); R.p.loop=1; pushReg(cur); draw(); },true);
       txt('▲▼ CHANGE SELECTED LINE (RE-SAMPLES)  ·  DRAG ON WAVE TO SET LOOP',1,18.4+1.4,GD); } break;
@@ -409,14 +447,14 @@ function draw(){ g.setTransform(2,0,0,2,0,0); g.fillStyle='#020803'; g.fillRect(
         g.moveTo(ox,oy); pts.forEach(p=>g.lineTo(p[0],p[1])); g.lineTo(ox+w,oy); g.closePath(); g.fill(); g.stroke(); }
       txt(`${R.name}  ·  32 SEGMENTS  ·  ${R.rate} HZ  ·  ${R.bits} BIT`,1,2); } break;
   case 'R': header('RHYTHM SEQUENCER'); { txt(`PATTERN ${'ABCD'[SEQ.pat]}   TEMPO ${SEQ.tempo}   ${clk.running?'PLAYING':'STOPPED'}`,1,2);
-      txt('[PLAY]',50,2,'#a6ffbd'); hit(10+50*CW-4,14+2*LH-10,60,20,()=>{ VS.ensure(); clk.bpm=SEQ.tempo; clk.toggle(); playK.classList.toggle('lit',clk.running); draw(); });
-      ['A','B','C','D'].forEach((p,i)=>{ txt(p,62+i*3,2,i===SEQ.pat?'#d6ffe0':GD); hit(10+(62+i*3)*CW-4,14+2*LH-10,20,20,()=>{ SEQ.pat=i; draw(); }); });
+      txt('[PLAY]',50,2,'#c4ffe4'); hit(10+50*CW-4,14+2*LH-10,60,20,()=>{ VS.ensure(); clk.bpm=SEQ.tempo; clk.toggle(); playK.classList.toggle('lit',clk.running); draw(); });
+      ['A','B','C','D'].forEach((p,i)=>{ txt(p,62+i*3,2,i===SEQ.pat?'#e2fff2':GD); hit(10+(62+i*3)*CW-4,14+2*LH-10,20,20,()=>{ SEQ.pat=i; draw(); }); });
       const P=SEQ.pats[SEQ.pat], gx=170, gy=72, cw=30, rh=27;
-      for(let s=0;s<16;s++) txt(String(s+1).padStart(2),(gx+s*cw+6)/CW-1.15,3.2,s===SEQ.step?'#d6ffe0':GD);
-      for(let r=0;r<8;r++){ const y=gy+r*rh; txt(`${r+1} ${regs[r].name.padEnd(7)}`,0.2,(y+12-14)/LH+.05,r===cur?'#a6ffbd':GR); txt(VS.noteName(SEQ.note[r]).toUpperCase().padStart(4),12.6,(y+12-14)/LH+.05,GD);
+      for(let s=0;s<16;s++) txt(String(s+1).padStart(2),(gx+s*cw+6)/CW-1.15,3.2,s===SEQ.step?'#e2fff2':GD);
+      for(let r=0;r<8;r++){ const y=gy+r*rh; txt(`${r+1} ${regs[r].name.padEnd(7)}`,0.2,(y+12-14)/LH+.05,r===cur?'#c4ffe4':GR); txt(VS.noteName(SEQ.note[r]).toUpperCase().padStart(4),12.6,(y+12-14)/LH+.05,GD);
         hit(10,y,100,rh-4,()=>{ cur=r; keysUi(); draw(); });
         let ny=null,n0=0; hit(118,y,46,rh-4,(x,yy,first)=>{ if(first){ ny=yy; n0=SEQ.note[r]; return; } const nn=VS.clamp(Math.round(n0+(ny-yy)/4),24,96); if(nn!==SEQ.note[r]){ SEQ.note[r]=nn; save(); draw(); } },true);
-        for(let s=0;s<16;s++){ const x=gx+s*cw, v=P[r][s]; g.strokeStyle=s===SEQ.step?GR:GD; g.strokeRect(x+.5,y+.5,cw-6,rh-8); if(v){ g.fillStyle=v===2?'#d6ffe0':GR; g.fillRect(x+4,y+4,cw-13,rh-15); }
+        for(let s=0;s<16;s++){ const x=gx+s*cw, v=P[r][s]; g.strokeStyle=s===SEQ.step?GR:GD; g.strokeRect(x+.5,y+.5,cw-6,rh-8); if(v){ g.fillStyle=v===2?'#e2fff2':GR; g.fillRect(x+4,y+4,cw-13,rh-15); }
           hit(x,y,cw-4,rh-6,()=>{ P[r][s]=(P[r][s]+1)%3; save(); draw(); }); } }
       txt('TOUCH STEP: ON / ACCENT / OFF  ·  DRAG NOTE UP/DOWN  ·  ▲▼ TEMPO',1,19.6,GD); } break; }
   footer(); g.shadowBlur=0; }

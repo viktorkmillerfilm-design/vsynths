@@ -23,7 +23,7 @@ const smfOk=b=>{ const h=String.fromCharCode(...b.slice(0,4)), t=String.fromChar
   ok(m.peak<1&&!m.nan&&m.peak>.01,`10 notes x 3 osc x 6 unison + feedback + bitcrusher stress: peak ${m.peakDb.toFixed(1)} dBFS`); await sleep(800);
   // mod assignment via UI: arm lfo5, tap filter1 cutoff knob, drag
   await page.evaluate(()=>{ WM.loadPreset(7); WM.arm('lfo5'); });
-  const kn=await page.evaluate(()=>{ const e=[...document.querySelectorAll('.mk')].find(x=>x.querySelector('.kl').textContent==='cutoff'); const r=e.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2}; });
+  const kn=await page.evaluate(()=>{ const e=[...document.querySelectorAll('.mk')].find(x=>(x.querySelector('.kl')||{}).textContent.toLowerCase()==='cutoff'); const r=e.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2}; });
   await page.mouse.move(kn.x,kn.y); await page.mouse.down(); await page.mouse.move(kn.x,kn.y-40,{steps:5}); await page.mouse.up(); await page.evaluate(()=>WM.arm('lfo5'));
   const mods=await page.evaluate(()=>WM.P.mods.f1cut); ok(mods&&mods[0].src==='lfo5'&&mods[0].amt>.1,'UI mod assign: lfo5 → filter1 cutoff amt '+(mods&&mods[0].amt));
   // wobble preset sequencer

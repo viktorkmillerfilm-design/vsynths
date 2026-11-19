@@ -19,7 +19,7 @@ function parseSMF(b) { const s = (o, n) => String.fromCharCode(...b.slice(o, o +
   await page.setViewport({ width: 1280, height: 800 });
   await page.goto(URL0); await page.evaluate(() => localStorage.clear()); await page.reload(); await sleep(400);
   // unlock with a real click on the keyboard area (plays C3)
-  await page.mouse.click(700, 700); await page.waitForFunction(() => OBXA.eng && OBXA.eng.ready && OBXA.ctx.state === 'running', { timeout: 5000 }); await sleep(300);
+  await page.mouse.click(700, 700); await page.waitForFunction(() => OBXA.eng && OBXA.eng.ready && OBXA.ctx.state === 'running' && OBXA.ctx.currentTime > 0.3, { timeout: 8000 }); await sleep(300);
   const kind = await page.evaluate(() => OBXA.eng && OBXA.eng.kind); ok(kind === 'worklet', 'engine kind = ' + kind);
   // live audio meter helper on the analyser after the limiter
   const meter = ms => page.evaluate(async ms => { const a = OBXA.eng.ana, buf = new Float32Array(a.fftSize); let peak = 0, nan = 0, ss = 0, n = 0; const t0 = performance.now();
@@ -56,8 +56,7 @@ function parseSMF(b) { const s = (o, n) => String.fromCharCode(...b.slice(o, o +
   await page.evaluate(() => OBXA.loadProg(3)); await page.evaluate(() => { OBXA.noteDown(36); OBXA.noteDown(43); }); m = await meter(700);
   ok(m.rms > 0.005 && m.peak < 1, `unison bass (legato): rms ${m.rms.toFixed(4)} peak ${(20 * Math.log10(m.peak)).toFixed(2)} dBFS`); await page.evaluate(() => { OBXA.noteUp(36); OBXA.noteUp(43); });
   // arp
-  await page.evaluate(() => { OBXA.loadProg(0); document.querySelectorAll('.btn').forEach(b => { if (b.nextSibling && b.nextSibling.nextSibling && b.nextSibling.nextSibling.textContent === 'ARP') b.click(); }); });
-  await page.evaluate(() => { const s = OBXA.S; if (!s.arp.on) { [...document.querySelectorAll('.t')].find(t => t.textContent === 'ARP').previousSibling.previousSibling.click(); } [60, 64, 67].forEach(n => OBXA.noteDown(n)); });
+  await page.evaluate(() => { OBXA.loadProg(0); if (!OBXA.S.arp.on) document.getElementById('arpBtn').click(); [60, 64, 67].forEach(n => OBXA.noteDown(n)); });
   m = await meter(1200); ok(m.rms > 0.003 && m.peak < 1, `arpeggiator: rms ${m.rms.toFixed(4)} arp on ${await page.evaluate(() => OBXA.S.arp.on)}`);
   // 4) MIDI export (arp pattern while arp held, then sequence)
   let midi = await page.evaluate(() => Array.from(OBXA.buildMidi())); let r = parseSMF(midi); ok(r.ok && r.balanced && r.on > 10, `MIDI (arp) SMF valid: ${JSON.stringify(r)}`);
@@ -69,7 +68,7 @@ function parseSMF(b) { const s = (o, n) => String.fromCharCode(...b.slice(o, o +
   await client.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: dl }); await page.click('#midiBtn'); await sleep(1200);
   const files = fs.readdirSync(dl); ok(files.length === 1 && files[0].endsWith('.mid') && parseSMF([...fs.readFileSync(path.join(dl, files[0]))]).ok, 'MIDI button download: ' + files.join(','));
   // 5) UI: knob drag changes value, program buttons
-  const cut0 = await page.evaluate(() => OBXA.S.up.cut); const kb = await page.evaluate(() => { const t = [...document.querySelectorAll('.t')].find(t => t.textContent === 'FREQUENCY'); const r = t.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y - 25 }; });
+  const cut0 = await page.evaluate(() => OBXA.S.up.cut); const kb = await page.evaluate(() => { const r = document.querySelector('.knob[data-key="cut"]').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
   await page.mouse.move(kb.x, kb.y); await page.mouse.down(); await page.mouse.move(kb.x, kb.y - 60, { steps: 6 }); await page.mouse.up();
   const cut1 = await page.evaluate(() => OBXA.S.up.cut); ok(cut1 > cut0, `filter FREQUENCY knob drag ${cut0.toFixed(2)} -> ${cut1.toFixed(2)}`);
   await page.evaluate(() => OBXA.loadProg(0));

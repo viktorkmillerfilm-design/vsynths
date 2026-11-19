@@ -19,9 +19,9 @@ const dir=path.resolve(__dirname,'..','fm7'); let fails=0; const ok=(c,m)=>{ con
     await page.evaluate(()=>FM7.noteOn(60,100)); const r=await page.evaluate(()=>VS.monitor(160)); await page.evaluate(()=>FM7.noteOff(60)); if(r.peak>0.003&&r.peak<1&&!r.nan) algOk++; await sleep(40); }
   ok(algOk===32,`all 32 algorithms audible (${algOk}/32)`);
   // edit mode: param buttons + data entry
-  await page.evaluate(()=>{ FM7.setMode('play'); FM7.press32(0); FM7.setMode('edit'); FM7.press32(25); FM7.inc(-1); });
+  await page.evaluate(()=>{ FM7.setMode('play'); FM7.press32(0); FM7.setMode('edit'); FM7.press32(26); FM7.inc(-1); });
   const l=await page.evaluate(()=>FM7.lcd()); ok(/OUTPUT LEVEL=98/.test(l),'edit: OUTPUT LEVEL -1 shown on lcd: '+JSON.stringify(l));
-  await page.evaluate(()=>FM7.press32(19)); await page.evaluate(()=>FM7.press32(19)); ok(/EG RATE 2=/.test(await page.evaluate(()=>FM7.lcd())),'edit: EG RATE sub-param cycles to R2');
+  await page.evaluate(()=>FM7.press32(20)); await page.evaluate(()=>FM7.press32(20)); ok(/EG RATE 2=/.test(await page.evaluate(()=>FM7.lcd())),'edit: EG RATE sub-param cycles to R2');
   await page.evaluate(()=>FM7.setMode('play'));
   // sequencer
   await page.evaluate(()=>{ FM7.press32(0); FM7.setArp('seq'); FM7.clk.bpm=140; FM7.clk.start(); }); m=await page.evaluate(()=>VS.monitor(2000));
