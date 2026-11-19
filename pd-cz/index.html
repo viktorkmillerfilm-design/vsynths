@@ -520,5 +520,42 @@ function show(){ clearTimeout(ft); let l1,l2;
   PL.forEach((l,i)=>l&&on(l,mode==='edit'&&prm===i)); [0,1,3,2].forEach((k,i)=>on(LSL[i],P.lineSel===k)); bLine.classList.add('lit');
   if(!power) lcd.textContent=''; }
 VS.fit(panel,W,H); show();
+/* vsynths note protocol v1 · receiver (shared, paste once per synth, then call VSN.use({...}) with the synth's own note functions)
+   messages in : {type:'vsynths:hello'}                                   -> answers {type:'vsynths:ready', proto:1, slug, notes:true}
+                 {type:'vsynths:note', note, vel, on, dur, delay, at, src}  note: midi 0-127 or [notes]; vel 0-1 (or 1-127); on: true|false (default true)
+                                                                            dur: s (on + auto off); delay: s from now, or at: epoch ms (performance.timeOrigin+performance.now())
+                 {type:'vsynths:notes', list:[...note msgs]}               batch
+                 {type:'vsynths:panic'} / {type:'vsynths:stop'}            release every note this protocol holds (the synth's own stop handler still runs for :stop)
+   messages out: {type:'vsynths:ready', ...} once VSN.use() runs and on every hello; {type:'vsynths:ack', on, off} on {type:'vsynths:stats'} */
+(function (W) {
+  if (W.VSN) return;
+  const A = { on: null, off: null, panic: null, slug: '' }, live = new Map(), timers = new Set(), st = { on: 0, off: 0, msgs: 0 };
+  const slugOf = () => A.slug || (location.pathname.split('/').filter(s => s && !/\.html?$/.test(s)).pop() || document.title || 'synth').toLowerCase();
+  const nowMs = () => (performance.timeOrigin || 0) + performance.now();
+  const ready = to => { const m = { type: 'vsynths:ready', proto: 1, slug: slugOf(), notes: !!A.on }; try { (to || (W.parent !== W ? W.parent : null)) && (to || W.parent).postMessage(m, '*'); } catch (e) {} };
+  const later = (ms, f) => { if (ms <= 2) return f(); const id = setTimeout(() => { timers.delete(id); f(); }, ms); timers.add(id); };
+  const v01 = v => { v = +v; if (!isFinite(v)) return 0.8; if (v > 1) v /= 127; return Math.max(0.01, Math.min(1, v)); };
+  function on(n, v) { const c = live.get(n) || 0; try { if (c) A.off(n); A.on(n, v); } catch (e) {} live.set(n, c + 1); st.on++; }
+  function off(n) { const c = live.get(n) || 0; if (!c) return; if (c > 1) { live.set(n, c - 1); return; } live.delete(n); try { A.off(n); } catch (e) {} st.off++; }
+  function releaseAll() { timers.forEach(clearTimeout); timers.clear(); for (const n of [...live.keys()]) { live.set(n, 1); off(n); } try { A.panic && A.panic(); } catch (e) {} }
+  function note(d) {
+    if (!A.on) return; const ns = Array.isArray(d.note) ? d.note : [d.note], v = v01(d.vel == null ? 0.8 : d.vel);
+    const ms = d.at != null ? d.at - nowMs() : (+d.delay || 0) * 1000; if (ms < -250) return; // stale (tab was asleep): drop instead of a burst
+    const isOn = d.on !== false, dur = +d.dur > 0 ? Math.min(+d.dur, 30) : 0;
+    for (const n0 of ns) { const n = Math.round(+n0); if (!(n >= 0 && n <= 127)) continue;
+      if (!isOn) { later(ms, () => off(n)); continue; }
+      later(ms, () => on(n, v)); if (dur) later(ms + dur * 1000, () => off(n)); }
+  }
+  W.addEventListener('message', e => { const d = e.data; if (!d || typeof d !== 'object' || typeof d.type !== 'string' || d.type.slice(0, 8) !== 'vsynths:') return;
+    st.msgs++;
+    if (d.type === 'vsynths:note') note(d);
+    else if (d.type === 'vsynths:notes' && Array.isArray(d.list)) d.list.forEach(note);
+    else if (d.type === 'vsynths:panic' || d.type === 'vsynths:stop') releaseAll();
+    else if (d.type === 'vsynths:hello') ready(e.source);
+    else if (d.type === 'vsynths:stats') { try { e.source.postMessage({ type: 'vsynths:ack', slug: slugOf(), on: st.on, off: st.off, held: live.size }, '*'); } catch (x) {} } });
+  W.VSN = { use(o) { Object.assign(A, o); ready(); return W.VSN; }, stats: () => Object.assign({ held: live.size }, st), releaseAll, proto: 1 };
+})(typeof window !== 'undefined' ? window : this);
+
+VSN.use({slug:'pd-cz',on:(n,v)=>down(n,Math.round(v*127)),off:n=>up(n)}); /* vsynths note protocol */
 window.PD={send:()=>{ if(eng) eng.send({t:'patch',p:P}); },get P(){return P},noteOn,noteOff,press16,perf,val,moveCur,envPoint,SA,get mode(){return mode},set mode(m){mode=m; if(m==='edit'&&prm<0) prm=6; show();},lcd:()=>lcd.textContent,PRESETS};
 </script></body></html>
