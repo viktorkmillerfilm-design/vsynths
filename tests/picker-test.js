@@ -15,7 +15,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     // simulate a not-yet-copied instrument: answer 404 for minimoog/index.html
     await page.setRequestInterception(true); page.on('request', q => { if (/minimoog\/index\.html/.test(q.url())) q.respond({ status: 404, body: 'nf' }); else q.continue(); });
     await page.goto(base + 'index.html'); await page.evaluate(() => localStorage.clear()); await page.goto(base + 'index.html#chip-2a03'); await sleep(1200);
-    R.items = await page.$$eval('#list a', a => a.map(x => x.dataset.id)); if (R.items.length !== 15) fail('list has ' + R.items.length);
+    R.items = await page.$$eval('#list a', a => a.map(x => x.dataset.id)); if (R.items.length !== 16) fail('list has ' + R.items.length);
     R.selectVisible = await page.$eval('#pick', e => getComputedStyle(e).display !== 'none'); if (R.selectVisible) fail('select shown on desktop');
     R.src0 = await page.$eval('#fr', f => f.getAttribute('src')); if (R.src0 !== 'chip-2a03/index.html') fail('hash not honoured ' + R.src0);
     await page.screenshot({ path: root + '/tests/picker-desktop.png' });

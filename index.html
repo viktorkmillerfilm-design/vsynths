@@ -62,7 +62,8 @@ const SYN=[
   ['alpha-juno','orbit-6','6-voice dco poly, alpha dial'],
   ['tb-303','acid line','bass line groovebox'],
   ['chip-2a03','pulsar 8','8-bit console apu chip'],
-  ['chip-sid','trivox 64','3-voice 8-bit sound chip']];
+  ['chip-sid','trivox 64','3-voice 8-bit sound chip'],
+  ['prism','prism','hybrid wavetable synth']];
 const LS='vsynths.pick', ids=SYN.map(s=>s[0]), fr=document.getElementById('fr'), list=document.getElementById('list'), pick=document.getElementById('pick');
 const soon=document.getElementById('soon'), avail={}; let cur=null;
 SYN.forEach(([id,name,desc])=>{ const a=document.createElement('a'); a.href='#'+id; a.textContent=name; a.title=desc; a.dataset.id=id; list.appendChild(a);

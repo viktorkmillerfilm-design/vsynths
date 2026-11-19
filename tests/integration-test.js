@@ -1,9 +1,9 @@
-// integration: serve the folder over http, open the picker, switch through all 15 at desktop + iPhone landscape.
+// integration: serve the folder over http, open the picker, switch through all 16 at desktop + iPhone landscape.
 // Audio is measured inside each frame by tapping every connection to ctx.destination into an AnalyserNode.
 const puppeteer = require('/tmp/pt/node_modules/puppeteer-core');
 const path = require('path'), { spawn } = require('child_process');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const IDS = ['fm7','pd-cz','wavemass','fair-cmi','supersaw-8k','obx-a','minimoog','moog-modular','arp-soloist','juno-60','juno-106','alpha-juno','tb-303','chip-2a03','chip-sid'];
+const IDS = ['fm7','pd-cz','wavemass','fair-cmi','supersaw-8k','obx-a','minimoog','moog-modular','arp-soloist','juno-60','juno-106','alpha-juno','tb-303','chip-2a03','chip-sid','prism'];
 const TAP = () => {
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC || AC.__tapped) return; AC.__tapped = 1;
   window.__ctxs = [];
