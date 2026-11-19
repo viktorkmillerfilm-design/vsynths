@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>vsynths</title>
+<link rel="icon" href="data:,">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;color:#ddd;overflow:hidden;overscroll-behavior:none;font:12px/1 ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",monospace;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#bar{flex:none;height:34px;display:flex;align-items:center;gap:14px;padding:0 12px;border-bottom:1px solid #222;background:#000;white-space:nowrap}
+#name{font-weight:700;letter-spacing:.14em;color:#fff;font-size:13px}
+#list{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+#list::-webkit-scrollbar{display:none}
+#list a{color:#8a8a8a;text-decoration:none;padding:6px 7px;border-radius:3px;letter-spacing:.03em;flex:none}
+#list a:hover{color:#fff;background:#111}
+#list a.on{color:#000;background:#e8e8e8}
+#list a.soon{color:#444}
+#list a.soon.on{background:#333;color:#aaa}
+#pick{display:none;flex:1;min-width:0;background:#000;color:#eee;border:1px solid #333;border-radius:3px;padding:4px 6px;font:inherit;font-size:14px}
+#desc{color:#666;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+#open{color:#666;text-decoration:none;padding:4px 6px}
+#open:hover{color:#fff}
+#main{flex:1;position:relative;min-height:0}
+#fr{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b0b0b}
+#soon{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#555;text-align:center;padding:20px}
+#soon b{color:#999;font-weight:400;font-size:15px;letter-spacing:.06em}
+@media (max-width:900px),(max-height:500px){
+  #bar{height:30px;gap:8px;padding:0 8px}
+  #list,#desc{display:none}
+  #pick{display:block}
+  #name{font-size:12px}
+}
+</style></head>
+<body>
+<div id="bar">
+  <span id="name">vsynths</span>
+  <nav id="list"></nav>
+  <select id="pick" aria-label="instrument"></select>
+  <span id="desc"></span>
+  <a id="open" href="#" target="_blank" rel="noopener" title="open on its own">↗</a>
+</div>
+<div id="main">
+  <iframe id="fr" title="instrument" allow="autoplay; midi; fullscreen"></iframe>
+  <div id="soon"><b id="soonName"></b><span>coming soon</span></div>
+</div>
+<script>
+const SYN=[
+  ['fm7','fm-7','6-operator fm synth'],
+  ['pd-cz','pd-1','phase distortion synth'],
+  ['wavemass','wavemass','wavetable synth'],
+  ['fair-cmi','cmi-8','8-bit sampling workstation'],
+  ['supersaw-8k','vs-8k','supersaw virtual analog'],
+  ['obx-a','obx-a','8-voice analog-style poly'],
+  ['minimoog','mono-3','3-osc mono, ladder filter'],
+  ['moog-modular','system-5','patchable modular'],
+  ['arp-soloist','pro-solo','30-voice preset mono synth'],
+  ['juno-60','ju-6','6-voice dco poly with arpeggio'],
+  ['juno-106','ju-106','6-voice dco poly, 128 patches'],
+  ['alpha-juno','alpha-6','6-voice dco poly, alpha dial'],
+  ['tb-303','acid line','bass line groovebox'],
+  ['chip-2a03','pulsar 8','8-bit console apu chip'],
+  ['chip-sid','trivox 64','3-voice 8-bit sound chip']];
+const LS='vsynths.pick', ids=SYN.map(s=>s[0]), fr=document.getElementById('fr'), list=document.getElementById('list'), pick=document.getElementById('pick');
+const soon=document.getElementById('soon'), avail={}; let cur=null;
+SYN.forEach(([id,name,desc])=>{ const a=document.createElement('a'); a.href='#'+id; a.textContent=name; a.title=desc; a.dataset.id=id; list.appendChild(a);
+  const o=document.createElement('option'); o.value=id; o.textContent=name+' · '+desc; pick.appendChild(o); });
+list.addEventListener('click',e=>{ const a=e.target.closest('a'); if(!a) return; e.preventDefault(); select(a.dataset.id); });
+pick.addEventListener('change',()=>select(pick.value));
+// is <id>/index.html there? true / false / null (unknown, e.g. file:// where fetch is blocked)
+function probe(id){ if(id in avail) return Promise.resolve(avail[id]);
+  return fetch(id+'/index.html',{method:'HEAD',cache:'no-store'}).then(r=>avail[id]=r.ok).catch(()=>avail[id]=null); }
+function mark(){ list.querySelectorAll('a').forEach(a=>a.classList.toggle('soon',avail[a.dataset.id]===false));
+  [...pick.options].forEach(o=>{ const s=SYN.find(x=>x[0]===o.value); o.textContent=s[1]+' · '+s[2]+(avail[o.value]===false?' (soon)':''); }); }
+function stopFrame(){ try{ fr.contentWindow&&fr.contentWindow.postMessage({type:'vsynths:stop'},'*'); }catch(e){} }
+async function select(id,fromHash){
+  if(!ids.includes(id)) id=ids[0];
+  if(id===cur) return; cur=id;
+  try{ localStorage.setItem(LS,id); }catch(e){}
+  if(location.hash!=='#'+id){ if(fromHash) history.replaceState(null,'','#'+id); else location.hash=id; }
+  const s=SYN.find(x=>x[0]===id);
+  list.querySelectorAll('a').forEach(a=>{ const on=a.dataset.id===id; a.classList.toggle('on',on); if(on) a.scrollIntoView({inline:'nearest',block:'nearest'}); });
+  pick.value=id; document.getElementById('desc').textContent=s[2]; document.getElementById('open').href=id+'/'; document.title='vsynths · '+s[1];
+  stopFrame(); // old instrument: silence first, then navigate away (only one runs)
+  const [ok]=await Promise.all([probe(id),new Promise(r=>setTimeout(r,80))]); mark(); if(cur!==id) return; // let the stop message land before unloading
+  if(ok===false){ fr.src='about:blank'; fr.style.visibility='hidden'; soon.style.display='flex'; document.getElementById('soonName').textContent=s[1]+' · '+s[2]; }
+  else { soon.style.display='none'; fr.style.visibility='visible'; fr.src=id+'/index.html'; }
+}
+fr.addEventListener('load',()=>{ try{ fr.contentWindow.focus(); }catch(e){} });
+addEventListener('hashchange',()=>select(location.hash.slice(1),true));
+let first=location.hash.slice(1); if(!ids.includes(first)){ try{ first=localStorage.getItem(LS); }catch(e){} }
+select(ids.includes(first)?first:ids[0],true);
+Promise.all(ids.map(probe)).then(mark);
+</script>
+</body></html>

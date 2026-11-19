@@ -1,0 +1,16 @@
+# dependencies / tooling
+node_modules/
+tests/node_modules/
+package-lock.json
+# test artefacts (screenshots, results, logs)
+tests/*.png
+tests/*.json
+*.log
+# OS / editor / temp
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+tmp/
+*.zip
+*.wav
