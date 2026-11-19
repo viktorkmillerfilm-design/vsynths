@@ -394,7 +394,7 @@ try{ const s=JSON.parse(localStorage.getItem(LS)); if(s&&s.bank&&s.bank.length==
 const save=()=>{ try{localStorage.setItem(LS,JSON.stringify({bank,vno,fn}));}catch(e){} };
 /* ---------------- engine ---------------- */
 let eng=null; const pendingE=[];
-VS.onInit(async ctx=>{ const n=await VS.dsp(ctx,document.getElementById('dspsrc').textContent,'fm7dsp'); n.connect(VS.out); eng=n; sendPatch(); eng.send({t:'fn',fn}); if(ctx.state!=='running'){ try{ await Promise.race([ctx.resume(),new Promise(r=>setTimeout(r,1500))]); }catch(e){} } flushPending(ctx); window.__eng=eng.kind; });
+VS.onInit(async ctx=>{ const n=await VS.dsp(ctx,document.getElementById('dspsrc').textContent,'fm7dsp'); n.connect(VS.out); eng=n; eng.send({t:'patch',p:P}); eng.send({t:'fn',fn}); /* patch must arrive before any queued note (sendPatch defers to rAF) */ if(ctx.state!=='running'){ try{ await Promise.race([ctx.resume(),new Promise(r=>setTimeout(r,1500))]); }catch(e){} } flushPending(ctx); window.__eng=eng.kind; });
 let pq=0; function sendPatch(){ if(!eng||pq)return; pq=requestAnimationFrame(()=>{pq=0; eng.send({t:'patch',p:P});}); if(document.hidden){ cancelAnimationFrame(pq); pq=0; eng.send({t:'patch',p:P}); } }
 const E=m=>{ if(eng) eng.send(m); else pendingE.push([m,performance.now()]); };
 /* first press: the worklet loads async, so replay queued notes with their real spacing once audio is running */
